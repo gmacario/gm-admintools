@@ -8,28 +8,43 @@
 #	19-JAN-2009	macario		Initial version
 # =============================================================================
 
+# Configurable parameters
+
 NAS_SHARE=//itven1nnas1.venaria.marelli.it/lupin
-NAS_USER=macario
+#NAS_USER=paolodoz
 NAS_DOMAIN=mmemea
-NAS_PASSWORD=
+#NAS_PASSWORD=
 #NAS_MOUNTPOINT=/mnt/lupin
 #NAS_CHECKFILE=${NAS_MOUNTPOINT}/this_is_itven1nnas1_lupin.txt
 
 VM_REPOSITORY="/var/lib/vmware/Virtual Machines"
-#VM_NAME=lupin10
-VM_NAME=Ubuntu804-WR_PFIdec19
+VM_NAME=Ubuntu804-WR_PFIjan19
 VM_BACKUPDIR=/Backup_VM
 #VM_RELEASEDIR=/Master_Disks/Build_VM
 
 # -----------------------------------------------------------------------------
+# You should not need to change the script below
+
 #set -x
+
+# Request parameters if not specified in the section above
+if [ "${NAS_USER}" = "" ]; then
+    read -p "Enter NAS_USER: " NAS_USER
+fi
+if [ "${NAS_PASSWORD}" = "" ]; then
+    echo -n "Enter NAS_PASSWORD: "
+    stty -echo
+    read NAS_PASSWORD
+    echo
+    stty echo
+fi
+if [ "${VM_NAME}" = "" ]; then
+    read -p "Enter VM_NAME: " VM_NAME
+fi
 
 ## Make sure NAS_SHARE is mounted
 #if [ ! -f ${NAS_CHECKFILE} ]; then
 #    sudo mkdir -p ${NAS_MOUNTPOINT}
-#    if [ "${NAS_PASSWORD}" = "" ]; then
-#        read -p "Enter NAS_PASSWORD: " NAS_PASSWORD
-#    fi
 #    sudo smbmount ${NAS_SHARE} ${NAS_MOUNTPOINT} \ 
 #        -o username="${NAS_USER}",password="${NAS_PASSWORD}",workgroup=${NAS_DOMAIN}
 ##    sudo mount -t smbfs ${NAS_SHARE} ${NAS_MOUNTPOINT} \ 
@@ -40,7 +55,6 @@ VM_BACKUPDIR=/Backup_VM
 #    echo Cannot access file ${NAS_CHECKFILE}
 #    exit 1
 #fi
-
 
 # Sanity checks
 if [ ! -d "${VM_REPOSITORY}/${VM_NAME}" ]; then
@@ -66,11 +80,13 @@ if [ ! -e ${BCK_FILENAME}.tgz ]; then
     rm -f md5sum.txt
 fi
 
-# Calculate tarball checksum
+echo "*** Calculating md5sum of ${BCK_FILENAME}"
 md5sum ${BCK_FILENAME}.tgz >md5sum.txt || exit 1
 
-# Copy .tar.bz2 to NAS_SHARE
-echo "*** Please supply password for ${NAS_USER} on ${NAS_SHARE} if requested"
+# set -x
+
+echo "*** Copying tarball to ${NAS_SHARE}"
+#echo "*** Please supply password for ${NAS_USER} on ${NAS_SHARE} if requested"
 echo "cd ${VM_BACKUPDIR}/
 mkdir ${BCK_FILENAME}
 cd ${BCK_FILENAME}
@@ -78,6 +94,7 @@ put ${BCK_FILENAME}.tgz
 put md5sum.txt
 dir
 quit" \
-| smbclient --user ${NAS_USER} --workgroup ${NAS_DOMAIN} ${NAS_SHARE} || exit 1
+| smbclient --user ${NAS_USER} --workgroup ${NAS_DOMAIN} \
+${NAS_SHARE} ${NAS_PASSWORD} || exit 1
 
 # === EOF ===
