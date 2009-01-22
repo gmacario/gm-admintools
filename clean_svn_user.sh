@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # =============================================================================
-# Project:	NBT
+# Project:	LUPIN
 #
 # Purpose:	Remove cached Subversion auth files
 #
@@ -9,7 +9,7 @@
 #
 # Note:		Should configure username,etc.
 #
-# Copyright 2007,2008 Magneti Marelli Electronic Systems - All Rights Reserved
+# Copyright 2007-2009 Magneti Marelli Electronic Systems - All Rights Reserved
 # =============================================================================
 
 #set -x
