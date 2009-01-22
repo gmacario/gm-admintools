@@ -33,13 +33,13 @@ if [ `mount | grep ${DEV_SOURCE} | wc -l` -gt 0 ]; then
     echo Warning: Some partitions of /dev/${DEV_SOURCE} are mounted
     mount | grep ${DEV_SOURCE}
 fi
+
+# TODO: Make sure DEV_DEST exists and is not mounted
 if [ `mount | grep ${DEV_DEST} | wc -l` -gt 0 ]; then
     echo ERROR: Some partitions of /dev/${DEV_DEST} are mounted
     mount | grep ${DEV_DEST}
     exit 1
 fi
-
-# TODO: Make sure DEV_DEST exists and is not mounted
 
 # TODO: Make sure DEV_DEST is empty
 
@@ -47,9 +47,9 @@ fi
 # Sanity checks OK, go ahead...
 echo Cloning disk from ${DEV_SOURCE} to ${DEV_DEST}, please wait...
 
-# TODO: Verify partition layout on sdx
+# TODO: Verify partition layout on ${DEV_SOURCE}
 
-# TODO: Create partitions on sdy
+# TODO: Create partitions on ${DEV_DEST}
 #    + sdy1: (NTFS, WinXP C:) xx GB
 #    + sdy2: (NTFS, WinXP D:) size specified or all remaining space
 
@@ -65,17 +65,5 @@ echo Disk cloning complete.
 exit 0
 
 # -----------------------------------------------------------------------------
-# TRASH FOLLOWS
-
-#SMBSHARE=//itven1nnas1.venaria.marelli.it/LUPIN
-#MOUNTPOINT=/mnt/lupin
-#MOUNT_OPTS=uid=${USER}
-#MOUNT_OPTS+=,username=macario
-#MOUNT_OPTS+=,workgroup=MMEMEA
-#MOUNT_OPTS+=,password=VERYSECRET
-
-#sudo mkdir -p ${MOUNTPOINT}
-#sudo smbmount ${SMBSHARE} ${MOUNTPOINT} -o ${MOUNT_OPTS} && \
-#echo ${SMBSHARE} mounted to ${MOUNTPOINT}
 
 # === EOF ===
