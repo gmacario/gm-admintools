@@ -19,6 +19,15 @@ DEV_DEST=sdb
 # -----------------------------------------------------------------------------
 # Sanity Checks
 
+if [ ${USER} != root ]; then
+    echo This script should be run as root
+    exit 1
+fi
+
+sudo LANG=C fdisk -l | awk '
+/^Disk \/dev/	{ print $0 }
+'
+
 # TODO: Make sure DEV_SOURCE exists and is not mounted
 
 # TODO: Make sure DEV_DEST exists and is not mounted
@@ -26,6 +35,8 @@ DEV_DEST=sdb
 # TODO: Make sure DEV_DEST is empty
 
 
+# Sanity checks OK, go ahead...
+echo Cloning disk from ${DEV_SOURCE} to ${DEV_DEST}, please wait...
 
 # TODO: Verify partition layout on sdx
 
@@ -40,6 +51,8 @@ DEV_DEST=sdb
 #  + (Optional) Dual-boot Linux on remaining space
 
 
+echo Disk cloning complete.
+exit 0
 
 # -----------------------------------------------------------------------------
 # TRASH FOLLOWS
