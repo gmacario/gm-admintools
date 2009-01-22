@@ -25,7 +25,20 @@ DEV_DEST=sdb
 
 # TODO: Make sure DEV_DEST is empty
 
-# TODO
+
+
+# TODO: Verify partition layout on sdx
+
+# TODO: Create partitions on sdy
+#    + sdy1: (NTFS, WinXP C:) xx GB
+#    + sdy2: (NTFS, WinXP D:) size specified or all remaining space
+
+# TODO: Copy MBR
+
+# TODO: Copy all data in source partitions
+#  + Boot WinXP from C:
+#  + (Optional) Dual-boot Linux on remaining space
+
 
 
 # -----------------------------------------------------------------------------
