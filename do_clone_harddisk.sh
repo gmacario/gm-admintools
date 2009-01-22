@@ -29,6 +29,15 @@ sudo LANG=C fdisk -l | awk '
 '
 
 # TODO: Make sure DEV_SOURCE exists and is not mounted
+if [ `mount | grep ${DEV_SOURCE} | wc -l` -gt 0 ]; then
+    echo Warning: Some partitions of /dev/${DEV_SOURCE} are mounted
+    mount | grep ${DEV_SOURCE}
+fi
+if [ `mount | grep ${DEV_DEST} | wc -l` -gt 0 ]; then
+    echo ERROR: Some partitions of /dev/${DEV_DEST} are mounted
+    mount | grep ${DEV_DEST}
+    exit 1
+fi
 
 # TODO: Make sure DEV_DEST exists and is not mounted
 
@@ -50,6 +59,7 @@ echo Cloning disk from ${DEV_SOURCE} to ${DEV_DEST}, please wait...
 #  + Boot WinXP from C:
 #  + (Optional) Dual-boot Linux on remaining space
 
+echo TODO TODO TODO
 
 echo Disk cloning complete.
 exit 0
