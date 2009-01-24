@@ -366,29 +366,29 @@ BEGIN	{
 	part_system=(part_bootable ? substr($0,index($0,$7)) : substr($0,index($0,$6)))
 
 	# Build up shell commands
-	if (part_id == 5) {
-		# Extended: do nothing
-	} else if (part_id == 7) {
-		# HPFS/NFTS
-		printf("echo === Copying NTFS filesystem from %s%s to %s%s\n", dev_source, part_num, dev_dest, part_num);
-		printf("mount -t ntfs -o ro %s%s %s\n", dev_source, part_num, mnt_source);
-		printf("mount -t ntfs %s%s %s\n", dev_dest, part_num, mnt_dest);
-		printf("cp -av %s %s\n", mnt_source, mnt_dest);
-		printf("umount %s\n", mnt_dest);
-		printf("umount %s\n", mnt_source);
-	} else if (part_id == 82) {
-		# Linux swap: do nothing
-	} else if (part_id == 83) {
-		# Linux partition
-		printf("echo === Copying ext3 filesystem from %s%s to %s%s\n", dev_source, part_num, dev_dest, part_num);
-		printf("mount -t ext3 -o ro %s%s %s\n", dev_source, part_num, mnt_source);
-		printf("mount -t ext3 %s%s %s\n", dev_dest, part_num, mnt_dest);
-		printf("cp -av %s %s\n", mnt_source, mnt_dest);
+	if ((part_id == 5) || (part_id == 82)) {
+	    # case 5:	Extended
+	    # case 82:	Linux swap
+		#
+		# Do nothing
+	} else if ((part_id == 7) || (part_id == 83)) {
+	    # case 7:	HPFS/NFTS
+	    # case 83:	Linux
+	    	if (part_id == 7) {
+		    fstype = "ntfs"
+	    	} else if (part_id == 83) {
+		    fstype = "ext3"
+	    	} else {
+		    fstype = "UNKNOWN"
+	    	}
+		printf("echo === Copying %s filesystem from %s%s to %s%s\n", 
+			fstype, dev_source, part_num, dev_dest, part_num);
+		printf("mount -t %s -o ro %s%s %s\n", fstype, dev_source, part_num, mnt_source);
+		printf("mount -t %s %s%s %s\n", fstype, dev_dest, part_num, mnt_dest);
+		printf("cp -a %s %s\n", mnt_source, mnt_dest);
 		#printf("sh -c \"cd %s && cp -av . %s\"\n", mnt_source, mnt_dest);
 		printf("umount %s\n", mnt_dest);
 		printf("umount %s\n", mnt_source);
-	# } else if (part_id == ?) {
-	#	# TODO
 	} else {
 		printf("echo ERROR: %s: Unable to copy filesystem %s (%s)\n", $1, part_id, part_system);
 	}
