@@ -33,8 +33,8 @@ OPT_NO_GEOMETRY_CHECK=true
 # Format partitions on DEV_DEST (implicit if OPT_CREATE_DEST_PARTITIONS)
 #OPT_FORMAT_DEST_PARTITIONS=true
 #
-# Do not check for bad blocks when formatting (faster but less safe)
-#OPT_NO_BADBLOCKS_CHECK=true
+# Quick format (Do not check for bad blocks, etc - faster but less safe)
+#OPT_FORMAT_QUICK=true
 #
 # TODO: Specify which partition will be resized in case the two disks have different capacity
 #OPT_RESIZE_PARTITION=2
@@ -315,23 +315,19 @@ fi		# if [ "${OPT_CREATE_DEST_PARTITIONS}" = "true" ]
 # Format partitions on ${DEV_DEST}
 if [ "${OPT_FORMAT_DEST_PARTITIONS}" = "true" ]; then
 
-# TODO: Should not add "-c" to mkfs/mkswap if (OPT_NO_BADBLOCKS_CHECK)
 echo "Formatting partitions on ${DEV_DEST}..."
 outcmd=`LANG=C fdisk -l ${DEV_DEST} | grep "^${DEV_DEST}"`
 #echo "DBG: outcmd=${outcmd}"
-echo "${outcmd}" | awk -v dev=${DEV_DEST} '
+echo "${outcmd}" | awk -v dev=${DEV_DEST} -v f_quick=${OPT_FORMAT_QUICK} '
 BEGIN	{
+	f_quick = (f_quick ? true : false)
+	print "DBG: f_quick=" f_quick
 	}
 //	{
 	part_num=substr($1,length(dev)+1)
-	#print "DBG: part_num=" part_num
 	part_bootable=($2 == "*")
-	#print "DBG: part_bootable=" part_bootable
 	part_id=(part_bootable ? $6 : $5)
-	#print "DBG: part_id=" part_id
 	part_system=(part_bootable ? substr($0,index($0,$7)) : substr($0,index($0,$6)))
-	#print "DBG: part_system=" part_system
-	#print ""
 
 	# Build up shell commands
 	if (part_id == 5) {
@@ -339,17 +335,17 @@ BEGIN	{
 	} else if (part_id == 7) {
 		# HPFS/NFTS
 		printf("echo === %s: Formatting as NTFS filesystem\n", $1)
-		printf("mkntfs %s\n", $1);
+		printf("mkntfs %s %s\n", (f_quick ? "-q" : ""), $1);
 		#printf("echo === %s: Writing zero - format NTFS under MS Windows\n", $1);
 		#printf("dd if=/dev/zero of=%s bs=512 count=16\n". $1);
 	} else if (part_id == 82) {
 		# Linux swap
 		printf("echo === %s: Formatting as Linux swap partition\n", $1);
-		printf("mkswap -c %s\n", $1);
+		printf("mkswap %s %s\n", (f_quick ? "" : "-c"), $1);
 	} else if (part_id == 83) {
 		# Linux
 		printf("echo === %s: Formatting as ext3 filesystem\n", $1);
-		printf("mkfs -c -t ext3 %s\n", $1);
+		printf("mkfs %s -t ext3 %s\n", (f_quick ? "" : "-c"), $1);
 	# } else if (part_id == ?) {
 	#	# Windows FAT16/FAT32/VFAT
 	#	# TODO
@@ -361,7 +357,7 @@ BEGIN	{
 END	{
 	}
 ' | while read cmdline; do
-    #echo "DBG: cmdline=${cmdline}"
+    echo "DBG: cmdline=${cmdline}"
     ${cmdline}
     if [ ! $? ]; then
 	echo "ERROR executing \"${cmdline}\""
