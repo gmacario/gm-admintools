@@ -13,10 +13,10 @@
 # Configurable Parameters
 #
 # Source device
-DEV_SOURCE=/dev/sda
+#DEV_SOURCE=/dev/sda
 #
 # Destination device (WARNING: WILL DESTROY CONTENTS!!!)
-DEV_DEST=/dev/sdb
+#DEV_DEST=/dev/sdb
 
 
 # Advanced options - USE AT YOUR OWN RISK!!!
@@ -54,7 +54,9 @@ print_linebreak()
 recursive_copy()
 {
     echo "DBG: recursive_copy($1, $2)"
-    cd "$1" && cp -a . "$2"
+    cd "$1" || return 1
+    cp -a . "$2" || return 2
+    return 0
 }
 
 # -----------------------------------------------------------------------------
@@ -166,8 +168,8 @@ fi
 parttbl_size=`LANG=C fdisk -l ${DEV_SOURCE} | awk '/^Units/ {print $9}'`
 #echo "DBG: parttbl_size=${parttbl_size}"
 
-echo "WARNING: THIS WILL DESTROY CONTENTS ON ${DEV_DEST}"
-echo -n "Do you want to proceed (YES/no)? "
+echo "WARNING: THIS WILL DESTROY ALL CONTENT OF ${DEV_DEST}"
+echo -n "Do you really want to proceed (YES/no)? "
 read ok
 if [ "${ok}" != "YES" ]; then
 	echo "Aborted"
@@ -240,7 +242,6 @@ outcmd=`LANG=C fdisk -l ${DEV_SOURCE} | grep "^${DEV_SOURCE}"`
 #echo "DBG: outcmd=${outcmd}"
 fdiskcmd=`echo "${outcmd}" | awk -v dev=${DEV_SOURCE} -v numparts=0 '
 BEGIN	{
-	print ""
 	}
 //	{
 	part_num=substr($1,length(dev)+1)
@@ -352,24 +353,25 @@ BEGIN	{
 	} else {
 		printf("echo ERROR: %s: Unable to format filesystem %s (%s)\n", $1, part_id, part_system);
 	}
-	skip
+	next
 	}
 END	{
 	}
 ' | while read cmdline; do
     echo "DBG: cmdline=${cmdline}"
     ${cmdline}
-    if [ ! $? ]; then
+    if [ $? -gt 0 ]; then
 	echo "ERROR executing \"${cmdline}\""
   	exit 1
     fi
 done
 echo "Formatting ${DEV_DEST} partitions completed"
+
 fi		# if [ "${OPT_FORMAT_DEST_PARTITIONS}" = "true" ]
 
 
 echo "Copying all data partititions from ${DEV_SOURCE} to ${DEV_DEST}..."
-outcmd=`LANG=C fdisk -l ${DEV_DEST} | grep "^${DEV_DEST}"`
+outcmd=`LANG=C fdisk -l ${DEV_SOURCE} | grep "^${DEV_SOURCE}"`
 echo "${outcmd}" | awk -v dev_source=${DEV_SOURCE} -v dev_dest=${DEV_DEST} '
 BEGIN	{
 	mnt_source = "/tmp/mnt/source"
@@ -410,7 +412,7 @@ BEGIN	{
 	} else {
 		printf("echo ERROR: %s: Unable to copy filesystem %s (%s)\n", $1, part_id, part_system);
 	}
-	skip
+	next
 	}
 END	{
 	printf("rmdir %s\n", mnt_source);
@@ -419,18 +421,13 @@ END	{
 ' | while read cmdline; do
     echo "DBG: cmdline=${cmdline}"
     ${cmdline}
-    if [ ! $? ]; then
+    if [ $? -gt 0 ]; then
 	echo "ERROR executing \"${cmdline}\""
   	exit 1
     fi
 done
-echo "Copying data partitions from ${DEV_SOURCE} to ${DEV_DEST} completed"
 
-#set -x
-#echo TODO
-#exit 0
-
-echo "Disk cloning complete."
+#echo "Copying data partitions from ${DEV_SOURCE} to ${DEV_DEST} completed"
 exit 0
 
 # -----------------------------------------------------------------------------
