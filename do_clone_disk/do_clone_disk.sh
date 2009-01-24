@@ -223,10 +223,9 @@ END	{
 #echo "DBG: fdiskcmd=${fdiskcmd}"
 echo ${fdiskcmd} | tr " " "\n" | LANG=C fdisk ${DEV_DEST} >&/dev/null
 
-# TODO: Create partitions on ${DEV_DEST}
 echo "Creating partitions on ${DEV_DEST} as per ${DEV_SOURCE}..."
 outcmd=`LANG=C fdisk -l ${DEV_SOURCE} | grep "^${DEV_SOURCE}"`
-echo "DBG: outcmd=${outcmd}"
+#echo "DBG: outcmd=${outcmd}"
 fdiskcmd=`echo "${outcmd}" | awk -v dev=${DEV_SOURCE} -v numparts=0 '
 BEGIN	{
 	print ""
@@ -296,21 +295,27 @@ ${heads_source}
 s
 ${sectrk_source}
 r
-" ${fdiskcmd} | tr " " "\n" 
-#| LANG=C fdisk ${DEV_DEST}
-# >&/dev/null
-
-echo TODO
-exit 0
+" ${fdiskcmd} | tr " " "\n" | LANG=C fdisk ${DEV_DEST} >&/dev/null
 
 # Display what happened in the end...
 LANG=C fdisk -l ${DEV_DEST}
 
-set -x 
+# Make sure you will format the partitions just created...
+OPT_FORMAT_DEST_PARTITIONS=true
 
-
-    # ...
 fi		# if [ "${OPT_CREATE_DEST_PARTITIONS}" = "true" ]
+
+
+
+# TODO: Format partitions on ${DEV_DEST}
+if [ "${OPT_FORMAT_DEST_PARTITIONS}" = "true" ]; then
+
+echo "Formatting partitions on ${DEV_DEST}..."
+
+# ...
+
+fi		# if [ "${OPT_FORMAT_DEST_PARTITIONS}" = "true" ]
+
 
 set -x
 echo TODO
@@ -318,8 +323,6 @@ exit 0
 
 
 
-
-# TODO: Format partitions on ${DEV_DEST}
 
 echo "Cloning disk from ${DEV_SOURCE} to ${DEV_DEST}, please wait..."
 
