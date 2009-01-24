@@ -12,11 +12,22 @@
 
 #set -x
 
-DEV_SOURCE=sda
-DEV_DEST=sdb
+DEV_SOURCE=/dev/sda
+DEV_DEST=/dev/sdb
 
 # End of configurable parameters
 # -----------------------------------------------------------------------------
+
+print_linebreak()
+{
+echo "-------------------------------------------------------------------------------"
+}
+
+# -----------------------------------------------------------------------------
+
+echo -e "$0 - v0.1\n"
+#echo '$Id:'
+
 # Sanity Checks
 
 if [ ${USER} != root ]; then
@@ -24,25 +35,51 @@ if [ ${USER} != root ]; then
     exit 1
 fi
 
-sudo LANG=C fdisk -l | awk '
-/^Disk \/dev/	{ print $0 }
-'
+#LANG=C fdisk -l | awk '
+#/^Disk \/dev/	{ print $0 }
+#'
 
-# TODO: Make sure DEV_SOURCE exists and is not mounted
+echo "*** This is the SOURCE disk ***"
+outcmd=`LANG=C fdisk -l ${DEV_SOURCE}`
+echo "${outcmd}"
+echo
+# Make sure DEV_SOURCE exists and is not mounted
+if [ `echo ${outcmd} | grep "Disk ${DEV_SOURCE}:" | wc -l` -ne 1 ]; then
+    echo "ERROR: Device ${DEV_SOURCE} does not exist"
+    exit 1
+fi
 if [ `mount | grep ${DEV_SOURCE} | wc -l` -gt 0 ]; then
-    echo Warning: Some partitions of /dev/${DEV_SOURCE} are mounted
+    echo "WARNING: Some partitions of ${DEV_SOURCE} are mounted"
     mount | grep ${DEV_SOURCE}
 fi
 
-# TODO: Make sure DEV_DEST exists and is not mounted
+echo
+#print_linebreak
+
+echo "*** This is the DEST disk ***"
+outcmd=`LANG=C fdisk -l ${DEV_DEST}`
+echo "${outcmd}"
+echo
+# Make sure DEV_DEST exists and is not mounted
+if [ `echo ${outcmd} | grep "Disk ${DEV_DEST}:" | wc -l` -ne 1 ]; then
+    echo "ERROR: Device ${DEV_DEST} does not exist"
+    exit 1
+fi
 if [ `mount | grep ${DEV_DEST} | wc -l` -gt 0 ]; then
-    echo ERROR: Some partitions of /dev/${DEV_DEST} are mounted
+    echo "ERROR: Some partitions of ${DEV_DEST} are mounted"
     mount | grep ${DEV_DEST}
     exit 1
 fi
 
 # TODO: Make sure DEV_DEST is empty
 
+echo "WARNING: this procedure will destroy contents on ${DEV_DEST}"
+echo -n "Do you want to proceed (YES/no)? "
+read ok
+if [ "${ok}" != "YES" ]; then
+	echo "Aborted"
+	exit 1
+fi
 
 # Sanity checks OK, go ahead...
 echo Cloning disk from ${DEV_SOURCE} to ${DEV_DEST}, please wait...
