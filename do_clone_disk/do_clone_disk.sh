@@ -13,10 +13,10 @@
 # Configurable Parameters
 #
 # Source device
-DEV_SOURCE=/dev/sda
+#DEV_SOURCE=/dev/sda
 #
 # Destination device (WARNING: WILL DESTROY CONTENTS!!!)
-DEV_DEST=/dev/sdc
+#DEV_DEST=/dev/sdc
 
 
 # Advanced options - USE AT YOUR OWN RISK!!!
@@ -61,7 +61,16 @@ fi
 
 echo "=== List of available disks on the system:"
 LANG=C fdisk -l | grep "^Disk /"
-echo
+echo ""
+
+if [ "${DEV_SOURCE}" = "" ]; then
+    echo Please configure DEV_SOURCE
+    exit 1
+fi
+if [ "${DEV_DEST}" = "" ]; then
+    echo Please configure DEV_DEST
+    exit 1
+fi
 
 echo "=== SOURCE disk information (${DEV_SOURCE})"
 outcmd=`LANG=C fdisk -l ${DEV_SOURCE}`
