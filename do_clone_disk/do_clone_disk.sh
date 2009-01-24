@@ -371,21 +371,22 @@ BEGIN	{
 	} else if (part_id == 7) {
 		# HPFS/NFTS
 		printf("echo === Copying NTFS filesystem from %s%s to %s%s\n", dev_source, part_num, dev_dest, part_num);
-		printf("echo mount -t ntfs -o ro %s%s %s\n", dev_source, part_num, mnt_source);
-		printf("echo mount -t ntfs %s%s %s\n", dev_dest, part_num, mnt_dest);
-		printf("echo PWD=%s cp -av . %s/\n", mnt_source, mnt_dest);
-		printf("echo umount %s\n", mnt_dest);
-		printf("echo umount %s\n", mnt_source);
+		printf("mount -t ntfs -o ro %s%s %s\n", dev_source, part_num, mnt_source);
+		printf("mount -t ntfs %s%s %s\n", dev_dest, part_num, mnt_dest);
+		printf("cp -av %s %s\n", mnt_source, mnt_dest);
+		printf("umount %s\n", mnt_dest);
+		printf("umount %s\n", mnt_source);
 	} else if (part_id == 82) {
 		# Linux swap: do nothing
 	} else if (part_id == 83) {
 		# Linux partition
 		printf("echo === Copying ext3 filesystem from %s%s to %s%s\n", dev_source, part_num, dev_dest, part_num);
-		printf("echo mount -t ext3 -o ro %s%s %s\n", dev_source, part_num, mnt_source);
-		printf("echo mount -t ext3 %s%s %s\n", dev_dest, part_num, mnt_dest);
-		printf("echo PWD=%s cp -av . %s/\n", mnt_source, mnt_dest);
-		printf("echo umount %s\n", mnt_dest);
-		printf("echo umount %s\n", mnt_source);
+		printf("mount -t ext3 -o ro %s%s %s\n", dev_source, part_num, mnt_source);
+		printf("mount -t ext3 %s%s %s\n", dev_dest, part_num, mnt_dest);
+		printf("cp -av %s %s\n", mnt_source, mnt_dest);
+		#printf("sh -c \"cd %s && cp -av . %s\"\n", mnt_source, mnt_dest);
+		printf("umount %s\n", mnt_dest);
+		printf("umount %s\n", mnt_source);
 	# } else if (part_id == ?) {
 	#	# TODO
 	} else {
