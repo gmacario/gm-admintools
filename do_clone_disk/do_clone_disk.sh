@@ -31,7 +31,7 @@ OPT_NO_GEOMETRY_CHECK=true
 #OPT_CREATE_DEST_PARTITIONS=true
 #
 # Format partitions on DEV_DEST (implicit if OPT_CREATE_DEST_PARTITIONS)
-#OPT_FORMAT_DEST_PARTITIONS=true
+OPT_FORMAT_DEST_PARTITIONS=true
 #
 # Specify the number of the partition to resize in case the two disks have different capacity
 #OPT_RESIZE_PARTITION=2
@@ -318,88 +318,93 @@ BEGIN	{
 		# Extended: do nothing (will format logical partitions instead)
 	} else if (part_id == 7) {
 		# HPFS/NFTS
-		# TODO print "mkntfs >/dev/null || You must install ntfsprogs"
-		print "echo === " $1 ": Formatting NTFS"
-		print "echo TODO: mkntfs " $1
-		# print "echo === " $1 ": Writing zero - format NTFS under MS Windows"
-		# print "dd if=/dev/zero of=" $1 " bs=512 count=16"
+		printf("echo === %s: Formatting as NTFS filesystem\n", $1)
+		printf("mkntfs %s\n", $1);
+		#printf("echo === %s: Writing zero - format NTFS under MS Windows\n", $1);
+		#printf("dd if=/dev/zero of=%s bs=512 count=16\n". $1);
 	} else if (part_id == 82) {
 		# Linux swap
-		print "echo === " $1 ": Creating Linux swap"
-		print "mkswap " $1
+		printf("echo === %s: Formatting as Linux swap partition\n", $1);
+		printf("mkswap %s\n", $1);
 	} else if (part_id == 83) {
 		# Linux
-		print "echo === " $1 ": Creating ext3 filesystem"
-		print "mkfs -t ext3 " $1
+		printf("echo === %s: Formatting as ext3 filesystem\n", $1);
+		printf("mkfs -t ext3 %s\n", $1);
 	# } else if (part_id == ?) {
 	#	# TODO
 	} else {
-		print "echo === " $1 ": Unable to handle filesystem " part_id " (" part_system ")"
+		printf("echo ERROR: %s: Unable to format filesystem %s (%s)\n", $1, part_id, part_system);
 	}
 	skip
 	}
 END	{
 	}
 ' | while read cmdline; do
-    #echo "DBG: cmdline=${cmdline}"
-    ${cmdline} || exit 1
+    echo "DBG: cmdline=${cmdline}"
+    ${cmdline}
+    if [ ! $? ]; then
+	echo "ERROR executing \"${cmdline}\""
+  	exit 1
+    fi
 done
 echo "Formatting ${DEV_DEST} partitions completed"
 fi		# if [ "${OPT_FORMAT_DEST_PARTITIONS}" = "true" ]
 
 
-echo "Cloning disk from ${DEV_SOURCE} to ${DEV_DEST}, please wait..."
+echo "Copying all data partititions from ${DEV_SOURCE} to ${DEV_DEST}..."
 outcmd=`LANG=C fdisk -l ${DEV_DEST} | grep "^${DEV_DEST}"`
 echo "${outcmd}" | awk -v dev_source=${DEV_SOURCE} -v dev_dest=${DEV_DEST} '
 BEGIN	{
 	mnt_source = "/tmp/source"
 	mnt_dest = "/tmp/dest"
-	echo "mkdir -p " mnt_source
-	echo "mkdir -p " mnt_dest
+	printf("mkdir -p %s\n", mnt_source);
+	printf("mkdir -p %s\n", mnt_dest);
 	}
 //	{
 	part_num=substr($1,length(dev_source)+1)
-	#print "DBG: part_num=" part_num
 	part_bootable=($2 == "*")
-	#print "DBG: part_bootable=" part_bootable
 	part_id=(part_bootable ? $6 : $5)
-	#print "DBG: part_id=" part_id
 	part_system=(part_bootable ? substr($0,index($0,$7)) : substr($0,index($0,$6)))
-	#print "DBG: part_system=" part_system
-	#print ""
 
 	# Build up shell commands
 	if (part_id == 5) {
 		# Extended: do nothing
 	} else if (part_id == 7) {
 		# HPFS/NFTS
-		print "echo === Copying NTFS filesystem from " dev_source part_num " to " dev_dest part_num
-		cmdline = "echo TODO"
-		#print "echo DBG: " cmdline
-		print cmdline
+		printf("echo === Copying NTFS filesystem from %s%s to %s%s\n", dev_source, part_num, dev_dest, part_num);
+		printf("echo mount -t ntfs -o ro %s %s\n", dev_source, mnt_source);
+		printf("echo mount -t ntfs %s %s\n", dev_dest, mnt_dest);
+		printf("cp -av %s %s\n", mnt_source, mnt_dest);
+		printf("echo umount %s\n", mnt_dest);
+		printf("echo umount %s\n", mnt_source);
 	} else if (part_id == 82) {
 		# Linux swap: do nothing
 	} else if (part_id == 83) {
 		# Linux partition
-		print "echo === Copying ext3 filesystem from " dev_source part_num " to " dev_dest part_num
-		cmdline = "echo TODO"
-		#print "echo DBG: " cmdline
-		#print "echo DBG: " cmdline
-		print cmdline
+		printf("echo === Copying ext3 filesystem from %s%s to %s%s\n", dev_source, part_num, dev_dest, part_num);
+		printf("echo mount -t ext3 -o ro %s %s\n", dev_source, mnt_source);
+		printf("echo mount -t ext3 %s %s\n", dev_dest, mnt_dest);
+		printf("cp -av %s %s\n", mnt_source, mnt_dest);
+		printf("echo umount %s\n", mnt_dest);
+		printf("echo umount %s\n", mnt_source);
 	# } else if (part_id == ?) {
 	#	# TODO
 	} else {
-		print "echo === " $1 ": Unable to handle filesystem " part_id " (" part_system ")"
+		printf("echo ERROR: %s: Unable to copy filesystem %s (%s)\n", $1, part_id, part_system);
 	}
 	skip
 	}
 END	{
-	echo "rmdir " mnt_source
-	echo "rmdir " mnt_dest
+	printf("rmdir %s\n", mnt_source);
+	printf("rmdir %s\n", mnt_dest);
 	}
 ' | while read cmdline; do
-    #echo "DBG: cmdline=${cmdline}"
-    ${cmdline} || exit 1
+    echo "DBG: cmdline=${cmdline}"
+    ${cmdline}
+    if [ ! $? ]; then
+	echo "ERROR executing \"${cmdline}\""
+  	exit 1
+    fi
 done
 echo "Copying data partitions from${DEV_SOURCE} to ${DEV_DEST} completed"
 
