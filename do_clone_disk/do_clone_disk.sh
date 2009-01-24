@@ -28,10 +28,10 @@ OPT_NO_GEOMETRY_CHECK=true
 #OPT_CREATE_DEST_MBR=true
 #
 # Create partitions on DEV_DEST (same layout as DEV_SOURCE)
-OPT_CREATE_DEST_PARTITIONS=true
+#OPT_CREATE_DEST_PARTITIONS=true
 #
 # Format partitions on DEV_DEST (implicit if OPT_CREATE_DEST_PARTITIONS)
-#OPT_FORMAT_DEST_PARTITIONS=true
+OPT_FORMAT_DEST_PARTITIONS=true
 #
 # Specify the number of the partition to resize in case the two disks have different capacity
 #OPT_RESIZE_PARTITION=2
@@ -201,7 +201,6 @@ outcmd=`LANG=C fdisk -l ${DEV_DEST} | grep "^${DEV_DEST}"`
 numparts=`echo "${outcmd}" | wc -l`
 fdiskcmd=`echo "${outcmd}" | awk -v dev=${DEV_SOURCE} -v numparts=${numparts} '
 BEGIN	{
-	print ""
 	}
 //	{
 	part_num=substr($1,length(dev)+1)
@@ -241,11 +240,11 @@ BEGIN	{
 	#print "DBG: part_end=" part_end
 	part_id=(part_bootable ? $6 : $5)
 	#print "DBG: part_id=" part_id
-	part_system=(part_bootable ? $7 : $6)
+	part_system=(part_bootable ? substr($0,index($0,$7)) : substr($0,index($0,$6)))
 	#print "DBG: part_system=" part_system
 	print ""
 
-	# TODO: Should extend part_end if OPT_XXX
+	# TODO: Should adjust part_end if OPT_RESIZE_PARTITION
 
 	# Build up fdisk commands
 	print "n"
@@ -312,14 +311,39 @@ if [ "${OPT_FORMAT_DEST_PARTITIONS}" = "true" ]; then
 
 echo "Formatting partitions on ${DEV_DEST}..."
 
-# ...
+outcmd=`LANG=C fdisk -l ${DEV_DEST} | grep "^${DEV_DEST}"`
+echo "DBG: outcmd=${outcmd}"
+shellcmd=`echo "${outcmd}" | awk -v dev=${DEV_DEST} '
+BEGIN	{
+	}
+//	{
+	part_num=substr($1,length(dev)+1)
+	#print "DBG: part_num=" part_num
+	part_bootable=($2 == "*")
+	#print "DBG: part_bootable=" part_bootable
+	part_id=(part_bootable ? $6 : $5)
+	#print "DBG: part_id=" part_id
+	part_system=(part_bootable ? substr($0,index($0,$7)) : substr($0,index($0,$6)))
+	#print "DBG: part_system=" part_system
+	print ""
 
-fi		# if [ "${OPT_FORMAT_DEST_PARTITIONS}" = "true" ]
+	# Build up shell commands
+	print "echo TODO: format " $1 " with filesystem " part_id " (" part_system ")"
 
+	skip
+	}
+END	{
+	}
+'`
+echo "DBG: shellcmd=${shellcmd}"
 
 set -x
 echo TODO
 exit 0
+
+# ...
+
+fi		# if [ "${OPT_FORMAT_DEST_PARTITIONS}" = "true" ]
 
 
 
