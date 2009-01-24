@@ -24,7 +24,7 @@ DEV_DEST=/dev/sdb
 # Do not make consistency checks on DEV_SOURCE vs. DEV_DEST disk geometry
 OPT_NO_GEOMETRY_CHECK=true
 #
-OPT_CREATE_DEST_MBR=true
+#OPT_CREATE_DEST_MBR=true
 #
 #OPT_CREATE_DEST_PARTITIONS=true
 #
@@ -159,11 +159,9 @@ fi
 
 # Sanity checks OK, go ahead...
 
-set -x
-
 if [ "${OPT_CREATE_DEST_MBR}" = "true" ]; then
 echo "Wiping partition table on ${DEV_DEST}..."
-dd if=/dev/zero of=${DEV_DEST} bs=512 count=1024
+dd if=/dev/zero of=${DEV_DEST} bs=${parttbl_size} count=1 >&/dev/null
 
 # Adjust disk geometry on ${DEV_DEST} to resemble ${DEV_SOURCE}
 echo "DBG: DEV_SOURCE heads: ${heads_source}"
@@ -178,20 +176,32 @@ ${sectrk_source}
 r
 p
 w
-" | LANG=C fdisk ${DEV_DEST}
+" | LANG=C fdisk ${DEV_DEST} >&/dev/null
+
+# Display what happened in the end...
+LANG=C fdisk -l ${DEV_DEST}
+
+# TODO: Why do not heads,sectrk change?
 
 fi		# if [ "${OPT_CREATE_DEST_MBR} = "true" ]
 
+
+
+
+set -x
 echo TODO
 exit 0
 
 
 
 # TODO: Verify partition layout on ${DEV_SOURCE}
-
-# TODO: Create partitions on ${DEV_DEST}
 #    + sdy1: (NTFS, WinXP C:) xx GB
 #    + sdy2: (NTFS, WinXP D:) size specified or all remaining space
+
+# TODO: Create partitions on ${DEV_DEST}
+if [ "${OPT_CREATE_DEST_PARTITIONS}" = "true" ]; then
+    # ...
+fi		# if [ "${OPT_CREATE_DEST_PARTITIONS}" = "true" ]
 
 # Copy MBR
 # TODO: How much should I copy to preserve all MBR???
