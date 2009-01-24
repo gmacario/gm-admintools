@@ -385,8 +385,8 @@ BEGIN	{
 			fstype, dev_source, part_num, dev_dest, part_num);
 		printf("mount -t %s -o ro %s%s %s\n", fstype, dev_source, part_num, mnt_source);
 		printf("mount -t %s %s%s %s\n", fstype, dev_dest, part_num, mnt_dest);
-		printf("cp -a %s %s\n", mnt_source, mnt_dest);
-		#printf("sh -c \"cd %s && cp -av . %s\"\n", mnt_source, mnt_dest);
+		#printf("cp -a %s %s\n", mnt_source, mnt_dest);
+		printf("sh -c \"cd %s && cp -av . %s\"\n", mnt_source, mnt_dest);
 		printf("umount %s\n", mnt_dest);
 		printf("umount %s\n", mnt_source);
 	} else {
