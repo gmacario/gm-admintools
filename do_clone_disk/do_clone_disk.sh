@@ -11,11 +11,23 @@
 # =============================================================================
 
 # Configurable Parameters
-
+#
+# Source device
 DEV_SOURCE=/dev/sda
+#
+# Destination device (WARNING: WILL DESTROY CONTENTS!!!)
 DEV_DEST=/dev/sdb
-#OPT_CREATE_DEST_MBR=true
+
+
+# Advanced options - USE AT YOUR OWN RISK!!!
+#
+# Do not make consistency checks on DEV_SOURCE vs. DEV_DEST disk geometry
+OPT_NO_GEOMETRY_CHECK=true
+#
+OPT_CREATE_DEST_MBR=true
+#
 #OPT_CREATE_DEST_PARTITIONS=true
+#
 #OPT_ADJUST_LAST_PARTITION=true
 
 # End of configurable parameters
@@ -113,16 +125,16 @@ heads_dest=`echo ${geom_dest} | awk '// {print $1}'`
 #echo "DBG: DEV_SOURCE heads: ${heads_source}"
 #echo "DBG: DEV_DEST   heads: ${heads_dest}"
 if [ "${heads_source}" != "${heads_dest}" ]; then
-	echo "ERROR: Incompatible #heads: source:${heads_source} and dest:${heads_dest}"
-	exit 1
+	echo "ERROR: Incompatible #heads: source:${heads_source} dest:${heads_dest}"
+	[ "${OPT_NO_GEOMETRY_CHECK}" == "true" ] || exit 1
 fi
 sectrk_source=`echo ${geom_source} | awk '// {print $3}'`
 sectrk_dest=`echo ${geom_dest} | awk '// {print $3}'`
 #echo "DBG: DEV_SOURCE sectors/track: ${sectrk_source}"
 #echo "DBG: DEV_DEST   sectors/track: ${sectrk_dest}"
 if [ "${sectrk_source}" != "${sectrk_dest}" ]; then
-	echo "ERROR: Incompatible #sectors/track: source (${sectrk_source}) dest:${sectrk_dest}"
-	exit 1
+	echo "ERROR: Incompatible #sectors/track: source:${sectrk_source} dest:${sectrk_dest}"
+	[ "${OPT_NO_GEOMETRY_CHECK}" == "true" ] || exit 1
 fi
 cylinders_source=`echo ${geom_source} | awk '// {print $5}'`
 cylinders_dest=`echo ${geom_dest} | awk '// {print $5}'`
@@ -133,8 +145,8 @@ if [ "${cylinders_source}" -gt "${cylinders_dest}" ]; then
 	exit 1
 fi
 
-# TODO: Is partition table size calculated correctly???
-parttbl_size=`LANG=C fdisk -l ${DEV_SOURCE} | grep "^Units"`
+# TODO: Is partition table size calculated correctly??? (here is calculated as one cylinder)
+parttbl_size=`LANG=C fdisk -l ${DEV_SOURCE} | awk '/^Units/ {print $9}'`
 echo "DBG: parttbl_size=${parttbl_size}"
 
 echo "WARNING: this procedure will destroy contents on ${DEV_DEST}"
@@ -149,11 +161,31 @@ fi
 
 set -x
 
-#echo TODO
-#exit 0
-
+if [ "${OPT_CREATE_DEST_MBR}" = "true" ]; then
 echo "Wiping partition table on ${DEV_DEST}..."
 dd if=/dev/zero of=${DEV_DEST} bs=512 count=1024
+
+# Adjust disk geometry on ${DEV_DEST} to resemble ${DEV_SOURCE}
+echo "DBG: DEV_SOURCE heads: ${heads_source}"
+echo "DBG: DEV_SOURCE sectors/track: ${sectrk_source}"
+echo "DBG: DEV_SOURCE cylinders: ${cylinders_source}"
+echo "
+x
+h
+${heads_source}
+s
+${sectrk_source}
+r
+p
+w
+" | LANG=C fdisk ${DEV_DEST}
+
+fi		# if [ "${OPT_CREATE_DEST_MBR} = "true" ]
+
+echo TODO
+exit 0
+
+
 
 # TODO: Verify partition layout on ${DEV_SOURCE}
 
@@ -163,7 +195,7 @@ dd if=/dev/zero of=${DEV_DEST} bs=512 count=1024
 
 # Copy MBR
 # TODO: How much should I copy to preserve all MBR???
-dd if=${DEV_SOURCE} of=${DEV_DEST} bs=512 count=1
+#dd if=${DEV_SOURCE} of=${DEV_DEST} bs=512 count=1
 
 # TODO: Format partitions on ${DEV_DEST}
 
