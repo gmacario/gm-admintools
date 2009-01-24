@@ -71,6 +71,7 @@ recursive_copy()
     echo "DBG: recursive_copy($1, $2)"
     cd "$1" || return 1
     cp -ax . "$2" || return 2
+    cd
     return 0
 }
 
