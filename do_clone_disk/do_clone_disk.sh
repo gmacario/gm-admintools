@@ -8,6 +8,10 @@
 # Language:	GNU bash script
 #
 # Copyright 2007-2009 Magneti Marelli Electronic Systems - All Rights Reserved
+#
+# Package Dependencies:
+#	Required:	awk fileutils sh
+#	Optional:	mke2fs ntfsprogs
 # =============================================================================
 
 # Configurable Parameters
@@ -21,7 +25,7 @@ DEV_DEST=/dev/sdb
 
 # Advanced options - USE AT YOUR OWN RISK!!!
 #
-# Do no consistency checks on DEV_SOURCE vs. DEV_DEST disk geometry
+# Do not do consistency checks on DEV_SOURCE vs. DEV_DEST disk geometry
 OPT_NO_GEOMETRY_CHECK=true
 #
 # Create Master Boot Record on DEV_DEST
@@ -31,12 +35,12 @@ OPT_NO_GEOMETRY_CHECK=true
 #OPT_CREATE_DEST_PARTITIONS=true
 #
 # Format partitions on DEV_DEST (implicit if OPT_CREATE_DEST_PARTITIONS)
-OPT_FORMAT_DEST_PARTITIONS=true
+#OPT_FORMAT_DEST_PARTITIONS=true
 #
-# Quick format (Do not check for bad blocks, etc - faster but less safe)
+# Quick format (Do not check for bad blocks, etc - faster but less reliable)
 #OPT_FORMAT_QUICK=true
 #
-# TODO: Specify which partition will be resized in case the two disks have different capacity
+# TODO: Partition to be resized in case the disks have different capacity
 #OPT_RESIZE_PARTITION=2
 
 # End of configurable parameters
@@ -66,15 +70,14 @@ recursive_copy()
 {
     echo "DBG: recursive_copy($1, $2)"
     cd "$1" || return 1
-    cp -a . "$2" || return 2
+    cp -ax . "$2" || return 2
     return 0
 }
 
 # -----------------------------------------------------------------------------
 # Main Program starts here
 
-echo -e "$0 - v0.1\n"
-#echo '$Id:'
+echo -e "$0 - v0.2\n"
 
 # Sanity Checks
 
@@ -109,6 +112,8 @@ fi
 if [ `mount | grep ${DEV_SOURCE} | wc -l` -gt 0 ]; then
     echo "WARNING: Some partitions of ${DEV_SOURCE} are mounted"
     mount | grep ${DEV_SOURCE}
+    # TODO: Should gracefully handle mounted source partitions
+    exit 1
 fi
 
 echo
@@ -371,7 +376,7 @@ BEGIN	{
 END	{
 	}
 ' | while read cmdline; do
-    echo "DBG: cmdline=${cmdline}"
+    #echo "DBG: cmdline=${cmdline}"
     ${cmdline}
     if [ $? -gt 0 ]; then
 	echo "ERROR executing \"${cmdline}\""
@@ -383,7 +388,7 @@ echo "Formatting ${DEV_DEST} partitions completed"
 fi		# if [ "${OPT_FORMAT_DEST_PARTITIONS}" = "true" ]
 
 
-echo "Copying all data partititions from ${DEV_SOURCE} to ${DEV_DEST}..."
+echo "Copying all data partitions from ${DEV_SOURCE} to ${DEV_DEST}..."
 outcmd=`LANG=C fdisk -l ${DEV_SOURCE} | grep "^${DEV_SOURCE}"`
 echo "${outcmd}" | awk -v dev_source=${DEV_SOURCE} -v dev_dest=${DEV_DEST} '
 BEGIN	{
