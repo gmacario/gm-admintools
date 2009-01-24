@@ -13,10 +13,10 @@
 # Configurable Parameters
 #
 # Source device
-#DEV_SOURCE=/dev/sda
+DEV_SOURCE=/dev/sda
 #
 # Destination device (WARNING: WILL DESTROY CONTENTS!!!)
-#DEV_DEST=/dev/sdb
+DEV_DEST=/dev/sdb
 
 
 # Advanced options - USE AT YOUR OWN RISK!!!
@@ -31,7 +31,7 @@ OPT_NO_GEOMETRY_CHECK=true
 #OPT_CREATE_DEST_PARTITIONS=true
 #
 # Format partitions on DEV_DEST (implicit if OPT_CREATE_DEST_PARTITIONS)
-#OPT_FORMAT_DEST_PARTITIONS=true
+OPT_FORMAT_DEST_PARTITIONS=true
 #
 # Quick format (Do not check for bad blocks, etc - faster but less safe)
 #OPT_FORMAT_QUICK=true
@@ -48,6 +48,17 @@ OPT_NO_GEOMETRY_CHECK=true
 print_linebreak()
 {
     echo "-------------------------------------------------------------------------------"
+}
+
+# Make sure that device $1 is not mounted
+safe_umount()
+{
+    echo "DBG: safe_umount($1)"
+    if [ `grep $1 /proc/mounts | wc -l` -gt 0 ]; then
+    	echo "DBG: $1 was mounted - unmounting now"
+        umount $1 
+    fi
+    return 0
 }
 
 # Recursively copy filesystem from $1 to $2
@@ -319,10 +330,10 @@ if [ "${OPT_FORMAT_DEST_PARTITIONS}" = "true" ]; then
 echo "Formatting partitions on ${DEV_DEST}..."
 outcmd=`LANG=C fdisk -l ${DEV_DEST} | grep "^${DEV_DEST}"`
 #echo "DBG: outcmd=${outcmd}"
-echo "${outcmd}" | awk -v dev=${DEV_DEST} -v f_quick=${OPT_FORMAT_QUICK} '
+echo "${outcmd}" | awk -v dev=${DEV_DEST} -v f_quick="${OPT_FORMAT_QUICK}" '
 BEGIN	{
-	f_quick = (f_quick ? true : false)
-	print "DBG: f_quick=" f_quick
+	f_quick = (match(f_quick,"true") ? 1 : 0)
+	#print "echo DBG: f_quick=" f_quick
 	}
 //	{
 	part_num=substr($1,length(dev)+1)
@@ -335,6 +346,7 @@ BEGIN	{
 		# Extended: do nothing (will format logical partitions instead)
 	} else if (part_id == 7) {
 		# HPFS/NFTS
+		printf("safe_umount %s\n", $1);
 		printf("echo === %s: Formatting as NTFS filesystem\n", $1)
 		printf("mkntfs %s %s\n", (f_quick ? "-q" : ""), $1);
 		#printf("echo === %s: Writing zero - format NTFS under MS Windows\n", $1);
@@ -345,6 +357,7 @@ BEGIN	{
 		printf("mkswap %s %s\n", (f_quick ? "" : "-c"), $1);
 	} else if (part_id == 83) {
 		# Linux
+		printf("safe_umount %s\n", $1);
 		printf("echo === %s: Formatting as ext3 filesystem\n", $1);
 		printf("mkfs %s -t ext3 %s\n", (f_quick ? "" : "-c"), $1);
 	# } else if (part_id == ?) {
