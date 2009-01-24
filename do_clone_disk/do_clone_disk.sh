@@ -13,10 +13,10 @@
 # Configurable Parameters
 #
 # Source device
-#DEV_SOURCE=/dev/sda
+DEV_SOURCE=/dev/sda
 #
 # Destination device (WARNING: WILL DESTROY CONTENTS!!!)
-#DEV_DEST=/dev/sdc
+DEV_DEST=/dev/sdb
 
 
 # Advanced options - USE AT YOUR OWN RISK!!!
@@ -25,13 +25,16 @@
 OPT_NO_GEOMETRY_CHECK=true
 #
 # Create Master Boot Record on DEV_DEST
-#OPT_CREATE_DEST_MBR=true
+OPT_CREATE_DEST_MBR=true
 #
 # Create partitions on DEV_DEST (same layout as DEV_SOURCE)
 #OPT_CREATE_DEST_PARTITIONS=true
 #
 # Format partitions on DEV_DEST (implicit if OPT_CREATE_DEST_PARTITIONS)
 #OPT_FORMAT_DEST_PARTITIONS=true
+#
+# Scan for bad blocks when formatting partitions
+OPT_FORMAT_CHECK_BADBLOCKS=true
 #
 # Specify the number of the partition to resize in case the two disks have different capacity
 #OPT_RESIZE_PARTITION=2
@@ -187,9 +190,7 @@ w
 # Display what happened in the end...
 LANG=C fdisk -l ${DEV_DEST}
 
-# Copy MBR (boot sector???)
-# TODO: How much should I copy to preserve all MBR???
-#dd if=${DEV_SOURCE} of=${DEV_DEST} bs=512 count=1
+OPT_CREATE_DEST_PARTITIONS=true
 
 fi		# if [ "${OPT_CREATE_DEST_MBR} = "true" ]
 
@@ -304,6 +305,7 @@ fi		# if [ "${OPT_CREATE_DEST_PARTITIONS}" = "true" ]
 # Format partitions on ${DEV_DEST}
 if [ "${OPT_FORMAT_DEST_PARTITIONS}" = "true" ]; then
 
+# TODO: Should add "-c" to mkfs/mkswap only if (OPT_FORMAT_CHECK_BADBLOCKS=true)
 echo "Formatting partitions on ${DEV_DEST}..."
 outcmd=`LANG=C fdisk -l ${DEV_DEST} | grep "^${DEV_DEST}"`
 #echo "DBG: outcmd=${outcmd}"
@@ -333,11 +335,11 @@ BEGIN	{
 	} else if (part_id == 82) {
 		# Linux swap
 		printf("echo === %s: Formatting as Linux swap partition\n", $1);
-		printf("mkswap %s\n", $1);
+		printf("mkswap -c %s\n", $1);
 	} else if (part_id == 83) {
 		# Linux
 		printf("echo === %s: Formatting as ext3 filesystem\n", $1);
-		printf("mkfs -t ext3 %s\n", $1);
+		printf("mkfs -c -t ext3 %s\n", $1);
 	# } else if (part_id == ?) {
 	#	# TODO
 	} else {
