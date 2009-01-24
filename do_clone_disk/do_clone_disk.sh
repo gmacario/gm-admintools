@@ -10,10 +10,13 @@
 # Copyright 2007-2009 Magneti Marelli Electronic Systems - All Rights Reserved
 # =============================================================================
 
-#set -x
+# Configurable Parameters
 
 DEV_SOURCE=/dev/sda
 DEV_DEST=/dev/sdb
+#OPT_CREATE_DEST_MBR=true
+#OPT_CREATE_DEST_PARTITIONS=true
+#OPT_ADJUST_LAST_PARTITION=true
 
 # End of configurable parameters
 # -----------------------------------------------------------------------------
@@ -72,29 +75,27 @@ if [ `mount | grep ${DEV_DEST} | wc -l` -gt 0 ]; then
     exit 1
 fi
 
-
 # Make sure that DEV_SOURCE is not bigger than DEV_DEST
-disksize_source=`LANG=C fdisk -l ${DEV_SOURCE} | grep "Disk ${DEV_SOURCE}:" | awk '// {print $5}'`
-disksize_dest=`LANG=C fdisk -l ${DEV_DEST} | grep "Disk ${DEV_DEST}:" | awk '// {print $5}'`
+disksize_source=`LANG=C fdisk -l ${DEV_SOURCE} | grep "^Disk ${DEV_SOURCE}:" | awk '// {print $5}'`
+disksize_dest=`LANG=C fdisk -l ${DEV_DEST} | grep "^Disk ${DEV_DEST}:" | awk '// {print $5}'`
 #echo "DBG: DEV_SOURCE ${disksize_source}"
 #echo "DBG: DEV_DEST   ${disksize_dest}"
 if [ "${disksize_source}" -gt "${disksize_dest}" ]; then
-	echo "ERROR: incompatible disk size: source:${disksize_source} dest:${disksize_dest}"
+	echo "ERROR: Incompatible disk size: source:${disksize_source} dest:${disksize_dest}"
 	exit 1
 fi
 
-#echo TODO
-#exit 0
-
-# Make sure that source and dest have the same blocksize
-blksize_source=`LANG=C fdisk -l ${DEV_SOURCE} | grep "^Units"`
-blksize_dest=`LANG=C fdisk -l ${DEV_DEST} | grep "^Units"`
-#echo "DBG: DEV_SOURCE ${blksize_source}"
-#echo "DBG: DEV_DEST   ${blksize_dest}"
-if [ "${blksize_source}" != "${blksize_dest}" ]; then
-	echo "ERROR: source and dest block sizes do not match"
-	exit 1
-fi
+# NO NO NO
+#
+## Make sure that source and dest have the same blocksize
+#blksize_source=`LANG=C fdisk -l ${DEV_SOURCE} | grep "^Units"`
+#blksize_dest=`LANG=C fdisk -l ${DEV_DEST} | grep "^Units"`
+##echo "DBG: DEV_SOURCE ${blksize_source}"
+##echo "DBG: DEV_DEST   ${blksize_dest}"
+#if [ "${blksize_source}" != "${blksize_dest}" ]; then
+#	echo "ERROR: Incompatible block size: source:${blksize_source} dest:${blksize_dest}"
+#	exit 1
+#fi
 
 # Verify that ${DEV_SOURCE} and ${DEV_DEST} disk geometries are compatible
 geom_source=`LANG=C fdisk -l ${DEV_SOURCE} | grep "cylinders$"`
@@ -102,7 +103,7 @@ geom_dest=`LANG=C fdisk -l ${DEV_DEST} | grep "cylinders$"`
 #echo "DBG: DEV_SOURCE ${geom_source}"
 #echo "DBG: DEV_DEST   ${geom_dest}"
 if [ "${geom_source}" != "${geom_dest}" ]; then
-	echo "WARNING: source and dest geometries do not match"
+	echo "WARNING: Different source and dest geometries"
 	echo "  ${DEV_SOURCE}: ${geom_source}"
 	echo "  ${DEV_DEST}: ${geom_dest}"
 	echo
@@ -112,7 +113,7 @@ heads_dest=`echo ${geom_dest} | awk '// {print $1}'`
 #echo "DBG: DEV_SOURCE heads: ${heads_source}"
 #echo "DBG: DEV_DEST   heads: ${heads_dest}"
 if [ "${heads_source}" != "${heads_dest}" ]; then
-	echo "ERROR: incompatible heads: source:${heads_source} and dest:${heads_dest}"
+	echo "ERROR: Incompatible #heads: source:${heads_source} and dest:${heads_dest}"
 	exit 1
 fi
 sectrk_source=`echo ${geom_source} | awk '// {print $3}'`
@@ -120,7 +121,7 @@ sectrk_dest=`echo ${geom_dest} | awk '// {print $3}'`
 #echo "DBG: DEV_SOURCE sectors/track: ${sectrk_source}"
 #echo "DBG: DEV_DEST   sectors/track: ${sectrk_dest}"
 if [ "${sectrk_source}" != "${sectrk_dest}" ]; then
-	echo "ERROR: incompatible sectors/track: source (${sectrk_source}) dest:${sectrk_dest}"
+	echo "ERROR: Incompatible #sectors/track: source (${sectrk_source}) dest:${sectrk_dest}"
 	exit 1
 fi
 cylinders_source=`echo ${geom_source} | awk '// {print $5}'`
@@ -128,7 +129,7 @@ cylinders_dest=`echo ${geom_dest} | awk '// {print $5}'`
 #echo "DBG: DEV_SOURCE cylinders: ${cylinders_source}"
 #echo "DBG: DEV_DEST   cylinders: ${cylinders_dest}"
 if [ "${cylinders_source}" -gt "${cylinders_dest}" ]; then
-	echo "ERROR: incompatible cylinders: source:${cylinders_source} dest:${cylinders_dest}"
+	echo "ERROR: Incompatible #cylinders: source:${cylinders_source} dest:${cylinders_dest}"
 	exit 1
 fi
 
@@ -147,6 +148,9 @@ fi
 # Sanity checks OK, go ahead...
 
 set -x
+
+#echo TODO
+#exit 0
 
 echo "Wiping partition table on ${DEV_DEST}..."
 dd if=/dev/zero of=${DEV_DEST} bs=512 count=1024
