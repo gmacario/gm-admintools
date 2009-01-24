@@ -31,7 +31,7 @@ OPT_NO_GEOMETRY_CHECK=true
 #OPT_CREATE_DEST_PARTITIONS=true
 #
 # Format partitions on DEV_DEST (implicit if OPT_CREATE_DEST_PARTITIONS)
-OPT_FORMAT_DEST_PARTITIONS=true
+#OPT_FORMAT_DEST_PARTITIONS=true
 #
 # Specify the number of the partition to resize in case the two disks have different capacity
 #OPT_RESIZE_PARTITION=2
@@ -296,7 +296,6 @@ fi		# if [ "${OPT_CREATE_DEST_PARTITIONS}" = "true" ]
 if [ "${OPT_FORMAT_DEST_PARTITIONS}" = "true" ]; then
 
 echo "Formatting partitions on ${DEV_DEST}..."
-
 outcmd=`LANG=C fdisk -l ${DEV_DEST} | grep "^${DEV_DEST}"`
 #echo "DBG: outcmd=${outcmd}"
 echo "${outcmd}" | awk -v dev=${DEV_DEST} '
@@ -340,7 +339,7 @@ BEGIN	{
 END	{
 	}
 ' | while read cmdline; do
-    echo "DBG: cmdline=${cmdline}"
+    #echo "DBG: cmdline=${cmdline}"
     ${cmdline}
     if [ ! $? ]; then
 	echo "ERROR executing \"${cmdline}\""
@@ -372,9 +371,9 @@ BEGIN	{
 	} else if (part_id == 7) {
 		# HPFS/NFTS
 		printf("echo === Copying NTFS filesystem from %s%s to %s%s\n", dev_source, part_num, dev_dest, part_num);
-		printf("echo mount -t ntfs -o ro %s %s\n", dev_source, mnt_source);
-		printf("echo mount -t ntfs %s %s\n", dev_dest, mnt_dest);
-		printf("cp -av %s %s\n", mnt_source, mnt_dest);
+		printf("echo mount -t ntfs -o ro %s%s %s\n", dev_source, part_num, mnt_source);
+		printf("echo mount -t ntfs %s%s %s\n", dev_dest, part_num, mnt_dest);
+		printf("echo PWD=%s cp -av . %s/\n", mnt_source, mnt_dest);
 		printf("echo umount %s\n", mnt_dest);
 		printf("echo umount %s\n", mnt_source);
 	} else if (part_id == 82) {
@@ -382,9 +381,9 @@ BEGIN	{
 	} else if (part_id == 83) {
 		# Linux partition
 		printf("echo === Copying ext3 filesystem from %s%s to %s%s\n", dev_source, part_num, dev_dest, part_num);
-		printf("echo mount -t ext3 -o ro %s %s\n", dev_source, mnt_source);
-		printf("echo mount -t ext3 %s %s\n", dev_dest, mnt_dest);
-		printf("cp -av %s %s\n", mnt_source, mnt_dest);
+		printf("echo mount -t ext3 -o ro %s%s %s\n", dev_source, part_num, mnt_source);
+		printf("echo mount -t ext3 %s%s %s\n", dev_dest, part_num, mnt_dest);
+		printf("echo PWD=%s cp -av . %s/\n", mnt_source, mnt_dest);
 		printf("echo umount %s\n", mnt_dest);
 		printf("echo umount %s\n", mnt_source);
 	# } else if (part_id == ?) {
