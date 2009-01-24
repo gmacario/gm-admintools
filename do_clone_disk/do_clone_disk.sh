@@ -25,18 +25,18 @@ DEV_DEST=/dev/sdb
 OPT_NO_GEOMETRY_CHECK=true
 #
 # Create Master Boot Record on DEV_DEST
-OPT_CREATE_DEST_MBR=true
+#OPT_CREATE_DEST_MBR=true
 #
-# Create partitions on DEV_DEST (same layout as DEV_SOURCE)
+# Create partitions on DEV_DEST with the same layout as DEV_SOURCE
 #OPT_CREATE_DEST_PARTITIONS=true
 #
 # Format partitions on DEV_DEST (implicit if OPT_CREATE_DEST_PARTITIONS)
 #OPT_FORMAT_DEST_PARTITIONS=true
 #
-# Scan for bad blocks when formatting partitions
-OPT_FORMAT_CHECK_BADBLOCKS=true
+# Do not check for bad blocks when formatting (faster but less safe)
+#OPT_NO_BADBLOCKS_CHECK=true
 #
-# Specify the number of the partition to resize in case the two disks have different capacity
+# TODO: Specify which partition will be resized in case the two disks have different capacity
 #OPT_RESIZE_PARTITION=2
 
 # End of configurable parameters
@@ -44,9 +44,17 @@ OPT_FORMAT_CHECK_BADBLOCKS=true
 # -----------------------------------------------------------------------------
 # Utility Functions
 
+# Print a line break
 print_linebreak()
 {
-echo "-------------------------------------------------------------------------------"
+    echo "-------------------------------------------------------------------------------"
+}
+
+# Recursively copy filesystem from $1 to $2
+recursive_copy()
+{
+    echo "DBG: recursive_copy($1, $2)"
+    cd "$1" && cp -a . "$2"
 }
 
 # -----------------------------------------------------------------------------
@@ -167,6 +175,8 @@ if [ "${ok}" != "YES" ]; then
 fi
 
 # Sanity checks OK, go ahead...
+
+# TODO: Should make sure that no partitions in ${DEV_SOURCE},${DEV_DEST} are automounted...
 
 if [ "${OPT_CREATE_DEST_MBR}" = "true" ]; then
 echo "Wiping partition table on ${DEV_DEST}..."
@@ -305,7 +315,7 @@ fi		# if [ "${OPT_CREATE_DEST_PARTITIONS}" = "true" ]
 # Format partitions on ${DEV_DEST}
 if [ "${OPT_FORMAT_DEST_PARTITIONS}" = "true" ]; then
 
-# TODO: Should add "-c" to mkfs/mkswap only if (OPT_FORMAT_CHECK_BADBLOCKS=true)
+# TODO: Should not add "-c" to mkfs/mkswap if (OPT_NO_BADBLOCKS_CHECK)
 echo "Formatting partitions on ${DEV_DEST}..."
 outcmd=`LANG=C fdisk -l ${DEV_DEST} | grep "^${DEV_DEST}"`
 #echo "DBG: outcmd=${outcmd}"
@@ -341,6 +351,7 @@ BEGIN	{
 		printf("echo === %s: Formatting as ext3 filesystem\n", $1);
 		printf("mkfs -c -t ext3 %s\n", $1);
 	# } else if (part_id == ?) {
+	#	# Windows FAT16/FAT32/VFAT
 	#	# TODO
 	} else {
 		printf("echo ERROR: %s: Unable to format filesystem %s (%s)\n", $1, part_id, part_system);
@@ -365,8 +376,8 @@ echo "Copying all data partititions from ${DEV_SOURCE} to ${DEV_DEST}..."
 outcmd=`LANG=C fdisk -l ${DEV_DEST} | grep "^${DEV_DEST}"`
 echo "${outcmd}" | awk -v dev_source=${DEV_SOURCE} -v dev_dest=${DEV_DEST} '
 BEGIN	{
-	mnt_source = "/tmp/source"
-	mnt_dest = "/tmp/dest"
+	mnt_source = "/tmp/mnt/source"
+	mnt_dest = "/tmp/mnt/dest"
 	printf("mkdir -p %s\n", mnt_source);
 	printf("mkdir -p %s\n", mnt_dest);
 	}
@@ -383,7 +394,7 @@ BEGIN	{
 		#
 		# Do nothing
 	} else if ((part_id == 7) || (part_id == 83)) {
-	    # case 7:	HPFS/NFTS
+	    # case 7:	HPFS/NTFS
 	    # case 83:	Linux
 	    	if (part_id == 7) {
 		    fstype = "ntfs"
@@ -396,8 +407,8 @@ BEGIN	{
 			fstype, dev_source, part_num, dev_dest, part_num);
 		printf("mount -t %s -o ro %s%s %s\n", fstype, dev_source, part_num, mnt_source);
 		printf("mount -t %s %s%s %s\n", fstype, dev_dest, part_num, mnt_dest);
-		#printf("cp -a %s %s\n", mnt_source, mnt_dest);
-		printf("sh -c \"cd %s && cp -av . %s\"\n", mnt_source, mnt_dest);
+		printf("recursive_copy %s %s\n", mnt_source, mnt_dest);
+		printf("df %s%s %s%s\n", dev_source, part_num, dev_dest, part_num);
 		printf("umount %s\n", mnt_dest);
 		printf("umount %s\n", mnt_source);
 	} else {
@@ -417,7 +428,7 @@ END	{
   	exit 1
     fi
 done
-echo "Copying data partitions from${DEV_SOURCE} to ${DEV_DEST} completed"
+echo "Copying data partitions from ${DEV_SOURCE} to ${DEV_DEST} completed"
 
 #set -x
 #echo TODO
