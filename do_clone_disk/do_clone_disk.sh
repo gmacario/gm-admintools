@@ -31,7 +31,7 @@ OPT_NO_GEOMETRY_CHECK=true
 #OPT_CREATE_DEST_PARTITIONS=true
 #
 # Format partitions on DEV_DEST (implicit if OPT_CREATE_DEST_PARTITIONS)
-OPT_FORMAT_DEST_PARTITIONS=true
+#OPT_FORMAT_DEST_PARTITIONS=true
 #
 # Specify the number of the partition to resize in case the two disks have different capacity
 #OPT_RESIZE_PARTITION=2
@@ -312,8 +312,8 @@ if [ "${OPT_FORMAT_DEST_PARTITIONS}" = "true" ]; then
 echo "Formatting partitions on ${DEV_DEST}..."
 
 outcmd=`LANG=C fdisk -l ${DEV_DEST} | grep "^${DEV_DEST}"`
-echo "DBG: outcmd=${outcmd}"
-shellcmd=`echo "${outcmd}" | awk -v dev=${DEV_DEST} '
+#echo "DBG: outcmd=${outcmd}"
+echo "${outcmd}" | awk -v dev=${DEV_DEST} '
 BEGIN	{
 	}
 //	{
@@ -325,38 +325,106 @@ BEGIN	{
 	#print "DBG: part_id=" part_id
 	part_system=(part_bootable ? substr($0,index($0,$7)) : substr($0,index($0,$6)))
 	#print "DBG: part_system=" part_system
-	print ""
+	#print ""
 
 	# Build up shell commands
-	print "echo TODO: format " $1 " with filesystem " part_id " (" part_system ")"
-
+	if (part_id == 5) {
+		# Extended: do nothing (will format logical partitions instead)
+	} else if (part_id == 7) {
+		# HPFS/NFTS
+		print "echo === " $1 ": Writing zero - format NTFS under MS Windows"
+		cmdline = "dd if=/dev/zero of=" $1 " bs=512 count=16"
+		#print "echo DBG: " cmdline
+		print cmdline
+	} else if (part_id == 82) {
+		# Linux swap
+		print "echo === " $1 ": Creating Linux swap"
+		cmdline = "mkswap " $1
+		#print "echo DBG: " cmdline
+		print cmdline
+	} else if (part_id == 83) {
+		# Linux
+		print "echo === " $1 ": Creating ext3 filesystem"
+		cmdline = "mkfs -t ext3 " $1
+		#print "echo DBG: " cmdline
+		print cmdline
+	# } else if (part_id == ?) {
+	#	# TODO
+	} else {
+		print "echo === " $1 ": Unable to handle filesystem " part_id " (" part_system ")"
+	}
 	skip
 	}
 END	{
 	}
-'`
-echo "DBG: shellcmd=${shellcmd}"
-
-set -x
-echo TODO
-exit 0
-
-# ...
-
+' | while read cmdline; do
+    #echo "DBG: cmdline=${cmdline}"
+    ${cmdline} || exit 1
+done
+echo "Formatting ${DEV_DEST} partitions completed"
 fi		# if [ "${OPT_FORMAT_DEST_PARTITIONS}" = "true" ]
 
 
-
-
 echo "Cloning disk from ${DEV_SOURCE} to ${DEV_DEST}, please wait..."
+outcmd=`LANG=C fdisk -l ${DEV_DEST} | grep "^${DEV_DEST}"`
+echo "${outcmd}" | awk -v dev_source=${DEV_SOURCE} -v dev_dest=${DEV_DEST} '
+BEGIN	{
+	mnt_source = "/tmp/source"
+	mnt_dest = "/tmp/dest"
+	echo "mkdir -p " mnt_source
+	echo "mkdir -p " mnt_dest
+	}
+//	{
+	part_num=substr($1,length(dev_source)+1)
+	#print "DBG: part_num=" part_num
+	part_bootable=($2 == "*")
+	#print "DBG: part_bootable=" part_bootable
+	part_id=(part_bootable ? $6 : $5)
+	#print "DBG: part_id=" part_id
+	part_system=(part_bootable ? substr($0,index($0,$7)) : substr($0,index($0,$6)))
+	#print "DBG: part_system=" part_system
+	#print ""
 
-# TODO: Copy all data in source partitions
-#  + Boot WinXP from C:
-#  + (Optional) Dual-boot Linux on remaining space
+	# Build up shell commands
+	if (part_id == 5) {
+		# Extended: do nothing
+	} else if (part_id == 7) {
+		# HPFS/NFTS
+		print "echo === Copying NTFS filesystem from " dev_source part_num " to " dev_dest part_num
+		cmdline = "echo TODO"
+		#print "echo DBG: " cmdline
+		print cmdline
+	} else if (part_id == 82) {
+		# Linux swap: do nothing
+	} else if (part_id == 83) {
+		# Linux partition
+		print "echo === Copying ext3 filesystem from " dev_source part_num " to " dev_dest part_num
+		cmdline = "echo TODO"
+		#print "echo DBG: " cmdline
+		#print "echo DBG: " cmdline
+		print cmdline
+	# } else if (part_id == ?) {
+	#	# TODO
+	} else {
+		print "echo === " $1 ": Unable to handle filesystem " part_id " (" part_system ")"
+	}
+	skip
+	}
+END	{
+	echo "rmdir " mnt_source
+	echo "rmdir " mnt_dest
+	}
+' | while read cmdline; do
+    #echo "DBG: cmdline=${cmdline}"
+    ${cmdline} || exit 1
+done
+echo "Copying data partitions from${DEV_SOURCE} to ${DEV_DEST} completed"
 
-echo TODO TODO TODO
+#set -x
+#echo TODO
+#exit 0
 
-echo Disk cloning complete.
+echo "Disk cloning complete."
 exit 0
 
 # -----------------------------------------------------------------------------
