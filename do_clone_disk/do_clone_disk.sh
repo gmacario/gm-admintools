@@ -37,7 +37,9 @@ OPT_NO_GEOMETRY_CHECK=true
 #OPT_RESIZE_PARTITION=2
 
 # End of configurable parameters
+
 # -----------------------------------------------------------------------------
+# Utility Functions
 
 print_linebreak()
 {
@@ -45,6 +47,7 @@ echo "--------------------------------------------------------------------------
 }
 
 # -----------------------------------------------------------------------------
+# Main Program starts here
 
 echo -e "$0 - v0.1\n"
 #echo '$Id:'
@@ -56,15 +59,11 @@ if [ ${USER} != root ]; then
     exit 1
 fi
 
-#LANG=C fdisk -l | awk '
-#/^Disk \/dev/	{ print $0 }
-#'
-
-echo "*** List of available disks on the system:"
+echo "=== List of available disks on the system:"
 LANG=C fdisk -l | grep "^Disk /"
 echo
 
-echo "*** SOURCE disk information (${DEV_SOURCE}) ***"
+echo "=== SOURCE disk information (${DEV_SOURCE})"
 outcmd=`LANG=C fdisk -l ${DEV_SOURCE}`
 echo "${outcmd}"
 #echo "${outcmd} | grep "^Disk""
@@ -82,7 +81,7 @@ fi
 echo
 #print_linebreak
 
-echo "*** DEST disk information (${DEV_DEST}) ***"
+echo "=== DEST disk information (${DEV_DEST})"
 outcmd=`LANG=C fdisk -l ${DEV_DEST}`
 echo "${outcmd}"
 echo
@@ -162,9 +161,9 @@ echo "Wiping partition table on ${DEV_DEST}..."
 dd if=/dev/zero of=${DEV_DEST} bs=${parttbl_size} count=1 >&/dev/null
 
 # Adjust disk geometry on ${DEV_DEST} to resemble ${DEV_SOURCE}
-echo "DBG: DEV_SOURCE heads: ${heads_source}"
-echo "DBG: DEV_SOURCE sectors/track: ${sectrk_source}"
-echo "DBG: DEV_SOURCE cylinders: ${cylinders_source}"
+#echo "DBG: DEV_SOURCE heads: ${heads_source}"
+#echo "DBG: DEV_SOURCE sectors/track: ${sectrk_source}"
+#echo "DBG: DEV_SOURCE cylinders: ${cylinders_source}"
 echo "
 x
 h
@@ -179,8 +178,6 @@ w
 # Display what happened in the end...
 LANG=C fdisk -l ${DEV_DEST}
 
-# TODO: Why do not heads,sectrk change?
-
 # Copy MBR (boot sector???)
 # TODO: How much should I copy to preserve all MBR???
 #dd if=${DEV_SOURCE} of=${DEV_DEST} bs=512 count=1
@@ -188,11 +185,7 @@ LANG=C fdisk -l ${DEV_DEST}
 fi		# if [ "${OPT_CREATE_DEST_MBR} = "true" ]
 
 
-# TODO: Verify partition layout on ${DEV_SOURCE}
-#    + sdy1: (NTFS, WinXP C:) xx GB
-#    + sdy2: (NTFS, WinXP D:) size specified or all remaining space
-
-
+# Make partitions on DEV_DEST as per DEV_SOURCE
 if [ "${OPT_CREATE_DEST_PARTITIONS}" = "true" ]; then
 
 echo "Deleting all partitions on ${DEV_DEST}..."
@@ -231,18 +224,11 @@ BEGIN	{
 	}
 //	{
 	part_num=substr($1,length(dev)+1)
-	#print "DBG: part_num=" part_num
 	part_bootable=($2 == "*")
-	#print "DBG: part_bootable=" part_bootable
 	part_start=(part_bootable ? $3 : $2)
-	#print "DBG: part_start=" part_start
 	part_end=(part_bootable ? $4 : $3)
-	#print "DBG: part_end=" part_end
 	part_id=(part_bootable ? $6 : $5)
-	#print "DBG: part_id=" part_id
 	part_system=(part_bootable ? substr($0,index($0,$7)) : substr($0,index($0,$6)))
-	#print "DBG: part_system=" part_system
-	print ""
 
 	# TODO: Should adjust part_end if OPT_RESIZE_PARTITION
 
@@ -306,7 +292,7 @@ fi		# if [ "${OPT_CREATE_DEST_PARTITIONS}" = "true" ]
 
 
 
-# TODO: Format partitions on ${DEV_DEST}
+# Format partitions on ${DEV_DEST}
 if [ "${OPT_FORMAT_DEST_PARTITIONS}" = "true" ]; then
 
 echo "Formatting partitions on ${DEV_DEST}..."
@@ -332,22 +318,19 @@ BEGIN	{
 		# Extended: do nothing (will format logical partitions instead)
 	} else if (part_id == 7) {
 		# HPFS/NFTS
-		print "echo === " $1 ": Writing zero - format NTFS under MS Windows"
-		cmdline = "dd if=/dev/zero of=" $1 " bs=512 count=16"
-		#print "echo DBG: " cmdline
-		print cmdline
+		# TODO print "mkntfs >/dev/null || You must install ntfsprogs"
+		print "echo === " $1 ": Formatting NTFS"
+		print "echo TODO: mkntfs " $1
+		# print "echo === " $1 ": Writing zero - format NTFS under MS Windows"
+		# print "dd if=/dev/zero of=" $1 " bs=512 count=16"
 	} else if (part_id == 82) {
 		# Linux swap
 		print "echo === " $1 ": Creating Linux swap"
-		cmdline = "mkswap " $1
-		#print "echo DBG: " cmdline
-		print cmdline
+		print "mkswap " $1
 	} else if (part_id == 83) {
 		# Linux
 		print "echo === " $1 ": Creating ext3 filesystem"
-		cmdline = "mkfs -t ext3 " $1
-		#print "echo DBG: " cmdline
-		print cmdline
+		print "mkfs -t ext3 " $1
 	# } else if (part_id == ?) {
 	#	# TODO
 	} else {
