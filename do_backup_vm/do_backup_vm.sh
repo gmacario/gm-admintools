@@ -2,28 +2,46 @@
 # =============================================================================
 # Project:	LUPIN
 #
-# Description:	Script to publish a VMware VM to NAS
+# Description:	Backup a VMware VM and copy to a remote directory on NAS
 #
-# Revision History:
-#	19-JAN-2009	macario		Initial version
+# Language:	Linux Shell Script
+#
+# Copyright 2007-2009 Magneti Marelli Electronic Systems - All Rights Reserved
 # =============================================================================
 
 # Configurable parameters
 
+# NAS Share used to save backups
 NAS_SHARE=//itven1nnas1.venaria.marelli.it/lupin
-#NAS_USER=paolodoz
+#
+# Active Directory credentials (domain/user/password) on NAS_SHARE
 NAS_DOMAIN=mmemea
-#NAS_PASSWORD=
-#NAS_MOUNTPOINT=/mnt/lupin
-#NAS_CHECKFILE=${NAS_MOUNTPOINT}/this_is_itven1nnas1_lupin.txt
+#NAS_USER=paolodoz
+#NAS_PASSWORD=MyPassword
+#
+# Directory under NAS_SHARE where to save backup
+NAS_BACKUPDIR=/Backup_VM
 
+# Directory where backup is created before uploading to NAS
+BCK_TMPDIR=${HOME}/tmp/${NAS_BACKUPDIR}
+
+# Repository containing VM
 VM_REPOSITORY="/var/lib/vmware/Virtual Machines"
-VM_NAME=Ubuntu804-WR_PFIjan19
-VM_BACKUPDIR=/Backup_VM
-#VM_RELEASEDIR=/Master_Disks/Build_VM
+#
+# Name of the VM to backup
+VM_NAME=lupin07
+#VM_NAME=Ubuntu804-WR_PFIjan19
+
+# The following options are still unused:
+#NAS_MOUNTPOINT=/mnt/lupin
+#NAS_RELEASEDIR=/Master_Disks/Build_VM
+#NAS_CHECKFILE=${NAS_MOUNTPOINT}/this_is_itven1nnas1_lupin.txt
 
 # -----------------------------------------------------------------------------
 # You should not need to change the script below
+
+BCK_FILENAME=`date +%Y%m%d`-${VM_NAME}
+#CHUNKSIZE=600m 
 
 #set -x
 
@@ -37,6 +55,9 @@ if [ "${NAS_PASSWORD}" = "" ]; then
     read NAS_PASSWORD
     echo
     stty echo
+fi
+if [ "${BCK_TMPDIR}" = "" ]; then
+    read -p "Enter BCK_TMPDIR: " VM_NAME
 fi
 if [ "${VM_NAME}" = "" ]; then
     read -p "Enter VM_NAME: " VM_NAME
@@ -58,26 +79,33 @@ fi
 
 # Sanity checks
 if [ ! -d "${VM_REPOSITORY}/${VM_NAME}" ]; then
-    echo Cannot find VM "${VM_NAME}" under "${VM_REPOSITORY}"
-    exit 1
-fi
-# Make sure that VM is stopped
-VM_ISLOCKED=`find "${VM_REPOSITORY}/${VM_NAME}" -name "*.lck" | wc -l`
-#echo DBG: VM_ISLOCKED=${VM_ISLOCKED}
-if [ ${VM_ISLOCKED} -gt 0 ]; then
-    echo VM ${VM_NAME} is currently locked
+    echo ERROR: Cannot find VM "${VM_NAME}" under "${VM_REPOSITORY}"
     exit 1
 fi
 
-BCK_FILENAME=`date +%Y%m%d`-${VM_NAME}
-#CHUNKSIZE=600m 
+# Make sure you can write your temporary files...
+mkdir -p ${BCK_TMPDIR}/${BCK_FILENAME}
+if [ $? -gt 0 ]; then
+    echo "ERROR: Cannot create directory under ${BCK_TMPDIR}"
+    exit 1
+fi
 
-# TODO: Should find optimal compromise between size and compression speed...
-if [ ! -e ${BCK_FILENAME}.tgz ]; then
-    echo "*** Please supply password for ${USER} on ${HOSTNAME} if requested"
+cd ${BCK_TMPDIR}/${BCK_FILENAME} || exit 1
+
+if [ -e ${BCK_FILENAME}.tgz ]; then
+    echo "WARNING: skipping creation of ${BCK_FILENAME}"
+else
+    # Make sure that VM is stopped
+    VM_ISLOCKED=`find "${VM_REPOSITORY}/${VM_NAME}" -name "*.lck" | wc -l`
+    if [ ${VM_ISLOCKED} -gt 0 ]; then
+        echo "ERROR: VM ${VM_NAME} is currently locked - Stop your VM first"
+        exit 1
+    fi
+    #echo "*** Enter password for ${USER} on ${HOSTNAME} if requested"
     (cd "${VM_REPOSITORY}" && \
 	sudo tar cvz ${VM_NAME}) >${BCK_FILENAME}.tgz || exit 1
     rm -f md5sum.txt
+    echo "*** You may restart your VM now"
 fi
 
 echo "*** Calculating md5sum of ${BCK_FILENAME}"
@@ -86,8 +114,8 @@ md5sum ${BCK_FILENAME}.tgz >md5sum.txt || exit 1
 # set -x
 
 echo "*** Copying tarball to ${NAS_SHARE}"
-#echo "*** Please supply password for ${NAS_USER} on ${NAS_SHARE} if requested"
-echo "cd ${VM_BACKUPDIR}/
+#echo "*** Enter password for ${NAS_USER} on ${NAS_SHARE} if requested"
+echo "cd ${NAS_BACKUPDIR}/
 mkdir ${BCK_FILENAME}
 cd ${BCK_FILENAME}
 put ${BCK_FILENAME}.tgz
@@ -96,5 +124,7 @@ dir
 quit" \
 | smbclient --user ${NAS_USER} --workgroup ${NAS_DOMAIN} \
 ${NAS_SHARE} ${NAS_PASSWORD} || exit 1
+
+# TODO: rm -rf ${BCK_TMPDIR}
 
 # === EOF ===
