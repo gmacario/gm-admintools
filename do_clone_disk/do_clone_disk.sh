@@ -9,6 +9,9 @@
 #
 # Copyright 2007-2009 Magneti Marelli Electronic Systems - All Rights Reserved
 #
+# Usage example:
+#	$ LANG=C time sudo ./do_clone_disk.sh
+#
 # Package Dependencies:
 #	Required:	awk cp fdisk fileutils sh
 #	Optional:	grub mbr mke2fs ntfsprogs
@@ -16,8 +19,6 @@
 # TODO: Should install MBR, boot loaders, etc.
 # 	install-mbr ${DEV_DEST}
 # 	grub --install-partition=${DEV_DEST}
-#
-# TODO: Should handle option OPT_RESIZE_PARTITION
 # =============================================================================
 
 # Configurable Parameters
@@ -38,7 +39,7 @@ OPT_NO_GEOMETRY_CHECK=true
 OPT_IGNORE_SOURCE_MOUNTED=true
 #
 # Create Master Boot Record on DEV_DEST
-#OPT_CREATE_DEST_MBR=true
+OPT_CREATE_DEST_MBR=true
 #
 # Create partitions on DEV_DEST with the same layout as DEV_SOURCE
 #OPT_CREATE_DEST_PARTITIONS=true
@@ -49,8 +50,8 @@ OPT_IGNORE_SOURCE_MOUNTED=true
 # Quick format (Do not check for bad blocks, etc - faster but less reliable)
 #OPT_FORMAT_QUICK=true
 #
-# Partition to be resized in case the disks have different capacity
-#OPT_RESIZE_PARTITION=2
+# If true, partitions extending to end of disk will be resized to the actual disk capacity
+OPT_RESIZE_PARTITIONS=true
 
 # End of configurable parameters
 
@@ -243,7 +244,7 @@ fi
 parttbl_size=`LANG=C fdisk -l ${DEV_SOURCE} | awk '/^Units/ {print $9}'`
 #echo "DBG: parttbl_size=${parttbl_size}"
 
-echo "WARNING: THIS WILL DESTROY ALL CONTENT OF ${DEV_DEST}"
+echo "WARNING: THIS WILL DESTROY ALL CONTENTS OF ${DEV_DEST}"
 echo -n "Do you really want to proceed (YES/no)? "
 read ok
 if [ "${ok}" != "YES" ]; then
@@ -292,7 +293,7 @@ fi		# if [ "${OPT_CREATE_DEST_MBR} = "true" ]
 #
 if [ "${OPT_CREATE_DEST_PARTITIONS}" = "true" ]; then
 
-echo "== (OPT_CREATE_DEST_PARTITIONS) ==> Cloning partitions on ${DEV_DEST} as fpr ${DEV_SOURCE}..."
+echo "== (OPT_CREATE_DEST_PARTITIONS) ==> Cloning partitions on ${DEV_DEST} as per ${DEV_SOURCE}..."
 
 echo "=== Deleting all partitions on ${DEV_DEST}..."
 outcmd=`LANG=C fdisk -l ${DEV_DEST} | grep "^${DEV_DEST}"`
@@ -323,9 +324,28 @@ echo ${fdiskcmd} | tr " " "\n" | LANG=C fdisk ${DEV_DEST} >&/dev/null
 
 
 echo "=== Creating partitions on ${DEV_DEST} as per ${DEV_SOURCE}..."
+
+# Implement partition resizing to the end of disk
+#
+if [ "${OPT_RESIZE_PARTITIONS}" = "true" ]; then
+    # TODO: There may be unnoticed bugs if (OPT_NO_GEOMETRY_CHECK)
+    cylinders_max=${cylinders_dest}
+else
+    cylinders_max=${cylinders_source}
+fi
+#echo "DBG: DEV_SOURCE cylinders: ${cylinders_source}"
+#echo "DBG: DEV_DEST   cylinders: ${cylinders_dest}"
+#echo "DBG: MAX        cylinders: ${cylinders_max}"
+
+numparts=`LANG=C fdisk -l ${DEV_SOURCE} | grep "^${DEV_DEST}" | wc -l`
+#echo "DBG: numparts=${numparts}"
+
 outcmd=`LANG=C fdisk -l ${DEV_SOURCE} | grep "^${DEV_SOURCE}"`
 #echo "DBG: outcmd=${outcmd}"
-fdiskcmd=`echo "${outcmd}" | awk -v dev=${DEV_SOURCE} -v numparts=0 '
+fdiskcmd=`echo "${outcmd}" | awk -v dev=${DEV_SOURCE} \
+	-v cylinders_source=${cylinders_source} \
+	-v cylinders_max=${cylinders_max} \
+	-v numparts=${numparts} '
 BEGIN	{
 	}
 //	{
@@ -336,7 +356,10 @@ BEGIN	{
 	part_id=(part_bootable ? $6 : $5)
 	part_system=(part_bootable ? substr($0,index($0,$7)) : substr($0,index($0,$6)))
 
-	# TODO: Should adjust part_end if OPT_RESIZE_PARTITION
+	# Adjust part_end if at last cylinder (See OPT_RESIZE_PARTITION above)
+	if (part_end >= cylinders_source) {
+		part_end = cylinders_max
+	}
 
 	# Build up fdisk commands
 	print "n"
@@ -377,7 +400,6 @@ END	{
 '`
 #echo "DBG: DEV_SOURCE heads: ${heads_source}"
 #echo "DBG: DEV_SOURCE sectors/track: ${sectrk_source}"
-#echo "DBG: DEV_SOURCE cylinders: ${cylinders_source}"
 #echo "DBG: fdiskcmd=${fdiskcmd}"
 echo "
 x
