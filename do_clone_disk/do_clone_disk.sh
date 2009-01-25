@@ -10,8 +10,14 @@
 # Copyright 2007-2009 Magneti Marelli Electronic Systems - All Rights Reserved
 #
 # Package Dependencies:
-#	Required:	awk fileutils sh
-#	Optional:	mke2fs ntfsprogs
+#	Required:	awk cp fdisk fileutils sh
+#	Optional:	grub mbr mke2fs ntfsprogs
+#
+# TODO: Should install MBR, boot loaders, etc.
+# 	install-mbr ${DEV_DEST}
+# 	grub --install-partition=${DEV_DEST}
+#
+# TODO: Should handle option OPT_RESIZE_PARTITION
 # =============================================================================
 
 # Configurable Parameters
@@ -28,6 +34,9 @@ DEV_DEST=/dev/sdb
 # Do not do consistency checks on DEV_SOURCE vs. DEV_DEST disk geometry
 OPT_NO_GEOMETRY_CHECK=true
 #
+# Do not complain if some partitions on DEV_SOURCE are mounted
+OPT_IGNORE_SOURCE_MOUNTED=true
+#
 # Create Master Boot Record on DEV_DEST
 #OPT_CREATE_DEST_MBR=true
 #
@@ -40,7 +49,7 @@ OPT_NO_GEOMETRY_CHECK=true
 # Quick format (Do not check for bad blocks, etc - faster but less reliable)
 #OPT_FORMAT_QUICK=true
 #
-# TODO: Partition to be resized in case the disks have different capacity
+# Partition to be resized in case the disks have different capacity
 #OPT_RESIZE_PARTITION=2
 
 # End of configurable parameters
@@ -66,12 +75,55 @@ safe_umount()
 }
 
 # Recursively copy filesystem from $1 to $2
+#	$1	mnt_source	(ex "/tmp/mnt/source")
+#	$2	mnt_dest	(ex "/tmp/mnt/dest")
 recursive_copy()
 {
     #echo "DBG: recursive_copy($1, $2)"
     cd "$1" || return 1
     cp -ax . "$2" || return 2
     cd
+    return 0
+}
+
+# Safe copy of filesystems
+#	$1	part_source	(ex "/dev/sda2")
+#	$2	part_dest	(ex "/dev/sdb2")
+#	$3	fstype		(ex "ext3")
+# 
+# Should gracefully handle case of part_source already mounted
+safe_copy_fs()
+{
+set -x
+
+    echo "DBG: safe_copyfs($1, $2, $3)"
+
+    mnt_source="/tmp/mnt/source"
+    mnt_dest="/tmp/mnt/dest"
+
+    f_source_mounted=`LANG=C mount | grep $1 | wc -l`
+    if [ ${f_source_mounted} -gt 0 ]; then
+	ln -sf `LANG=C mount | grep $1 | awk '// {print $3}'` ${mnt_source} || return 1
+    else
+	mkdir -p ${mnt_source} || return 1
+        mount -t $3 -o ro $1 ${mnt_source} || return 1
+    fi
+
+    mkdir -p ${mnt_dest} || return 2
+    mount -t $3 $2 ${mnt_dest} || return 2
+
+    recursive_copy ${mnt_source} ${mnt_dest} || return 3
+    df $1 $2
+
+    umount ${mnt_dest} || return 2
+    rmdir ${mnt_dest} || return 2
+
+    if [ ${f_source_mounted} -gt 0 ]; then
+        rm -f ${mnt_source} || return 1
+    else
+        umount ${mnt_source} || return 1
+    fi
+
     return 0
 }
 
@@ -113,9 +165,11 @@ fi
 if [ `mount | grep ${DEV_SOURCE} | wc -l` -gt 0 ]; then
     echo "WARNING: Some partitions of ${DEV_SOURCE} are mounted"
     mount | grep ${DEV_SOURCE}
-    # TODO: Should gracefully handle mounted source partitions
-    exit 1
+    if [ "${OPT_IGNORE_SOURCE_MOUNTED}" != "true" ]; then
+    	exit 1
+    fi
 fi
+
 
 echo
 #print_linebreak
@@ -194,8 +248,6 @@ if [ "${ok}" != "YES" ]; then
 fi
 
 # Sanity checks OK, go ahead...
-
-# TODO: Should make sure that no partitions in ${DEV_SOURCE},${DEV_DEST} are automounted...
 
 if [ "${OPT_CREATE_DEST_MBR}" = "true" ]; then
 echo "Wiping partition table on ${DEV_DEST}..."
@@ -389,14 +441,15 @@ echo "Formatting ${DEV_DEST} partitions completed"
 fi		# if [ "${OPT_FORMAT_DEST_PARTITIONS}" = "true" ]
 
 
+# TODO: Should gracefully handle partitions from ${DEV_SOURCE} already mounted
+#    if [ "${OPT_IGNORE_SOURCE_MOUNTED}" != "true" ]; then
+#    	TODO
+#    fi
+
 echo "Copying all data partitions from ${DEV_SOURCE} to ${DEV_DEST}..."
 outcmd=`LANG=C fdisk -l ${DEV_SOURCE} | grep "^${DEV_SOURCE}"`
 echo "${outcmd}" | awk -v dev_source=${DEV_SOURCE} -v dev_dest=${DEV_DEST} '
 BEGIN	{
-	mnt_source = "/tmp/mnt/source"
-	mnt_dest = "/tmp/mnt/dest"
-	printf("mkdir -p %s\n", mnt_source);
-	printf("mkdir -p %s\n", mnt_dest);
 	}
 //	{
 	part_num=substr($1,length(dev_source)+1)
@@ -420,22 +473,37 @@ BEGIN	{
 	    	} else {
 		    fstype = "UNKNOWN"
 	    	}
-		printf("echo === Copying %s filesystem from %s%s to %s%s\n", 
-			fstype, dev_source, part_num, dev_dest, part_num);
-		printf("mount -t %s -o ro %s%s %s\n", fstype, dev_source, part_num, mnt_source);
-		printf("mount -t %s %s%s %s\n", fstype, dev_dest, part_num, mnt_dest);
-		printf("recursive_copy %s %s\n", mnt_source, mnt_dest);
-		printf("df %s%s %s%s\n", dev_source, part_num, dev_dest, part_num);
-		printf("umount %s\n", mnt_dest);
-		printf("umount %s\n", mnt_source);
+		printf("echo === Copying %s filesystem from %s to %s\n", 
+			fstype, 
+			dev_source part_num,
+			dev_dest part_num);
+		#
+		printf("safe_copy_fs %s %s %s\n",
+			dev_source part_num,
+			dev_dest part_num,
+			fstype);
+#		#
+#		mnt_source = "/tmp/mnt/source"
+#		mnt_dest = "/tmp/mnt/dest"
+#		printf("mkdir -p %s\n", mnt_source);
+#		printf("mkdir -p %s\n", mnt_dest);
+#		printf("mount -t %s -o ro %s%s %s\n", fstype, dev_source, part_num, mnt_source);
+#		printf("mount -t %s %s%s %s\n", fstype, dev_dest, part_num, mnt_dest);
+#		#
+#		printf("recursive_copy %s %s\n", mnt_source, mnt_dest);
+#		printf("df %s %s\n", mnt_source, mnt_dest);
+#		#printf("df %s%s %s%s\n", dev_source, part_num, dev_dest, part_num);
+#		#
+#		printf("umount %s\n", mnt_dest);
+#		printf("umount %s\n", mnt_source);
+#		printf("rmdir %s\n", mnt_source);
+#		printf("rmdir %s\n", mnt_dest);
 	} else {
 		printf("echo ERROR: %s: Unable to copy filesystem %s (%s)\n", $1, part_id, part_system);
 	}
 	next
 	}
 END	{
-	printf("rmdir %s\n", mnt_source);
-	printf("rmdir %s\n", mnt_dest);
 	}
 ' | while read cmdline; do
     #echo "DBG: cmdline=${cmdline}"
