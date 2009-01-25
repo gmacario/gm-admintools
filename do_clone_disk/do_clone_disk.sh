@@ -81,7 +81,7 @@ recursive_copy()
 {
     #echo "DBG: recursive_copy($1, $2)"
     cd "$1" || return 1
-    cp -ax . "$2" || return 2
+    cp -ax . "$2" || return 4
     cd
     return 0
 }
@@ -94,26 +94,29 @@ recursive_copy()
 # Should gracefully handle case of part_source already mounted
 safe_copy_fs()
 {
-set -x
-
     #echo "DBG: safe_copyfs($1, $2, $3)"
     echo "=== Copying $3 filesystem from $1 to $2"
 
+    set -x
+
     mnt_source="/tmp/mnt/source"
     mnt_dest="/tmp/mnt/dest"
+
+    # TODO: if mnt_source,mnt_dest exist, add some "-nn" to make them unique
 
     f_source_mounted=`LANG=C mount | grep $1 | wc -l`
     if [ ${f_source_mounted} -gt 0 ]; then
 	ln -sf `LANG=C mount | grep $1 | awk '// {print $3}'` ${mnt_source} || return 1
     else
 	mkdir -p ${mnt_source} || return 1
-        mount -t $3 -o ro $1 ${mnt_source} || return 1
+        mount -t $3 -o ro,force $1 ${mnt_source} || return 1
     fi
 
     mkdir -p ${mnt_dest} || return 2
     mount -t $3 $2 ${mnt_dest} || return 2
 
-    recursive_copy ${mnt_source} ${mnt_dest} || return 3
+    # Do not return on errors, so we can keep on copying other partitions...
+    recursive_copy ${mnt_source} ${mnt_dest} 	# || return 4
     df $1 $2
 
     umount ${mnt_dest} || return 2
@@ -123,6 +126,7 @@ set -x
         rm -f ${mnt_source} || return 1
     else
         umount ${mnt_source} || return 1
+        rmdir ${mnt_source} || return 1
     fi
 
     return 0
