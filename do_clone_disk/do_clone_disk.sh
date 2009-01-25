@@ -97,12 +97,11 @@ safe_copy_fs()
     #echo "DBG: safe_copyfs($1, $2, $3)"
     echo "=== Copying $3 filesystem from $1 to $2"
 
-    set -x
+    #set -x
 
-    mnt_source="/tmp/mnt/source"
-    mnt_dest="/tmp/mnt/dest"
-
-    # TODO: if mnt_source,mnt_dest exist, add some "-nn" to make them unique
+    # Append "-<pid>" to make the filename unique
+    mnt_source="/tmp/mnt/source-$$"
+    mnt_dest="/tmp/mnt/dest-$$"
 
     f_source_mounted=`LANG=C mount | grep $1 | wc -l`
     if [ ${f_source_mounted} -gt 0 ]; then
@@ -254,8 +253,15 @@ fi
 
 # Sanity checks OK, go ahead...
 
+
+# -----------------------------------------------------------------------------
+# Create MBR and Partition Table
+#
 if [ "${OPT_CREATE_DEST_MBR}" = "true" ]; then
-echo "Wiping partition table on ${DEV_DEST}..."
+
+echo "== (OPT_CREATE_DEST_MBR) ==> Recreating MBR on ${DEV_DEST}..."
+
+echo "=== Wiping partition table on ${DEV_DEST}..."
 dd if=/dev/zero of=${DEV_DEST} bs=${parttbl_size} count=1 >&/dev/null
 
 # Adjust disk geometry on ${DEV_DEST} to resemble ${DEV_SOURCE}
@@ -281,10 +287,14 @@ OPT_CREATE_DEST_PARTITIONS=true
 fi		# if [ "${OPT_CREATE_DEST_MBR} = "true" ]
 
 
+# -----------------------------------------------------------------------------
 # Make partitions on DEV_DEST as per DEV_SOURCE
+#
 if [ "${OPT_CREATE_DEST_PARTITIONS}" = "true" ]; then
 
-echo "Deleting all partitions on ${DEV_DEST}..."
+echo "== (OPT_CREATE_DEST_PARTITIONS) ==> Cloning partitions on ${DEV_DEST} as fpr ${DEV_SOURCE}..."
+
+echo "=== Deleting all partitions on ${DEV_DEST}..."
 outcmd=`LANG=C fdisk -l ${DEV_DEST} | grep "^${DEV_DEST}"`
 #echo "DBG: outcmd=${outcmd}"
 numparts=`echo "${outcmd}" | wc -l`
@@ -311,7 +321,8 @@ END	{
 #echo "DBG: fdiskcmd=${fdiskcmd}"
 echo ${fdiskcmd} | tr " " "\n" | LANG=C fdisk ${DEV_DEST} >&/dev/null
 
-echo "Creating partitions on ${DEV_DEST} as per ${DEV_SOURCE}..."
+
+echo "=== Creating partitions on ${DEV_DEST} as per ${DEV_SOURCE}..."
 outcmd=`LANG=C fdisk -l ${DEV_SOURCE} | grep "^${DEV_SOURCE}"`
 #echo "DBG: outcmd=${outcmd}"
 fdiskcmd=`echo "${outcmd}" | awk -v dev=${DEV_SOURCE} -v numparts=0 '
@@ -380,17 +391,21 @@ r
 # Display what happened in the end...
 LANG=C fdisk -l ${DEV_DEST}
 
+# Create MBR
+install-mbr ${DEV_DEST}
+
 # Make sure you will format the partitions just created...
 OPT_FORMAT_DEST_PARTITIONS=true
 
 fi		# if [ "${OPT_CREATE_DEST_PARTITIONS}" = "true" ]
 
 
-
+# -----------------------------------------------------------------------------
 # Format partitions on ${DEV_DEST}
+#
 if [ "${OPT_FORMAT_DEST_PARTITIONS}" = "true" ]; then
 
-echo "Formatting partitions on ${DEV_DEST}..."
+echo "== (OPT_FORMAT_DEST_PARTITIONS) ==> Formatting partitions on ${DEV_DEST}..."
 outcmd=`LANG=C fdisk -l ${DEV_DEST} | grep "^${DEV_DEST}"`
 #echo "DBG: outcmd=${outcmd}"
 echo "${outcmd}" | awk -v dev=${DEV_DEST} -v f_quick="${OPT_FORMAT_QUICK}" '
@@ -446,7 +461,10 @@ echo "Formatting ${DEV_DEST} partitions completed"
 fi		# if [ "${OPT_FORMAT_DEST_PARTITIONS}" = "true" ]
 
 
-echo "Copying all data partitions from ${DEV_SOURCE} to ${DEV_DEST}..."
+# -----------------------------------------------------------------------------
+# Copy data partitions from DEV_SOURCE to DEV_DEST
+#
+echo "== Copying all data partitions from ${DEV_SOURCE} to ${DEV_DEST}..."
 outcmd=`LANG=C fdisk -l ${DEV_SOURCE} | grep "^${DEV_SOURCE}"`
 echo "${outcmd}" | awk -v dev_source=${DEV_SOURCE} -v dev_dest=${DEV_DEST} '
 BEGIN	{
@@ -492,10 +510,10 @@ END	{
   	exit 1
     fi
 done
-
 #echo "Copying data partitions from ${DEV_SOURCE} to ${DEV_DEST} completed"
-exit 0
+
 
 # -----------------------------------------------------------------------------
+exit 0
 
 # === EOF ===
