@@ -57,7 +57,7 @@ print_linebreak()
 # Make sure that device $1 is not mounted
 safe_umount()
 {
-    echo "DBG: safe_umount($1)"
+    #echo "DBG: safe_umount($1)"
     if [ `grep $1 /proc/mounts | wc -l` -gt 0 ]; then
     	echo "DBG: $1 was mounted - unmounting now"
         umount $1 
@@ -68,7 +68,7 @@ safe_umount()
 # Recursively copy filesystem from $1 to $2
 recursive_copy()
 {
-    echo "DBG: recursive_copy($1, $2)"
+    #echo "DBG: recursive_copy($1, $2)"
     cd "$1" || return 1
     cp -ax . "$2" || return 2
     cd
@@ -438,7 +438,8 @@ END	{
 	printf("rmdir %s\n", mnt_dest);
 	}
 ' | while read cmdline; do
-    echo "DBG: cmdline=${cmdline}"
+    #echo "DBG: cmdline=${cmdline}"
+    echo "+ ${cmdline}"
     ${cmdline}
     if [ $? -gt 0 ]; then
 	echo "ERROR executing \"${cmdline}\""
