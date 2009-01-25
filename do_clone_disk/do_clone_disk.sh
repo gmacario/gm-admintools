@@ -16,9 +16,7 @@
 #	Required:	awk cp fdisk fileutils sh
 #	Optional:	grub mbr mke2fs ntfsprogs
 #
-# TODO: Should install MBR, boot loaders, etc.
-# 	install-mbr ${DEV_DEST}
-# 	grub --install-partition=${DEV_DEST}
+# TODO: Should attempt installation of MBR, boot loaders (grub, lilo), etc.
 #
 # TODO:	There are still a few subtle bugs with OPT_RESIZE_PARTITIONS
 #	when source and dest disks have different geometries
@@ -417,6 +415,7 @@ r
 LANG=C fdisk -l ${DEV_DEST}
 
 # Create MBR
+echo "=== Installing MBR on ${DEV_DEST}..."
 install-mbr ${DEV_DEST}
 
 # Make sure you will format the partitions just created...
@@ -537,6 +536,25 @@ END	{
 done
 #echo "Copying data partitions from ${DEV_SOURCE} to ${DEV_DEST} completed"
 
+# Install GRUB
+#echo "=== Installing GRUB on ${DEV_DEST}..."
+#
+# TODO: Some notes about grub:
+#
+#	mnt_root=/tmp/mnt/root-$$
+#	mkdir -p ${mnt_root} || exit 1
+#	mount /dev/sdb2 ${mnt_root} || exit 1
+#
+#	if [ -e ${mnt_root}/boot/grub/menu.lst ]; then
+#		...
+#	fi
+#
+#	grub-install --root-directory=${mnt_root} ${DEV_DEST}
+# 	??? chroot ${mnt_root} grub --install-partition=${DEV_DEST}
+#
+#	grub --config-file=${mnt_root}/boot/grub/menu.lst
+#
+#	umount ${mnt_root}
 
 # -----------------------------------------------------------------------------
 exit 0
