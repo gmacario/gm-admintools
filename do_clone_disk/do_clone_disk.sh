@@ -446,11 +446,6 @@ echo "Formatting ${DEV_DEST} partitions completed"
 fi		# if [ "${OPT_FORMAT_DEST_PARTITIONS}" = "true" ]
 
 
-# TODO: Should gracefully handle partitions from ${DEV_SOURCE} already mounted
-#    if [ "${OPT_IGNORE_SOURCE_MOUNTED}" != "true" ]; then
-#    	TODO
-#    fi
-
 echo "Copying all data partitions from ${DEV_SOURCE} to ${DEV_DEST}..."
 outcmd=`LANG=C fdisk -l ${DEV_SOURCE} | grep "^${DEV_SOURCE}"`
 echo "${outcmd}" | awk -v dev_source=${DEV_SOURCE} -v dev_dest=${DEV_DEST} '
@@ -491,7 +486,6 @@ END	{
 	}
 ' | while read cmdline; do
     #echo "DBG: cmdline=${cmdline}"
-    echo "+ ${cmdline}"
     ${cmdline}
     if [ $? -gt 0 ]; then
 	echo "ERROR executing \"${cmdline}\""
