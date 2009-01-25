@@ -19,6 +19,9 @@
 # TODO: Should install MBR, boot loaders, etc.
 # 	install-mbr ${DEV_DEST}
 # 	grub --install-partition=${DEV_DEST}
+#
+# TODO:	There are still a few subtle bugs with OPT_RESIZE_PARTITIONS
+#	when source and dest disks have different geometries
 # =============================================================================
 
 # Configurable Parameters
@@ -39,10 +42,10 @@ OPT_NO_GEOMETRY_CHECK=true
 OPT_IGNORE_SOURCE_MOUNTED=true
 #
 # Create Master Boot Record on DEV_DEST
-OPT_CREATE_DEST_MBR=true
+#OPT_CREATE_DEST_MBR=true
 #
 # Create partitions on DEV_DEST with the same layout as DEV_SOURCE
-#OPT_CREATE_DEST_PARTITIONS=true
+OPT_CREATE_DEST_PARTITIONS=true
 #
 # Format partitions on DEV_DEST (implicit if OPT_CREATE_DEST_PARTITIONS)
 #OPT_FORMAT_DEST_PARTITIONS=true
