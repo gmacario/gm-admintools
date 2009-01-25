@@ -96,7 +96,8 @@ safe_copy_fs()
 {
 set -x
 
-    echo "DBG: safe_copyfs($1, $2, $3)"
+    #echo "DBG: safe_copyfs($1, $2, $3)"
+    echo "=== Copying $3 filesystem from $1 to $2"
 
     mnt_source="/tmp/mnt/source"
     mnt_dest="/tmp/mnt/dest"
@@ -473,31 +474,10 @@ BEGIN	{
 	    	} else {
 		    fstype = "UNKNOWN"
 	    	}
-		printf("echo === Copying %s filesystem from %s to %s\n", 
-			fstype, 
-			dev_source part_num,
-			dev_dest part_num);
-		#
 		printf("safe_copy_fs %s %s %s\n",
 			dev_source part_num,
 			dev_dest part_num,
 			fstype);
-#		#
-#		mnt_source = "/tmp/mnt/source"
-#		mnt_dest = "/tmp/mnt/dest"
-#		printf("mkdir -p %s\n", mnt_source);
-#		printf("mkdir -p %s\n", mnt_dest);
-#		printf("mount -t %s -o ro %s%s %s\n", fstype, dev_source, part_num, mnt_source);
-#		printf("mount -t %s %s%s %s\n", fstype, dev_dest, part_num, mnt_dest);
-#		#
-#		printf("recursive_copy %s %s\n", mnt_source, mnt_dest);
-#		printf("df %s %s\n", mnt_source, mnt_dest);
-#		#printf("df %s%s %s%s\n", dev_source, part_num, dev_dest, part_num);
-#		#
-#		printf("umount %s\n", mnt_dest);
-#		printf("umount %s\n", mnt_source);
-#		printf("rmdir %s\n", mnt_source);
-#		printf("rmdir %s\n", mnt_dest);
 	} else {
 		printf("echo ERROR: %s: Unable to copy filesystem %s (%s)\n", $1, part_id, part_system);
 	}
