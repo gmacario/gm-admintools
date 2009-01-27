@@ -12,10 +12,11 @@
 # Usage example:
 #	$ LANG=C time sudo ./clonedisk.sh
 #
-# The script attempts to fetch configuration options from:
-#	conffile=${PWD}/clonedisk.conf
-#	conffile=${HOME}/.clonedisk/clonedisk.conf
-#	conffile=/etc/clonedisk.conf
+# The script attempts to fetch configuration options
+# from the first file in the following list:
+#	* ./clonedisk.conf
+#	* ${HOME}/.clonedisk/clonedisk.conf
+#	* /etc/clonedisk.conf
 #
 # Package Dependencies:
 #	Required:	awk cp fdisk fileutils sh
@@ -37,6 +38,10 @@
 #
 # Destination device (WARNING: WILL DESTROY CONTENTS!!!)
 #DEV_DEST=/dev/sdb
+#
+# Make sure that the script is run on the proper host
+# in order to avoid clobbering the wrong disks
+#OPT_CHECK_HOSTNAME=myhostname
 
 
 # Advanced options - USE AT YOUR OWN RISK!!!
@@ -150,15 +155,15 @@ echo -e "$0 - v0.2\n"
 # Sanity Checks
 
 if [ ${USER} != root ]; then
-    echo This script should be run as root
+    echo "ERROR: This script should be run as root"
     exit 1
 fi
 
 # Try to source configuration from clonedisk.conf
-
+#
 conffile=""
-if [ -e ${PWD}/clonedisk.conf ]; then
-    conffile=${PWD}/clonedisk.conf
+if [ -e ./clonedisk.conf ]; then
+    conffile=./clonedisk.conf
 elif [ -e ${HOME}/.clonedisk/clonedisk.conf ]; then
     conffile=${HOME}/.clonedisk/clonedisk.conf
 elif [ -e /etc/clonedisk.conf ]; then
@@ -166,9 +171,8 @@ elif [ -e /etc/clonedisk.conf ]; then
 else
     echo "WARNING: no conffile found, using defaults"
 fi
-
 if [ "${conffile}" != "" ]; then
-    echo "== Reading configuration from ${conffile}"
+    echo "== Reading configuration from file ${conffile}"
     source ${conffile} || exit 1
 fi
 echo ""
@@ -178,12 +182,18 @@ LANG=C fdisk -l | grep "^Disk /"
 echo ""
 
 if [ "${DEV_SOURCE}" = "" ]; then
-    echo Please configure DEV_SOURCE
+    echo "Please configure DEV_SOURCE"
     exit 1
 fi
 if [ "${DEV_DEST}" = "" ]; then
-    echo Please configure DEV_DEST
+    echo "Please configure DEV_DEST"
     exit 1
+fi
+if [ "${OPT_CHECK_HOSTNAME}" != "" ]; then
+    if [ "${OPT_CHECK_HOSTNAME}" != "`hostname`" ]; then
+	echo "ERROR: This script should be run on `hostname`"
+	exit 1
+    fi
 fi
 
 echo "=== SOURCE disk information (${DEV_SOURCE})"
