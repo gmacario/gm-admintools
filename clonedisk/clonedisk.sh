@@ -147,6 +147,79 @@ safe_copy_fs()
     return 0
 }
 
+
+
+# TODO TODO TODO
+
+# Code adapted from LUPIN/code/trunk/wrlinux/scripts/flash_distro-3.0.sh
+
+# Install GRUB 
+#	$1	install_device	(ex "/dev/sdb")
+#	$2	root_part	(ex "/dev/sdb2")
+#	$3	root_fstype	(ex "ext3")
+#
+do_install_grub() {
+    echo "=== Installing GRUB on ${2} for root_part=${1} (${3})..."
+
+    if [ "" == `which grub-install` ]; then
+	echo "- You have to install grub. Try with sudo apt-get install grub. Exiting."
+	exit 1;
+    fi
+
+    set -x
+
+    mnt_root="/tmp/mnt/root-$$"
+    mkdir -p ${mnt_root} || return 1
+    mount -t ${3} ${2} ${mnt_root} || return 1
+
+    menu_lst=${mnt_root}/boot/grub/menu.lst
+    device_map=${mnt_root}/boot/grub/device.map
+
+    ##################
+    # write menu.lst and device.map
+    ###################
+    #
+    #echo "default 0" > ${menu_lst}
+    #echo "timeout 0" >> ${menu_lst}
+    #echo "hiddenmenu" >> ${menu_lst}
+    #echo "title WRLinux" >> ${menu_lst}
+    #echo "root (hd0,0)" >> ${menu_lst}
+    ## change in the next line root=/dev/sda1 if trying to create an usb pen
+    ##echo "kernel /boot/bzImage root=/dev/hda1 rw" >> ${menu_lst}
+    #echo "kernel /boot/bzImage root=/dev/hda1 rw noapic quiet ide1=noprobe hdb=none lpj=1597020 ide0=ata66" >> ${menu_lst}
+    #echo "savedefault" >> ${menu_lst}
+    ###################
+    
+    # Preserve original device map
+    if [ -f ${device_map} ]; then
+	rm -f ${device_map}.orig
+	mv ${device_map} ${device_map}.orig
+    fi
+    #echo "(hd0) ${2}" > ${device_map}
+
+    if [ ! -f ${menu_lst} ]; then
+	echo "ERROR: Cannot find file ${menu_lst}"
+	return 1
+    fi
+    #if [ ! -f ${device_map} ]; then
+    #	echo "ERROR: Cannot find file ${device_map}"
+    #	return 1
+    #fi
+
+    # "--recheck" option will create device_map as currently seen on the host machine
+    grub-install --recheck --root-directory=${mnt_root} ${1} # &> /dev/null
+
+    # Restore original device map
+    if [ -f ${device_map}.orig ]; then
+	rm -f ${device_map}
+	mv ${device_map}.orig ${device_map}
+    fi
+
+    umount ${mnt_root} || return 2
+    rmdir ${mnt_root} || return 2
+}
+
+
 # -----------------------------------------------------------------------------
 # Main Program starts here
 
@@ -176,6 +249,7 @@ if [ "${conffile}" != "" ]; then
     source ${conffile} || exit 1
 fi
 echo ""
+
 
 echo "=== List of available disks on the system:"
 LANG=C fdisk -l | grep "^Disk /"
@@ -292,6 +366,10 @@ if [ "${ok}" != "YES" ]; then
 fi
 
 # Sanity checks OK, go ahead...
+
+#echo "TODO: Handle case OPT_INSTALL_GRUB"
+#do_install_grub /dev/sdb /dev/sdb2 ext3
+#exit 0;	# TODO
 
 
 # -----------------------------------------------------------------------------
@@ -574,25 +652,11 @@ END	{
 done
 #echo "Copying data partitions from ${DEV_SOURCE} to ${DEV_DEST} completed"
 
-# Install GRUB
-#echo "=== Installing GRUB on ${DEV_DEST}..."
-#
-# TODO: Some notes about grub:
-#
-#	mnt_root=/tmp/mnt/root-$$
-#	mkdir -p ${mnt_root} || exit 1
-#	mount /dev/sdb2 ${mnt_root} || exit 1
-#
-#	if [ -e ${mnt_root}/boot/grub/menu.lst ]; then
-#		...
-#	fi
-#
-#	grub-install --root-directory=${mnt_root} ${DEV_DEST}
-# 	??? chroot ${mnt_root} grub --install-partition=${DEV_DEST}
-#
-#	grub --config-file=${mnt_root}/boot/grub/menu.lst
-#
-#	umount ${mnt_root}
+if [ "${OPT_INSTALL_GRUB}" == "true" ]; then
+    echo "TODO: Handle case OPT_INSTALL_GRUB"
+    # TODO: do_install_grub /dev/sdb /dev/sdb1 ext3
+fi
+
 
 # -----------------------------------------------------------------------------
 exit 0
