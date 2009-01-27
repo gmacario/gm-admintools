@@ -116,8 +116,9 @@ safe_copy_fs()
     #set -x
 
     # Append "-<pid>" to make the filename unique
-    mnt_source="/tmp/mnt/source-$$"
-    mnt_dest="/tmp/mnt/dest-$$"
+    mnt_tmpdir="/tmp/mnt"
+    mnt_source="${mnt_tmpdir}/source-$$"
+    mnt_dest="${mnt_tmpdir}/dest-$$"
 
     f_source_mounted=`LANG=C mount | grep $1 | wc -l`
     if [ ${f_source_mounted} -gt 0 ]; then
