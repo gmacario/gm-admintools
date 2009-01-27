@@ -265,7 +265,7 @@ if [ "${DEV_DEST}" = "" ]; then
 fi
 if [ "${OPT_CHECK_HOSTNAME}" != "" ]; then
     if [ "${OPT_CHECK_HOSTNAME}" != "`hostname`" ]; then
-	echo "ERROR: This script should be run on `hostname`"
+	echo "ERROR: This script is supposed to run on ${OPT_CHECK_HOSTNAME} while this is `hostname`"
 	exit 1
     fi
 fi
