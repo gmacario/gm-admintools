@@ -10,7 +10,12 @@
 # Copyright 2007-2009 Magneti Marelli Electronic Systems - All Rights Reserved
 #
 # Usage example:
-#	$ LANG=C time sudo ./do_clone_disk.sh
+#	$ LANG=C time sudo ./clonedisk.sh
+#
+# The script attempts to fetch configuration options from:
+#	conffile=${PWD}/clonedisk.conf
+#	conffile=${HOME}/.clonedisk/clonedisk.conf
+#	conffile=/etc/clonedisk.conf
 #
 # Package Dependencies:
 #	Required:	awk cp fdisk fileutils sh
@@ -24,26 +29,29 @@
 
 # Configurable Parameters
 #
+# NOTE: The following configuration variables
+#	may be overridden by clonedisk.conf (see comments above)
+
 # Source device
-DEV_SOURCE=/dev/sda
+#DEV_SOURCE=/dev/sda
 #
 # Destination device (WARNING: WILL DESTROY CONTENTS!!!)
-DEV_DEST=/dev/sdb
+#DEV_DEST=/dev/sdb
 
 
 # Advanced options - USE AT YOUR OWN RISK!!!
 #
 # Do not do consistency checks on DEV_SOURCE vs. DEV_DEST disk geometry
-OPT_NO_GEOMETRY_CHECK=true
+#OPT_NO_GEOMETRY_CHECK=true
 #
 # Do not complain if some partitions on DEV_SOURCE are mounted
-OPT_IGNORE_SOURCE_MOUNTED=true
+#OPT_IGNORE_SOURCE_MOUNTED=true
 #
 # Create Master Boot Record on DEV_DEST
 #OPT_CREATE_DEST_MBR=true
 #
 # Create partitions on DEV_DEST with the same layout as DEV_SOURCE
-OPT_CREATE_DEST_PARTITIONS=true
+#OPT_CREATE_DEST_PARTITIONS=true
 #
 # Format partitions on DEV_DEST (implicit if OPT_CREATE_DEST_PARTITIONS)
 #OPT_FORMAT_DEST_PARTITIONS=true
@@ -51,8 +59,9 @@ OPT_CREATE_DEST_PARTITIONS=true
 # Quick format (Do not check for bad blocks, etc - faster but less reliable)
 #OPT_FORMAT_QUICK=true
 #
-# If true, partitions extending to end of disk will be resized to the actual disk capacity
-OPT_RESIZE_PARTITIONS=true
+# If true, partitions extending to end of disk
+# will be resized to the actual disk capacity
+#OPT_RESIZE_PARTITIONS=true
 
 # End of configurable parameters
 
@@ -144,6 +153,25 @@ if [ ${USER} != root ]; then
     echo This script should be run as root
     exit 1
 fi
+
+# Try to source configuration from clonedisk.conf
+
+conffile=""
+if [ -e ${PWD}/clonedisk.conf ]; then
+    conffile=${PWD}/clonedisk.conf
+elif [ -e ${HOME}/.clonedisk/clonedisk.conf ]; then
+    conffile=${HOME}/.clonedisk/clonedisk.conf
+elif [ -e /etc/clonedisk.conf ]; then
+    conffile=/etc/clonedisk.conf
+else
+    echo "WARNING: no conffile found, using defaults"
+fi
+
+if [ "${conffile}" != "" ]; then
+    echo "== Reading configuration from ${conffile}"
+    source ${conffile} || exit 1
+fi
+echo ""
 
 echo "=== List of available disks on the system:"
 LANG=C fdisk -l | grep "^Disk /"
