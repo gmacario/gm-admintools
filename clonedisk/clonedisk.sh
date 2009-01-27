@@ -62,11 +62,11 @@
 #OPT_FORMAT_DEST_PARTITIONS=true
 #
 # Quick format (Do not check for bad blocks, etc - faster but less reliable)
-#OPT_FORMAT_QUICK=true
+OPT_FORMAT_QUICK=true
 #
 # If true, partitions extending to end of disk
 # will be resized to the actual disk capacity
-#OPT_RESIZE_PARTITIONS=true
+OPT_RESIZE_PARTITIONS=true
 
 # End of configurable parameters
 
@@ -122,6 +122,7 @@ safe_copy_fs()
 
     f_source_mounted=`LANG=C mount | grep $1 | wc -l`
     if [ ${f_source_mounted} -gt 0 ]; then
+	mkdir -p ${mnt_tmpdir}
 	ln -sf `LANG=C mount | grep $1 | awk '// {print $3}'` ${mnt_source} || return 1
     else
 	mkdir -p ${mnt_source} || return 1
@@ -578,7 +579,8 @@ BEGIN	{
 		# Linux
 		printf("safe_umount %s\n", $1);
 		printf("echo === %s: Formatting as ext3 filesystem\n", $1);
-		printf("mkfs %s -t ext3 %s\n", (f_quick ? "" : "-c"), $1);
+		#printf("mkfs %s -t ext3 %s\n", (f_quick ? "" : "-c"), $1);
+		printf("mke2fs %s -j %s\n", (f_quick ? "" : "-c"), $1);
 	# } else if (part_id == ?) {
 	#	# Windows FAT16/FAT32/VFAT
 	#	# TODO
