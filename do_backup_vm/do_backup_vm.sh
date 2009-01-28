@@ -23,14 +23,16 @@ NAS_DOMAIN=mmemea
 NAS_BACKUPDIR=/Backup_VM
 
 # Directory where backup is created before uploading to NAS
-BCK_TMPDIR=${HOME}/tmp/${NAS_BACKUPDIR}
+#BCK_TMPDIR=${HOME}/tmp/${NAS_BACKUPDIR}
+BCK_TMPDIR=/var/tmp/${NAS_BACKUPDIR}
 
 # Repository containing VM
 VM_REPOSITORY="/var/lib/vmware/Virtual Machines"
 #
 # Name of the VM to backup
-VM_NAME=lupin07
+#VM_NAME=lupin07
 #VM_NAME=Ubuntu804-WR_PFIjan19
+VM_NAME=ltib-tarek
 
 # The following options are still unused:
 #NAS_MOUNTPOINT=/mnt/lupin
@@ -39,9 +41,17 @@ VM_NAME=lupin07
 
 # -----------------------------------------------------------------------------
 # You should not need to change the script below
+# -----------------------------------------------------------------------------
+
+# Those parameters should not usually be changed
 
 BCK_FILENAME=`date +%Y%m%d`-${VM_NAME}
-#CHUNKSIZE=600m 
+BCK_CHUNKSIZE=1024m
+#BCK_CHUNKSIZE=4500m
+
+# -----------------------------------------------------------------------------
+# Main Program starts here
+echo -e "$0 - v0.2\n"
 
 #set -x
 
@@ -92,7 +102,7 @@ fi
 
 cd ${BCK_TMPDIR}/${BCK_FILENAME} || exit 1
 
-if [ -e ${BCK_FILENAME}.tgz ]; then
+if [ -e ${BCK_FILENAME}.tgz* ]; then
     echo "WARNING: skipping creation of ${BCK_FILENAME}"
 else
     # Make sure that VM is stopped
@@ -101,25 +111,45 @@ else
         echo "ERROR: VM ${VM_NAME} is currently locked - Stop your VM first"
         exit 1
     fi
-    #echo "*** Enter password for ${USER} on ${HOSTNAME} if requested"
+    echo "*** Enter password for ${USER} on ${HOSTNAME} if requested"
     (cd "${VM_REPOSITORY}" && \
-	sudo tar cvz ${VM_NAME}) >${BCK_FILENAME}.tgz || exit 1
+	sudo tar cvz ${VM_NAME}) |
+	split -d -b${BCK_CHUNKSIZE} - ${BCK_FILENAME}.tgz- || exit 1
     rm -f md5sum.txt
     echo "*** You may restart your VM now"
 fi
 
 echo "*** Calculating md5sum of ${BCK_FILENAME}"
-md5sum ${BCK_FILENAME}.tgz >md5sum.txt || exit 1
+md5sum ${BCK_FILENAME}.tgz* >md5sum.txt || exit 1
 
 # set -x
+
+#cat <<EOF
+#@echo off
+#md5sum -c md5sum.txt
+#cat *.tgz-* >xxx.tgz
+#tar xvfz xxx.tgz
+#
+#EOF >myrestore.bat
+
+#cat <<EOF
+##/bin/sh
+#md5sum -c md5sum.txt || exit 1
+#cat *.tgz-* >xxx.tgz
+#tar xvfz xxx.tgz
+#
+#EOF >myrestore.sh
+#chmod 755 myrestore.sh
 
 echo "*** Copying tarball to ${NAS_SHARE}"
 #echo "*** Enter password for ${NAS_USER} on ${NAS_SHARE} if requested"
 echo "cd ${NAS_BACKUPDIR}/
 mkdir ${BCK_FILENAME}
 cd ${BCK_FILENAME}
-put ${BCK_FILENAME}.tgz
+put ${BCK_FILENAME}.tgz*
 put md5sum.txt
+put myrestore.bat
+put myrestore.sh
 dir
 quit" \
 | smbclient --user ${NAS_USER} --workgroup ${NAS_DOMAIN} \
