@@ -571,6 +571,9 @@ BEGIN	{
 		printf("mkntfs %s %s\n", (f_quick ? "-q" : ""), $1);
 		#printf("echo === %s: Writing zero - format NTFS under MS Windows\n", $1);
 		#printf("dd if=/dev/zero of=%s bs=512 count=16\n". $1);
+	#} else if (part_id == b) {
+	#	# W95 FAT32
+	#	# TODO
 	} else if (part_id == 82) {
 		# Linux swap
 		printf("echo === %s: Formatting as Linux swap partition\n", $1);
@@ -626,6 +629,7 @@ BEGIN	{
 		# Do nothing
 	} else if ((part_id == 7) || (part_id == 83)) {
 	    # case 7:	HPFS/NTFS
+	    # case b:	W95 FAT32
 	    # case 83:	Linux
 	    	if (part_id == 7) {
 		    fstype = "ntfs"
