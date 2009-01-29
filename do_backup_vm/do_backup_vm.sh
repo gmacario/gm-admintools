@@ -24,7 +24,7 @@ NAS_BACKUPDIR=/Backup_VM
 
 # Directory where backup is created before uploading to NAS
 #BCK_TMPDIR=${HOME}/tmp/${NAS_BACKUPDIR}
-BCK_TMPDIR=/var/tmp${NAS_BACKUPDIR}
+BCK_TMPDIR=/var/tmp/${NAS_BACKUPDIR}
 
 # Repository containing VM
 VM_REPOSITORY="/var/lib/vmware/Virtual Machines"
@@ -150,7 +150,9 @@ echo "*** Copying tarball to ${NAS_SHARE}"
 CMDFILE=smb_commands.tmp
 echo >${CMDFILE} || exit 1
 
-echo "cd ${NAS_BACKUPDIR}"	>>${CMDFILE}
+echo "cd ${NAS_BACKUPDIR}/" | tr '/' '\\'	>>${CMDFILE}
+echo "dir"			>>${CMDFILE}
+echo ""				>>${CMDFILE}
 echo "mkdir ${BCK_FILENAME}"	>>${CMDFILE}
 echo "cd ${BCK_FILENAME}"	>>${CMDFILE}
 for file in ${BCK_FILENAME}.tgz* md5sum.txt myrestore.bat myrestore.sh; do
