@@ -316,7 +316,7 @@ disksize_dest=`LANG=C fdisk -l ${DEV_DEST} | grep "^Disk ${DEV_DEST}:" | awk '//
 #echo "DBG: DEV_DEST   ${disksize_dest}"
 if [ "${disksize_source}" -gt "${disksize_dest}" ]; then
 	echo "ERROR: Incompatible disk size: source:${disksize_source} dest:${disksize_dest}"
-	exit 1
+	[ "${OPT_NO_GEOMETRY_CHECK}" == "true" ] || exit 1
 fi
 
 # Verify that ${DEV_SOURCE} and ${DEV_DEST} disk geometries are compatible
@@ -352,7 +352,7 @@ cylinders_dest=`echo ${geom_dest} | awk '// {print $5}'`
 #echo "DBG: DEV_DEST   cylinders: ${cylinders_dest}"
 if [ "${cylinders_source}" -gt "${cylinders_dest}" ]; then
 	echo "ERROR: Incompatible #cylinders: source:${cylinders_source} dest:${cylinders_dest}"
-	exit 1
+	[ "${OPT_NO_GEOMETRY_CHECK}" == "true" ] || exit 1
 fi
 
 # TODO: Is partition table size calculated correctly??? (here is calculated as one cylinder)
