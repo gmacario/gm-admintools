@@ -143,7 +143,7 @@ fi
 
 cd ${BCK_TMPDIR}/${BCK_FILENAME} || exit 1
 
-if [ -e ${BCK_FILENAME}.tgz* ]; then
+if [ -e md5sum.txt ]; then
     echo "WARNING: skipping creation of ${BCK_FILENAME}"
 else
     # Make sure that VM is stopped
@@ -153,15 +153,15 @@ else
         exit 1
     fi
     echo "*** Enter password for ${USER} on ${HOSTNAME} if requested"
+    rm -f md5sum.txt
     (cd "${VM_REPOSITORY}" && \
 	sudo tar cvz ${VM_NAME}) |
 	split -d --bytes=${BCK_CHUNKSIZE} - ${BCK_FILENAME}.tgz- || exit 1
-    rm -f md5sum.txt
     echo "*** You may restart your VM now"
-fi
 
-echo "*** Calculating md5sum of ${BCK_FILENAME}"
-md5sum ${BCK_FILENAME}.tgz* >md5sum.txt || exit 1
+    echo "*** Calculating md5sum of ${BCK_FILENAME}"
+    md5sum ${BCK_FILENAME}.tgz* >md5sum.txt || exit 1
+fi
 
 num_splits=`ls ${BCK_FILENAME}.tgz-* | wc -l`
 
