@@ -13,7 +13,7 @@
 #	$ LANG=C time sudo ./clonedisk.sh
 #
 # The script attempts to fetch configuration options
-# from the first file in the following list:
+# from the first file in the following search list:
 #	* ./clonedisk.conf
 #	* ${HOME}/.clonedisk/clonedisk.conf
 #	* /etc/clonedisk.conf
