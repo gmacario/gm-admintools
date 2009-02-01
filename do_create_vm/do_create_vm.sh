@@ -41,7 +41,7 @@ VM_NAME=WR_PFI-macario
 
 # -----------------------------------------------------------------------------
 # Main Program starts here
-echo -e "$0 - v0.1\n"
+echo -e "$0 - v0.2\n"
 
 #set -x
 
