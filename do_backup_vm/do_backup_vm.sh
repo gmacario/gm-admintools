@@ -6,10 +6,26 @@
 #
 # Language:	Linux Shell Script
 #
+# Usage example:
+#       $ ./do_backup_vm.sh
+#
+# The script attempts to fetch configuration options
+# from the first file in the following search list:
+#       * ./do_backup_vm.conf
+#       * ${HOME}/.do_backup_vm/do_backup_vm.conf
+#       * /etc/do_backup_vm.conf
+#
+# Package Dependencies:
+#       Required:       awk cp fileutils samba sh
+#	Optional:	?
+#
 # Copyright 2007-2009 Magneti Marelli Electronic Systems - All Rights Reserved
 # =============================================================================
 
-# Configurable parameters
+# Configurable Parameters
+#
+# NOTE: The following configuration variables
+#       may be overridden by do_clone_disk.conf (see comments above)
 
 # NAS Share used to save backups
 NAS_SHARE=//itven1nnas1.venaria.marelli.it/lupin
@@ -32,7 +48,6 @@ VM_REPOSITORY="/var/lib/vmware/Virtual Machines"
 # Name of the VM to backup
 #VM_NAME=Ubuntu804-WR_PFIjan19
 #VM_NAME=lupin07
-VM_NAME=lupin08
 
 # The following options are still unused:
 #NAS_MOUNTPOINT=/mnt/lupin
@@ -57,6 +72,24 @@ BCK_CHUNKSIZE=1024m
 echo -e "$0 - v0.3\n"
 
 # set -x
+
+# Try to source configuration from conffile
+#
+conffile=""
+if [ -e ./do_backup_vm.conf ]; then
+    conffile=./do_backup_vm.conf
+elif [ -e ${HOME}/.do_backup_vm/do_backup_vm.conf ]; then
+    conffile=${HOME}/.do_backup_vm/do_backup_vm.conf
+elif [ -e /etc/do_backup_vm.conf ]; then
+    conffile=/etc/do_backup_vm.conf
+else
+    echo "WARNING: no conffile found, using defaults"
+fi
+if [ "${conffile}" != "" ]; then
+    echo "== Reading configuration from file ${conffile}"
+    source ${conffile} || exit 1
+fi
+echo ""
 
 # Request parameters if not specified in the section above
 if [ "${NAS_USER}" = "" ]; then

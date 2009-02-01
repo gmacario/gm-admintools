@@ -1,0 +1,37 @@
+#!/bin/sh
+# =============================================================================
+# Project:	LUPIN
+#
+# Description:	Sample configuration file for do_backup_vm.sh
+#
+# Language:	Linux Shell Script
+#
+# Copyright 2007-2009 Magneti Marelli Electronic Systems - All Rights Reserved
+# =============================================================================
+
+# Configurable parameters
+
+# NAS Share used to save backups
+NAS_SHARE=//itven1nnas1.venaria.marelli.it/lupin
+#
+# Active Directory credentials (domain/user/password) on NAS_SHARE
+NAS_DOMAIN=mmemea
+#NAS_USER=paolodoz
+#NAS_PASSWORD=MyPassword
+#
+# Directory under NAS_SHARE where to save backup
+NAS_BACKUPDIR=/Backup_VM
+
+# Directory where backup is created before uploading to NAS
+#BCK_TMPDIR=${HOME}/tmp/${NAS_BACKUPDIR}
+BCK_TMPDIR=/var/tmp/${NAS_BACKUPDIR}
+
+# Repository containing VM
+VM_REPOSITORY="/var/lib/vmware/Virtual Machines"
+#
+# Name of the VM to backup
+#VM_NAME=Ubuntu804-WR_PFIjan19
+#VM_NAME=lupin07
+VM_NAME=lupin08
+
+# === EOF ===
