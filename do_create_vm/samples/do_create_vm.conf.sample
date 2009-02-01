@@ -1,0 +1,9 @@
+# TODO: Should source this from do_create_vm.sh
+
+VM_BCKDIR=/var/tmp/Backup_VM
+VM_BCKDATE=20090121
+VM_OLDNAME=Ubuntu804-WR_PFIjan19
+
+VM_NAME=WR_PFI-macario
+
+# === EOF ===
