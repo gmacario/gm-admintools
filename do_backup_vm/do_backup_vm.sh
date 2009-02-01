@@ -58,15 +58,6 @@ VM_REPOSITORY="/var/lib/vmware/Virtual Machines"
 # You should not need to change the script below
 # -----------------------------------------------------------------------------
 
-# Those parameters should not usually be changed
-
-BCK_FILENAME=`date +%Y%m%d`-${VM_NAME}
-
-# NOTE: --bytes=xxx syntax of split has changed between ver 5.x and 6.x
-# Consult your manpage if you have any problems
-BCK_CHUNKSIZE=1024m
-#BCK_CHUNKSIZE=4500M
-
 # -----------------------------------------------------------------------------
 # Main Program starts here
 echo -e "$0 - v0.3\n"
@@ -91,7 +82,21 @@ if [ "${conffile}" != "" ]; then
 fi
 echo ""
 
-# Request parameters if not specified in the section above
+#set -x
+
+# Export conf variables to child processes
+#export VM_NAME
+
+# Those parameters should not usually be changed
+
+BCK_FILENAME=`date +%Y%m%d`-${VM_NAME}
+
+# NOTE: --bytes=xxx syntax of split has changed between ver 5.x and 6.x
+# Consult your manpage if you have any problems
+BCK_CHUNKSIZE=1024m
+#BCK_CHUNKSIZE=4500M
+
+## Request parameters if not specified in the section above
 if [ "${NAS_USER}" = "" ]; then
     read -p "Enter NAS_USER: " NAS_USER
 fi
