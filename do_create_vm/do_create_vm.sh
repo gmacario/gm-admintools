@@ -85,11 +85,20 @@ echo "*** Extracting backup into ${VM_DESTDIR}..."
 echo "== Created new VM ${VM_NAME} under ${VM_DESTDIR}"
 echo "   from backup ${VM_BCKDATE} of VM ${VM_BASELINE}"
 
-set -x
+#set -x
 
 cd ${VM_DESTDIR}
 if [ "${VM_OLDNAME}" != ${VM_NAME} ]; then
-    mv "${VM_OLDNAME}" "{VM_NAME}"
+    mv "${VM_OLDNAME}" "${VM_NAME}"
+    cd "${VM_NAME}"
+    for file in *.vmx; do
+	cp $file $file.ORIG
+	awk -v vm_name="${VM_NAME}" '
+/^displayName/	{printf("displayname = \"%s\"\n", vm_name);
+		next }
+//		{print $0}
+' $file.ORIG >$file
+    done
 fi
 
 # TODO: Should change VM name into *.vm"
