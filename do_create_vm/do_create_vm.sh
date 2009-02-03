@@ -28,12 +28,12 @@
 #       may be overridden by do_create_vm.conf (see comments above)
 
 VM_BCKDIR=/var/tmp/Backup_VM
-VM_BCKDATE=20090201
-VM_OLDNAME=Ubuntu804-WR_PFIjan28
-
-VM_BASELINE=${VM_BCKDATE}-${VM_OLDNAME}
 VM_DESTDIR=${HOME}/tmp
-VM_NAME=WR_PFI-macario
+
+#VM_BCKDATE=20090201
+#VM_OLDNAME=Ubuntu804-WR_PFIjan28
+#VM_NAME=WR_PFI-macario
+
 
 # -----------------------------------------------------------------------------
 # You should not need to change the script below
@@ -45,6 +45,30 @@ echo -e "$0 - v0.2\n"
 
 #set -x
 
+# Try to source configuration from conffile
+#
+conffile=""
+if [ -e ./do_create_vm.conf ]; then
+    conffile=./do_create_vm.conf
+elif [ -e ${HOME}/.do_create_vm/do_create_vm.conf ]; then
+    conffile=${HOME}/.do_create_vm/do_create_vm.conf
+elif [ -e /etc/do_create_vm.conf ]; then
+    conffile=/etc/do_create_vm.conf
+else
+    echo "WARNING: no conffile found, using defaults"
+fi
+if [ "${conffile}" != "" ]; then
+    echo "== Reading configuration from file ${conffile}"
+    source ${conffile} || exit 1
+fi
+echo ""
+
+# Those parameters should not usually be changed
+#
+VM_BASELINE=${VM_BCKDATE}-${VM_OLDNAME}
+
+# Request parameters if not specified in the section above
+#
 if [ ! -e ${VM_BCKDIR}/${VM_BASELINE} ]; then
     echo "ERROR: Cannot find VM ${VM_BASELINE} under ${VM_BCKDIR}"
 fi
