@@ -41,7 +41,7 @@ VM_DESTDIR=${HOME}/tmp
 
 # -----------------------------------------------------------------------------
 # Main Program starts here
-echo -e "$0 - v0.2\n"
+echo "$0 - v0.3\n"
 
 #set -x
 
@@ -59,18 +59,30 @@ else
 fi
 if [ "${conffile}" != "" ]; then
     echo "== Reading configuration from file ${conffile}"
-    source ${conffile} || exit 1
+    . ${conffile} || exit 1
 fi
 echo ""
 
 # Sanity checks
 #
+if [ -z ${VM_BCKDIR} ]; then
+    echo "ERROR: Should define VM_BCKDIR"
+    exit 1
+fi
 if [ -z ${VM_BCKDATE} ]; then
     echo "ERROR: Should define VM_BCKDATE"
     exit 1
 fi
 if [ -z ${VM_OLDNAME} ]; then
     echo "ERROR: Should define VM_OLDNAME"
+    exit 1
+fi
+if [ -z ${VM_DESTDIR} ]; then
+    echo "ERROR: Should define VM_DESTDIR"
+    exit 1
+fi
+if [ -z ${VM_NAME} ]; then
+    echo "ERROR: Should define VM_NAME"
     exit 1
 fi
 
