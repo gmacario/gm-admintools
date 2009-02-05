@@ -77,7 +77,7 @@ else
     echo "WARNING: no conffile found, using defaults"
 fi
 if [ "${conffile}" != "" ]; then
-    echo "== Reading configuration from file ${conffile}"
+    echo "== Reading configuration from ${conffile}"
     source ${conffile} || exit 1
 fi
 echo ""
@@ -97,21 +97,23 @@ BCK_CHUNKSIZE=1024m
 #BCK_CHUNKSIZE=4500M
 
 ## Request parameters if not specified in the section above
-if [ "${NAS_USER}" = "" ]; then
-    read -p "Enter NAS_USER: " NAS_USER
-fi
-if [ "${NAS_PASSWORD}" = "" ]; then
-    echo -n "Enter NAS_PASSWORD: "
-    stty -echo
-    read NAS_PASSWORD
-    echo
-    stty echo
-fi
 if [ "${BCK_TMPDIR}" = "" ]; then
     read -p "Enter BCK_TMPDIR: " VM_NAME
 fi
 if [ "${VM_NAME}" = "" ]; then
     read -p "Enter VM_NAME: " VM_NAME
+fi
+if [ "${OPT_EXPORT_TO_NAS}" = "true" ]; then
+    if [ "${NAS_USER}" = "" ]; then
+        read -p "Enter NAS_USER: " NAS_USER
+    fi
+    if [ "${NAS_PASSWORD}" = "" ]; then
+        echo -n "Enter NAS_PASSWORD: "
+        stty -echo
+        read NAS_PASSWORD
+        echo
+        stty echo
+    fi
 fi
 
 ## Make sure NAS_SHARE is mounted
@@ -161,6 +163,8 @@ else
 
     echo "*** Calculating md5sum of ${BCK_FILENAME}"
     md5sum ${BCK_FILENAME}.tgz* >md5sum.txt || exit 1
+
+    echo "*** Backup ${BCK_FILENAME} created successfully on ${BCK_TMPDIR}"
 fi
 
 num_splits=`ls ${BCK_FILENAME}.tgz-* | wc -l`
@@ -182,27 +186,31 @@ tar xvfz xxx.tgz
 EOF
 chmod 755 myrestore.sh
 
-echo "*** Copying tarball to ${NAS_SHARE}"
-#echo "*** Enter password for ${NAS_USER} on ${NAS_SHARE} if requested"
 
-CMDFILE=smb_commands.tmp
-echo >${CMDFILE} || exit 1
+if [ "${OPT_EXPORT_TO_NAS}" = "true" ]; then
+    echo "*** Copying tarball to ${NAS_SHARE}"
+    #echo "*** Enter password for ${NAS_USER} on ${NAS_SHARE} if requested"
 
-echo "cd ${NAS_BACKUPDIR}/" | tr '/' '\\'	>>${CMDFILE}
-echo "dir"			>>${CMDFILE}
-echo ""				>>${CMDFILE}
-echo "mkdir ${BCK_FILENAME}"	>>${CMDFILE}
-echo "cd ${BCK_FILENAME}"	>>${CMDFILE}
-for file in ${BCK_FILENAME}.tgz* md5sum.txt myrestore.bat myrestore.sh; do
-    echo "put ${file}"		>>${CMDFILE}
-done
-echo "dir"			>>${CMDFILE}
-echo "quit" 			>>${CMDFILE}
+    CMDFILE=smb_commands.tmp
+    echo >${CMDFILE} || exit 1
 
-cat ${CMDFILE} | smbclient --user ${NAS_USER} --workgroup ${NAS_DOMAIN} \
-${NAS_SHARE} ${NAS_PASSWORD} || exit 1
+    echo "cd ${NAS_BACKUPDIR}/" | tr '/' '\\'	>>${CMDFILE}
+    echo "dir"			>>${CMDFILE}
+    echo ""				>>${CMDFILE}
+    echo "mkdir ${BCK_FILENAME}"	>>${CMDFILE}
+    echo "cd ${BCK_FILENAME}"	>>${CMDFILE}
+    for file in ${BCK_FILENAME}.tgz* md5sum.txt myrestore.bat myrestore.sh; do
+        echo "put ${file}"		>>${CMDFILE}
+    done
+    echo "dir"			>>${CMDFILE}
+    echo "quit" 			>>${CMDFILE}
 
-# TODO rm -f ${CMDFILE}
+    cat ${CMDFILE} | smbclient --user ${NAS_USER} --workgroup ${NAS_DOMAIN} \
+    ${NAS_SHARE} ${NAS_PASSWORD} || exit 1
+
+    # TODO rm -f ${CMDFILE}
+fi
+
 # TODO: rm -rf ${BCK_TMPDIR}
 
 # === EOF ===
