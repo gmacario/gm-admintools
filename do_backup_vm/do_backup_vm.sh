@@ -171,18 +171,28 @@ num_splits=`ls ${BCK_FILENAME}.tgz-* | wc -l`
 
 # set -x
 
-cat >myrestore.bat << EOF
-@echo off
-md5sum -c md5sum.txt
-cat *.tgz-* >xxx.tgz
-tar xvfz xxx.tgz
-EOF
+#cat >myrestore.bat << EOF
+#@echo off
+#md5sum -c md5sum.txt
+#cat *.tgz-* >xxx.tgz
+#tar xvfz xxx.tgz
+#EOF
 
 cat >myrestore.sh << EOF
-#/bin/sh
-md5sum -c md5sum.txt || exit 1
-cat *.tgz-* >xxx.tgz
-tar xvfz xxx.tgz
+#!/bin/sh
+#
+# Sample script to restore VM - Personalize as needed
+
+set -x
+
+VM_BCKDIR=/cygdrive/f/Backup_VM/20090201-Ubuntu804-WR_PFIjan28/
+VM_DESTDIR=/cygdrive/f/Macario_VM/
+
+mkdir -p ${VM_DESTDIR} || exit 1
+cd ${VM_BCKDIR} && md5sum -c md5sum.txt || exit 1
+cd ${VM_DESTDIR} && cat ${VM_BCKDIR}/*.tgz-* | tar xvz
+
+# === EOF ===
 EOF
 chmod 755 myrestore.sh
 
@@ -199,7 +209,7 @@ if [ "${OPT_EXPORT_TO_NAS}" = "true" ]; then
     echo ""				>>${CMDFILE}
     echo "mkdir ${BCK_FILENAME}"	>>${CMDFILE}
     echo "cd ${BCK_FILENAME}"	>>${CMDFILE}
-    for file in ${BCK_FILENAME}.tgz* md5sum.txt myrestore.bat myrestore.sh; do
+    for file in ${BCK_FILENAME}.tgz* md5sum.txt myrestore.sh; do
         echo "put ${file}"		>>${CMDFILE}
     done
     echo "dir"			>>${CMDFILE}
