@@ -188,9 +188,9 @@ set -x
 VM_BCKDIR=/cygdrive/f/Backup_VM/20090201-Ubuntu804-WR_PFIjan28/
 VM_DESTDIR=/cygdrive/f/Macario_VM/
 
-mkdir -p ${VM_DESTDIR} || exit 1
-cd ${VM_BCKDIR} && md5sum -c md5sum.txt || exit 1
-cd ${VM_DESTDIR} && cat ${VM_BCKDIR}/*.tgz-* | tar xvz
+mkdir -p \${VM_DESTDIR} || exit 1
+cd \${VM_BCKDIR} && md5sum -c md5sum.txt || exit 1
+cd \${VM_DESTDIR} && cat \${VM_BCKDIR}/*.tgz-* | tar xvz
 
 # === EOF ===
 EOF
