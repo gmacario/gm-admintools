@@ -104,13 +104,13 @@ if [ -e ${VM_DESTDIR}/${VM_NAME} ]; then
 fi
 #mkdir -p ${VM_DESTDIR}/${VM_NAME} || exit 1
 
-(cd ${VM_BCKDIR}/${VM_BASELINE}; if [ -e md5sum.txt ]; then
+cd ${VM_BCKDIR}/${VM_BASELINE}
+if [ -e md5sum.txt ]; then
     echo "*** Verifying backup file checksums..."
-    md5sum -c md5sum.txt
+    md5sum -c md5sum.txt || exit 1
 else
-    echo "ERROR: Checksums of files on ${VM_BCKDIR}/${VM_BASELINE} do not match"
-    exit 1
-fi)
+    echo "WARNING: No md5sum.txt in ${VM_BCKDIR}/${VM_BASELINE}"
+fi
 
 # Everything seems OK, now unpack VM_BASELINE
 #
