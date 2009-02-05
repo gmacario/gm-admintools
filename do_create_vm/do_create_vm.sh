@@ -58,7 +58,7 @@ else
     echo "WARNING: no conffile found, using defaults"
 fi
 if [ "${conffile}" != "" ]; then
-    echo "== Reading configuration from file ${conffile}"
+    echo "== Reading configuration from ${conffile}"
     . ${conffile} || exit 1
 fi
 echo ""
