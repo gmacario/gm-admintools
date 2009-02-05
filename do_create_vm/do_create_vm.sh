@@ -63,14 +63,22 @@ if [ "${conffile}" != "" ]; then
 fi
 echo ""
 
-# Those parameters should not usually be changed
+# Sanity checks
 #
+if [ -z ${VM_BCKDATE} ]; then
+    echo "ERROR: Should define VM_BCKDATE"
+    exit 1
+fi
+if [ -z ${VM_OLDNAME} ]; then
+    echo "ERROR: Should define VM_OLDNAME"
+    exit 1
+fi
+
 VM_BASELINE=${VM_BCKDATE}-${VM_OLDNAME}
 
-# Request parameters if not specified in the section above
-#
 if [ ! -e ${VM_BCKDIR}/${VM_BASELINE} ]; then
     echo "ERROR: Cannot find VM ${VM_BASELINE} under ${VM_BCKDIR}"
+    exit 1
 fi
 if [ -e ${VM_DESTDIR}/${VM_OLDNAME} ]; then
     echo "ERROR: ${VM_OLDNAME} already exists under ${VM_DESTDIR}"
