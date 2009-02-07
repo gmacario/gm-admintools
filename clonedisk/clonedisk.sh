@@ -26,6 +26,8 @@
 #
 # TODO:	There are still a few subtle bugs with OPT_RESIZE_PARTITIONS
 #	when source and dest disks have different geometries
+#
+# TODO: Should copy volume label on (ext3,vfat,ntfs) partitions
 # =============================================================================
 
 # Configurable Parameters
