@@ -89,7 +89,7 @@ echo ""
 
 # Those parameters should not usually be changed
 
-BCK_FILENAME=`date +%Y%m%d`-${VM_NAME}
+
 
 # NOTE: --bytes=xxx syntax of split has changed between ver 5.x and 6.x
 # Consult your manpage if you have any problems
@@ -103,6 +103,7 @@ fi
 if [ "${VM_NAME}" = "" ]; then
     read -p "Enter VM_NAME: " VM_NAME
 fi
+BCK_FILENAME=`date +%Y%m%d`-${VM_NAME}
 if [ "${OPT_EXPORT_TO_NAS}" = "true" ]; then
     if [ "${NAS_USER}" = "" ]; then
         read -p "Enter NAS_USER: " NAS_USER
