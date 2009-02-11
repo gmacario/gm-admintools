@@ -16,8 +16,8 @@
 #       * /etc/do_create_vm.conf
 #
 # Package Dependencies:
-#       Required:       awk cp fileutils samba sh tar
-#       Optional:       ?
+#       Required:       awk cp fileutils sh tar
+#       Optional:       samba
 #
 # Copyright 2007-2009 Magneti Marelli Electronic Systems - All Rights Reserved
 # =============================================================================
