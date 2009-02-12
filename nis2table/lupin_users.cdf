@@ -1,0 +1,20 @@
+ LASTNAME;firstname;username
+CAVALLOTTI;Piero;cavallot
+CERATO;Alberto;cerato
+DESANA;Davide;desana
+DOZ;Paolo;paolodoz
+FERRARA;Riccardo;ferrara
+GHIAZZA;Matteo;ghiazza
+MACARIO;Giampaolo;macario
+NUZZI;Gino;ginnuzzi
+PIERRI;Massimo;pierri
+PIRRA;Giorgio;pirra
+PONCHIONE;Giorgio;ponchion
+RUSSO;Angelo;angrusso
+SANNA;Andrea;asanna
+SARTORI;Claudio;sartoric
+SERRETTI;Enrico;serrett
+SIMMINI;Angelo;asimmini
+SPONZA;Cristiano;sponza
+STOCCHINO;Marco;stocchino
+VIOLINO;Walter;violino
