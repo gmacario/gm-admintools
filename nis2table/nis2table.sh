@@ -21,13 +21,13 @@ BEGIN	{
 	printf("%s;%s;%s\n", " LASTNAME", "firstname", "username");
 	FS=":"
 	#
-	lupin_users["aghemo"] = 1;
 	lupin_users["angrusso"] = 1;
 	lupin_users["asanna"] = 1;
 	lupin_users["asimmini"] = 1;
 	lupin_users["cavallot"] = 1;
 	lupin_users["cerato"] = 1;
 	lupin_users["desana"] = 1;
+	lupin_users["faghemo"] = 1;
 	lupin_users["ferrara"] = 1;
 	#lupin_users["fmocci"] = 1;
 	lupin_users["ghiazza"] = 1;
@@ -50,6 +50,9 @@ BEGIN	{
 	#
 	firstname=gensub(/\ [a-zA-Z]*$/, "", "g", $5);
 	lastname=toupper(gensub(/.*\ /, "", "g", $5));
+	#
+	# Fixup macario firstname
+	if (firstname == "Giampaolo") firstname="Gianpaolo";
 	#print "DBG: username=" username
 	#print "DBG: firstname=" firstname
 	#print "DBG: lastname=" lastname
