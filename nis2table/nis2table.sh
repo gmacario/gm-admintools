@@ -1,4 +1,20 @@
 #!/bin/sh
+# =============================================================================
+# Project:      LUPIN
+#
+# Description:  Create an Excel table from NIS user database
+#
+# Language:     Linux Shell Script
+#
+# Usage example:
+#       $ ./nis2table.sh
+#
+# Package Dependencies:
+#       Required:       awk yp-tools
+#       Optional:       ?
+#
+# Copyright 2007-2009 Magneti Marelli Electronic Systems - All Rights Reserved
+# =============================================================================
 
 ypcat passwd | awk '
 BEGIN	{
@@ -43,4 +59,6 @@ BEGIN	{
 	}
 END	{
 	}
-' | sort >lupin_users.cdf
+' | sort >lupin_users.csv
+
+# === EOF ==
