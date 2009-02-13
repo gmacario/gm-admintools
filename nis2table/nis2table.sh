@@ -74,6 +74,6 @@ BEGIN	{
 	}
 END	{
 	}
-' | sort >lupin_users.csv
+' | sort >`ypdomainname`_users.csv
 
 # === EOF ==
