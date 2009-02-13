@@ -16,8 +16,7 @@
 # Copyright 2007-2009 Magneti Marelli Electronic Systems - All Rights Reserved
 # =============================================================================
 
-ypcat passwd || exit 1
-ypcat passwd | awk '
+(ypcat passwd  || exit 1 ) | awk '
 BEGIN	{
 	printf("%s;%s;%s;%s;%s\n", "* LASTNAME", "firstname", "username", "in_MotoGP", "in_MotoGB");
 	FS=":"
@@ -56,18 +55,19 @@ BEGIN	{
 //	{
 	#print "DBG: $0=" $0
 	username=$1
-	if (! (username in lupin_users) ) next;
+	#print "DBG: username=" username
+	#if (! (username in lupin_users) ) next;
 	#
 	firstname=gensub(/\ [a-zA-Z]*$/, "", "g", $5);
 	lastname=toupper(gensub(/.*\ /, "", "g", $5));
-	in_motoGP = ((username in lupin_users) && index("MOTOGP", lupin_users[username]) >= 0) ? "Yes" : "No";
-	in_motoGB = ((username in lupin_users) && index("MOTOGB", lupin_users[username]) >= 0) ? "Yes" : "No";
+	in_MotoGP = ((username in lupin_users) && index("MOTOGP", lupin_users[username]) >= 0) ? "Yes" : "No";
+	in_MotoGB = ((username in lupin_users) && index("MOTOGB", lupin_users[username]) >= 0) ? "Yes" : "No";
 	#
 	# Fixup macario firstname
 	if (firstname == "Giampaolo") firstname="Gianpaolo";
-	#print "DBG: username=" username
 	#print "DBG: firstname=" firstname
 	#print "DBG: lastname=" lastname
+	#print "DBG: in_MotoGP=" in_MotoGP
 	#print "DBG:"
 	#
 	printf("%s;%s;%s;%s;%s\n", lastname, firstname, username, in_MotoGP, in_MotoGB);
