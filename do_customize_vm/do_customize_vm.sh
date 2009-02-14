@@ -31,7 +31,7 @@ fi
 # Make sure that user exists
 id ${PFI_USER} >/dev/null 
 retval=$?
-echo DBG: retval from id=$retval
+#echo DBG: retval from id=$retval
 if [ $retval -ne 0 ]; then
 	echo "Please append nis to /etc/nsswitch.conf"
 	echo "See [[Configuring_NIS_Client_on_LUPIN_Hosts]] on LUPIN wiki"
@@ -58,14 +58,13 @@ fi
 
 # Create home directory for PFI_USER
 new_homedir=`ypcat passwd | grep -e "^${PFI_USER}:" | cut -d ':' -f 6`
-echo "DBG: new_homedir=$new_homedir"
+#echo "DBG: new_homedir=$new_homedir"
 
 mkdir $new_homedir
 cd /etc/skel && cp -a . $new_homedir
-chown -R $PFI_USER.$PFI_GROUP $new_homedir
 
-# Change ownership of {/opt/WindRiver,/opt/LUPIN}
-for dir in /opt/WindRiver /opt/LUPIN; do
+# Change ownership of relevant files
+for dir in $new_homedir /opt/WindRiver /opt/LUPIN; do
 	echo chown -R ${PFI_USER}.${PFI_GROUP} $dir
 	chown -R ${PFI_USER}.${PFI_GROUP} $dir || exit 1
 done
