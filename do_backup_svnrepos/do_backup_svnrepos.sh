@@ -6,7 +6,12 @@
 NOW=`date '+%Y%m%d-%H%M'`
 REMOTE=macario@inno05.venaria.marelli.it
 
-set -x
+REPOSITORIES=""
+REPOSITORIES+=" inno"
+REPOSITORIES+=" mmseti"
+REPOSITORIES+=" osstbox"
+
+#set -x
 
 # TODO: Understand error dumping mmseti:
 #	...
@@ -14,9 +19,17 @@ set -x
 #	* Dumped revision 5.
 #	svnadmin: Can't read length line in file '/opt/repos/mmseti/db/revs/6'
 #
-(ssh ${REMOTE} svnadmin dump /opt/repos/inno)    | split -b 1024m -d - ${NOW}-bk-inno.svndump-split && \
-#(ssh ${REMOTE} svnadmin dump /opt/repos/mmseti)  >${NOW}-bk-mmseti.svndump && \
-(ssh ${REMOTE} svnadmin dump /opt/repos/osstbox) | split -b 1024m -d - ${NOW}-bk-osstbox.svndump-split && \
-echo "Done"
+
+for repos in ${REPOSITORIES}; do
+    echo "INFO: Dumping SVN repos $repos..."
+    (ssh ${REMOTE} svnadmin dump /opt/repos/$repos | gzip -c -9) \
+	| split -b 1024m -d - ${NOW}-bk-$repos.svndump.gz-split
+    retval=$?
+    if [ $retval -ne 0 ]; then
+	echo "ERROR dumping repository $repos";
+	exit 1
+    fi
+done
+echo "INFO: Dumping repositories completed"
 
 # === EOF ===
