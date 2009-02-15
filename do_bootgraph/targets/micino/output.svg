@@ -1,0 +1,30 @@
+<?xml version="1.0" standalone="no"?> 
+<svg width="1000" height="100%" version="1.1" xmlns="http://www.w3.org/2000/svg">
+<rect x="33.3800086226043" width="52.8067099538821" y="150" height="145" style="fill:rgb(0,0,255);fill-opacity:0.5;stroke-width:1;stroke:rgb(0,0,0)"/>
+<text transform="translate(39.3800086226043,154) rotate(90)">acpi_pci_root_init</text>
+<rect x="99.785061991299" width="17.1350744026233" y="150" height="145" style="fill:rgb(0,255,0);fill-opacity:0.5;stroke-width:1;stroke:rgb(0,0,0)"/>
+<text transform="translate(105.785061991299,154) rotate(90)">init_acpi_pm_clocksource</text>
+<rect x="119.220699476112" width="575.161125119214" y="150" height="145" style="fill:rgb(255,0,20);fill-opacity:0.5;stroke-width:1;stroke:rgb(0,0,0)"/>
+<text transform="translate(125.220699476112,154) rotate(90)">populate_rootfs</text>
+<rect x="702.833936480149" width="28.0173235958872" y="150" height="145" style="fill:rgb(255,255,20);fill-opacity:0.5;stroke-width:1;stroke:rgb(0,0,0)"/>
+<text transform="translate(708.833936480149,154) rotate(90)">pci_init</text>
+<rect x="731.229557242334" width="175.970238950655" y="150" height="145" style="fill:rgb(255,0,255);fill-opacity:0.5;stroke-width:1;stroke:rgb(0,0,0)"/>
+<text transform="translate(737.229557242334,154) rotate(90)">isapnp_init</text>
+<rect x="910.067308571653" width="34.3768861946879" y="150" height="145" style="fill:rgb(0,255,255);fill-opacity:0.5;stroke-width:1;stroke:rgb(0,0,0)"/>
+<text transform="translate(916.067308571653,154) rotate(90)">pty_init</text>
+<text transform="translate(0,89) rotate(90)">0.61</text>
+<text transform="translate(63.3333333333333,89) rotate(90)">0.73</text>
+<text transform="translate(126.666666666667,89) rotate(90)">0.86</text>
+<text transform="translate(190,89) rotate(90)">0.99</text>
+<text transform="translate(253.333333333333,89) rotate(90)">1.12</text>
+<text transform="translate(316.666666666667,89) rotate(90)">1.24</text>
+<text transform="translate(380,89) rotate(90)">1.37</text>
+<text transform="translate(443.333333333333,89) rotate(90)">1.5</text>
+<text transform="translate(506.666666666667,89) rotate(90)">1.63</text>
+<text transform="translate(570,89) rotate(90)">1.76</text>
+<text transform="translate(633.333333333333,89) rotate(90)">1.88</text>
+<text transform="translate(696.666666666667,89) rotate(90)">2.01</text>
+<text transform="translate(760,89) rotate(90)">2.14</text>
+<text transform="translate(823.333333333334,89) rotate(90)">2.27</text>
+<text transform="translate(886.666666666667,89) rotate(90)">2.39</text>
+</svg>
