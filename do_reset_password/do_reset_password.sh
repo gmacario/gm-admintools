@@ -8,8 +8,10 @@ BEGIN	{ FS = ":" }
 	if [ "$username" != "rodino" ]; then
 		echo "DBG: Change password for user $username"
 		#sudo passwd $username
-		#su -c passwd $username
+		#sudo su -c passwd $username
 		#sudo yppasswd -p $username
+		#su -c passwd $username
+		su -c yppasswd $username
 	fi
 done
 
