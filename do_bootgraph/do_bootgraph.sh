@@ -4,16 +4,16 @@
 upstream=http://ftp.gnu.org/tmp/linux-libre-fsf2_2.6.28/linux-2.6.28
 
 # Work directory
-workdir=`hostname`
-#workdir=target
+#workdir=`hostname`
+workdir=targets/micino
 #
 # Uncomment if working across target (data should exist in workdir)
-#OPT_CROSS_TARGET=true
+OPT_CROSS_TARGET=true
 #
 # Output file
 outfile=$workdir/output.svg
 
-echo "INFO: bootgraph v0.1"
+echo "INFO: do_bootgraph v0.1"
 
 if [ ! -e bootgraph.pl ]; then
 	wget $upstream/scripts/bootgraph.pl
