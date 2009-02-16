@@ -1,5 +1,11 @@
 #!/bin/sh
 
+# Required:	perl
+#
+# Optional:	patch wget
+
+#set -x
+
 #upstream=http://lxr.linux.no/linux+v2.6.28.5
 upstream=http://ftp.gnu.org/tmp/linux-libre-fsf2_2.6.28/linux-2.6.28
 
@@ -17,6 +23,7 @@ echo "INFO: do_bootgraph v0.1"
 
 if [ ! -e bootgraph.pl ]; then
 	wget $upstream/scripts/bootgraph.pl
+	cat patches/*.diff | patch -p0
 fi
 
 if [ "$OPT_CROSS_TARGET" = "true" ]; then
@@ -64,7 +71,15 @@ if [ $retval -ne 0 ]; then
 	exit 1
 fi
 
-cat $workdir/dmesg.txt | perl bootgraph.pl >$outfile || exit 1
+cat $workdir/dmesg.txt | perl bootgraph.pl >$outfile
+retval=$?
+#echo DBG: retval=$retval
+if [ $retval -ne 0 ]; then
+	cat $outfile
+	rm -f $outfile
+	echo "ERROR: bootgraph.pl returned error $retval"
+	exit 1
+fi
 echo "INFO: Boot graph saved as $outfile"
 
 exit 0

@@ -82,7 +82,7 @@ if ($count == 0) {
 	print "'initcall_debug' are passed on the kernel command line.\n\n";
 	print "Usage: \n";
 	print "      dmesg | perl scripts/bootgraph.pl > output.svg\n\n";
-	exit;
+	exit 1;
 }
 
 print "<?xml version=\"1.0\" standalone=\"no\"?> \n";
@@ -152,3 +152,4 @@ while ($time < $maxtime) {
 }
 
 print "</svg>\n";
+exit 0;

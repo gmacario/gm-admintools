@@ -1,0 +1,16 @@
+--- bootgraph.pl.ORIG	2009-02-16 22:07:31.000000000 +0100
++++ bootgraph.pl	2009-02-16 22:08:15.000000000 +0100
+@@ -82,7 +82,7 @@
+ 	print "'initcall_debug' are passed on the kernel command line.\n\n";
+ 	print "Usage: \n";
+ 	print "      dmesg | perl scripts/bootgraph.pl > output.svg\n\n";
+-	exit;
++	exit 1;
+ }
+ 
+ print "<?xml version=\"1.0\" standalone=\"no\"?> \n";
+@@ -152,3 +152,4 @@
+ }
+ 
+ print "</svg>\n";
++exit 0;
