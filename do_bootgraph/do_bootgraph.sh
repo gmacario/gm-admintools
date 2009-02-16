@@ -35,6 +35,7 @@ else
 		zcat /proc/config.gz >$workdir/config.txt
 	else
 		echo WARNING: Make sure that kernel is built with CONFIG_PRINTK_TIME=y
+		# TODO: cp /boot/config-'uname -r' $workdir/config.txt
 	fi
 	cat /proc/cmdline >$workdir/cmdline.txt
 	dmesg >$workdir/dmesg.txt
