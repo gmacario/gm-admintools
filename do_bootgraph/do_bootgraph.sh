@@ -1,29 +1,50 @@
 #!/bin/sh
-
-# Required:	perl
+# =============================================================================
+# Project:      LUPIN
 #
-# Optional:	patch wget
+# Description:  Generate a graph out of the Linux kernel boot sequence
+#
+# Language:     Linux Shell Script
+#
+# Usage example:
+#       $ ./do_bootgraph.sh
+#
+# Package Dependencies:
+#	Required:	perl
+#	Optional:	patch wget
+#
+# Copyright 2007-2009 Magneti Marelli Electronic Systems - All Rights Reserved
+# =============================================================================
 
-#set -x
-
-#upstream=http://lxr.linux.no/linux+v2.6.28.5
-upstream=http://ftp.gnu.org/tmp/linux-libre-fsf2_2.6.28/linux-2.6.28
-
-# Work directory
-workdir=targets/`hostname`
-#workdir=targets/micino
+# Configurable Parameters
 #
 # Uncomment if working across target (data should exist in workdir)
 #OPT_CROSS_TARGET=true
 #
+# Work directory to store logs
+workdir=targets/`hostname`
+#workdir=targets/micino
+#
 # Output file
 outfile=$workdir/output.svg
 
-echo "INFO: do_bootgraph v0.1"
+# -----------------------------------------------------------------------------
+# You should not need to change the script below
+# -----------------------------------------------------------------------------
 
+#upstream=http://lxr.linux.no/linux+v2.6.28.5
+upstream=http://ftp.gnu.org/tmp/linux-libre-fsf2_2.6.28/linux-2.6.28
+
+# -----------------------------------------------------------------------------
+# Main Program starts here
+echo "INFO: do_bootgraph v0.2"
+
+#set -x
+
+# Source the Perl script from Linux sources and apply local patches
 if [ ! -e bootgraph.pl ]; then
-	wget $upstream/scripts/bootgraph.pl
-	cat patches/*.diff | patch -p0
+	wget $upstream/scripts/bootgraph.pl || exit 1
+	cat patches/*.diff | patch -p0 || exit 1
 fi
 
 if [ "$OPT_CROSS_TARGET" = "true" ]; then
@@ -34,8 +55,13 @@ else
 	if [ -e /proc/config.gz ]; then
 		zcat /proc/config.gz >$workdir/config.txt
 	else
-		echo WARNING: Make sure that kernel is built with CONFIG_PRINTK_TIME=y
-		# TODO: cp /boot/config-'uname -r' $workdir/config.txt
+		config_guess=/boot/config-`uname -r`
+		if [ -e $config_guess ]; then
+			echo "INFO: Taking kernel configuration from $config_guess"
+			cp $config_guess $workdir/config.txt
+		else
+			echo "WARNING: Cannot guess kernel configuration"
+		fi
 	fi
 	cat /proc/cmdline >$workdir/cmdline.txt
 	dmesg >$workdir/dmesg.txt
@@ -54,6 +80,9 @@ if [ -e $workdir/config.txt ]; then
 		echo ERROR: Please configure kernel with CONFIG_PRINTK_TIME=y
 		exit 1
 	fi
+else
+	echo "WARNING: No kernel configuration found"
+	echo "WARNING: Make sure that kernel has been built with CONFIG_PRINTK_TIME=y"
 fi
 
 grep "printk.time=1" $workdir/cmdline.txt >/dev/null
