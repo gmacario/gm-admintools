@@ -18,7 +18,39 @@ fi
 awk '
 BEGIN	{
 	#transtable["olduser"] = "newuser";
+	#transtable[""] = "";
 	transtable["mstocchino"] = "stocchino";
+	transtable["pdoz"] = "paolodoz";
+	transtable["gmacario"] = "macario";
+	transtable["gpirra"] = "pirra";
+	transtable["cbesozzi"] = "besozzi";
+	transtable["ebilliet"] = "billiet";
+	transtable["gcasanova"] = "casanova";
+	transtable["pcavallotti"] = "cavallot";
+	transtable["acerato"] = "cerato";
+	transtable["adamiano"] = "damiano";
+	transtable["ddesana"] = "desana";
+	transtable["sfarina"] = "farina";
+	transtable["rferrara"] = "ferrara";
+	transtable["lfresi"] = "fresi";
+	transtable["mghiazza"] = "ghiazza";
+	transtable["mmarcia"] = "marcia";
+	transtable["mnoberasco"] = "noberasco";
+	transtable["gnuzzi"] = "ginnuzzi";
+	transtable["nparolini"] = "parolini";
+	transtable["mpierri"] = "pierri";
+	transtable["gponchione"] = "ponchion";
+	transtable["arusso"] = "angrusso";
+	transtable["eserretti"] = "serrett";
+	transtable["wviolino"] = "violino";
+	transtable["csponza"] = "sponza";
+	transtable["elosego"] = "losego";
+	transtable["eturpault"] = "turpault";
+	transtable["mturinetto"] = "turinett";
+	transtable["ppinna"] = "pinna";
+	transtable["rherard"] = "herard";
+	transtable["yclemenceau"] = "clemence";
+
 	# TODO
 	
 	#transtable["oldrepos"] = "newrepos";
