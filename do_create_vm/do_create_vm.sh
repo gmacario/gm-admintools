@@ -41,7 +41,7 @@ VM_DESTDIR=${HOME}/tmp
 
 # -----------------------------------------------------------------------------
 # Main Program starts here
-echo "$0 - v0.3\n"
+echo "INFO: $0 - v0.4"
 
 #set -x
 
@@ -58,10 +58,9 @@ else
     echo "WARNING: no conffile found, using defaults"
 fi
 if [ "${conffile}" != "" ]; then
-    echo "== Reading configuration from ${conffile}"
+    echo "INFO: Reading configuration from ${conffile}"
     . ${conffile} || exit 1
 fi
-echo ""
 
 # Sanity checks
 #
@@ -94,19 +93,19 @@ if [ ! -e ${VM_BCKDIR}/${VM_BASELINE} ]; then
 fi
 if [ -e ${VM_DESTDIR}/${VM_OLDNAME} ]; then
     echo "ERROR: ${VM_OLDNAME} already exists under ${VM_DESTDIR}"
-    echo "       Please change ${VM_DESTDIR} or clean its contents"
+    echo "INFO: Please change ${VM_DESTDIR} or clean its contents"
     exit 1
 fi
 if [ -e ${VM_DESTDIR}/${VM_NAME} ]; then
     echo "ERROR: ${VM_NAME} already exists under ${VM_DESTDIR}"
-    echo "       Please change ${VM_DESTDIR} or clean its contents"
+    echo "INFO: Please change ${VM_DESTDIR} or clean its contents"
     exit 1
 fi
 #mkdir -p ${VM_DESTDIR}/${VM_NAME} || exit 1
 
 cd ${VM_BCKDIR}/${VM_BASELINE}
 if [ -e md5sum.txt ]; then
-    echo "*** Verifying backup file checksums..."
+    echo "INFO: Verifying backup file checksums..."
     md5sum -c md5sum.txt || exit 1
 else
     echo "WARNING: No md5sum.txt in ${VM_BCKDIR}/${VM_BASELINE}"
@@ -120,16 +119,15 @@ cmd_cat="cat ${VM_BASELINE}.tgz-[0-9][0-9]"
 #cmd_untar="tar tvz"
 cmd_untar="tar xvz"
 
-echo "*** Extracting backup into ${VM_DESTDIR}..."
+echo "INFO: Extracting backup into ${VM_DESTDIR}..."
 (cd ${VM_BCKDIR}/${VM_BASELINE} && ${cmd_cat}) | \
 	(cd ${VM_DESTDIR} && ${cmd_untar})
+retval=$?
+if [ $retval -ne 0 ]; then
+        echo "ERROR: Problems extracting files from ${VM_BASELINE}"
+        exit 1
+fi
 
-#echo "== TODO =="
-
-echo "== Created new VM ${VM_NAME} under ${VM_DESTDIR}"
-echo "   from backup ${VM_BCKDATE} of VM ${VM_BASELINE}"
-
-#set -x
 
 cd ${VM_DESTDIR}
 if [ "${VM_OLDNAME}" != ${VM_NAME} ]; then
@@ -145,6 +143,7 @@ if [ "${VM_OLDNAME}" != ${VM_NAME} ]; then
     done
 fi
 
-# TODO: Should change VM name into *.vm"
+echo "INFO: Created new VM ${VM_NAME} under ${VM_DESTDIR}"
+echo "INFO: from backup ${VM_BCKDATE} of VM ${VM_BASELINE}"
 
 # === EOF ===
