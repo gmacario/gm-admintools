@@ -120,6 +120,12 @@ cmd_cat="cat ${VM_BASELINE}.tgz-[0-9][0-9]"
 cmd_untar="tar xvz"
 
 echo "INFO: Extracting backup into ${VM_DESTDIR}..."
+mkdir -p ${VM_DESTDIR}/${VM_OLDNAME}
+retval=$?
+if [ $retval -ne 0 ]; then
+        echo "ERROR: Cannot create directory under ${VM_DESTDIR}"
+        exit 1
+fi
 (cd ${VM_BCKDIR}/${VM_BASELINE} && ${cmd_cat}) | \
 	(cd ${VM_DESTDIR} && ${cmd_untar})
 retval=$?
