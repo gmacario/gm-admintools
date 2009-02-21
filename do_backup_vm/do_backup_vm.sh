@@ -60,7 +60,7 @@ VM_REPOSITORY="/var/lib/vmware/Virtual Machines"
 
 # -----------------------------------------------------------------------------
 # Main Program starts here
-echo -e "$0 - v0.3\n"
+echo "INFO: $0 - v0.4"
 
 # set -x
 
@@ -74,13 +74,12 @@ elif [ -e ${HOME}/.do_backup_vm/do_backup_vm.conf ]; then
 elif [ -e /etc/do_backup_vm.conf ]; then
     conffile=/etc/do_backup_vm.conf
 else
-    echo "WARNING: no conffile found, using defaults"
+    echo "WARNING: No conffile found, using defaults"
 fi
 if [ "${conffile}" != "" ]; then
-    echo "== Reading configuration from ${conffile}"
+    echo "INFO: Reading configuration from ${conffile}"
     source ${conffile} || exit 1
 fi
-echo ""
 
 #set -x
 
@@ -93,7 +92,7 @@ echo ""
 
 # NOTE: --bytes=xxx syntax of split has changed between ver 5.x and 6.x
 # Consult your manpage if you have any problems
-BCK_CHUNKSIZE=1024m
+BCK_CHUNKSIZE=2048m
 #BCK_CHUNKSIZE=4500M
 
 ## Request parameters if not specified in the section above
@@ -155,17 +154,17 @@ else
         echo "ERROR: VM ${VM_NAME} is currently locked - Stop your VM first"
         exit 1
     fi
-    echo "*** Enter password for ${USER} on ${HOSTNAME} if requested"
+    echo "INFO: Enter password for ${USER} on ${HOSTNAME} if requested"
     rm -f md5sum.txt
     (cd "${VM_REPOSITORY}" && \
 	sudo tar cvz ${VM_NAME}) |
 	split -d --bytes=${BCK_CHUNKSIZE} - ${BCK_FILENAME}.tgz- || exit 1
-    echo "*** You may restart your VM now"
+    echo "INFO: You may restart your VM now"
 
-    echo "*** Calculating md5sum of ${BCK_FILENAME}"
+    echo "INFO: Calculating md5sum of ${BCK_FILENAME}"
     md5sum ${BCK_FILENAME}.tgz* >md5sum.txt || exit 1
 
-    echo "*** Backup ${BCK_FILENAME} created successfully on ${BCK_TMPDIR}"
+    echo "INFO: Backup ${BCK_FILENAME} created successfully on ${BCK_TMPDIR}"
 fi
 
 num_splits=`ls ${BCK_FILENAME}.tgz-* | wc -l`
@@ -205,8 +204,8 @@ chmod 755 ${sample_script}
 
 
 if [ "${OPT_EXPORT_TO_NAS}" = "true" ]; then
-    echo "*** Copying tarball to ${NAS_SHARE}"
-    #echo "*** Enter password for ${NAS_USER} on ${NAS_SHARE} if requested"
+    echo "INFO: Copying tarball to ${NAS_SHARE}"
+    #echo "INFO: Enter password for ${NAS_USER} on ${NAS_SHARE} if requested"
 
     CMDFILE=smb_commands.tmp
     echo >${CMDFILE} || exit 1
