@@ -85,19 +85,18 @@ else
 	echo "WARNING: Make sure that kernel has been built with CONFIG_PRINTK_TIME=y"
 fi
 
-grep "printk.time=1" $workdir/cmdline.txt >/dev/null
-retval=$?
-#echo DBG: retval=$retval
-if [ $retval -ne 0 ]; then
-	echo "ERROR: Please append 'printk.time=1' to kernel bootcmd"
-	exit 1
-fi
-
-grep "initcall_debug" $workdir/cmdline.txt >/dev/null
-retval=$?
-#echo DBG: retval=$retval
-if [ $retval -ne 0 ]; then
-	echo "ERROR: Please append 'initcall_debug' to kernel bootcmd"
+# Check for specific options in the kernel command line
+f_ok=0
+for opt in "printk.time=1" "initcall_debug"; do
+	grep $opt $workdir/cmdline.txt >/dev/null
+	retval1=$?
+	#echo DBG: retval1=$retval1
+	if [ $retval1 -ne 0 ]; then
+		echo "ERROR: Please add option to kernel bootcmd: $opt"
+		f_ok=1
+	fi
+done
+if [ $f_ok -ne 0 ]; then
 	exit 1
 fi
 
