@@ -20,6 +20,7 @@ scp -r $REMOTEUSER@$REMOTEHOST:$REMOTEDIR/mysql_backups $BACKUPDIR || exit 1
 # Backup Images
 for wiki in innowiki nbtwiki osstbox; do
 	echo "INFO: Backing up images from $wiki at $REMOTEHOST"
+	mkdir -p $BACKUPDIR/$wiki || exit 1
 	scp -r $REMOTEUSER@$REMOTEHOST:/var/www/$wiki/images $BACKUPDIR/$wiki || exit 1
 done
 
