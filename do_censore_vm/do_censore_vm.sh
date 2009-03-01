@@ -7,8 +7,10 @@
 #
 # Language:     Linux Shell Script
 #
-# Usage example:
+# Usage examples:
 #       $ ./do_censore_vm.sh
+#       $ CUSTOMER=clueless ./do_censore_vm.sh
+#       $ CUSTOMER=GENIVI OPT_REMOVE=true ./do_censore_vm.sh
 #
 # Package Dependencies:
 #       Required:       rm
@@ -23,7 +25,9 @@
 
 # CUSTOMER should be chosen within KNOWN_CUSTOMERS (see below)
 #CUSTOMER=clueless
-CUSTOMER=GENIVI
+
+# If set to true, do actually remove directory
+#OPT_REMOVE=true
 
 # -----------------------------------------------------------------------------
 # You should not need to change the script below
@@ -35,6 +39,7 @@ KNOWN_CUSTOMERS+="GENIVI "	# GENIVI (members with access to BMWI-POSR)
 KNOWN_CUSTOMERS+="LUPIN "	# LUPIN team
 KNOWN_CUSTOMERS+="MMSE "	# Magneti Marelli (outside the LUPIN team)
 KNOWN_CUSTOMERS+="PSA "		# Peugeot-Citroen (SMEG Customer)
+KNOWN_CUSTOMERS+="SAIC "	# SAIC (APR-2009 demo)
 KNOWN_CUSTOMERS+="TES "		# TES (Contractor for OpenGL to SMEG/Linux)
 
 # -----------------------------------------------------------------------------
@@ -52,7 +57,7 @@ KNOWN_CUSTOMERS+="TES "		# TES (Contractor for OpenGL to SMEG/Linux)
 #     + admin_scripts/
 #   + mm_sw/
 #   + wrlinux/
-#     + build_{BMW,GENIVI,Intel,PSA,SAIC}
+#     + build_{BMW,GENIVI,Intel,MMSE,PSA,SAIC}
 #     + layers/
 #       + cust_{BMW,GENIVI,Intel,PSA,SAIC}
 #       + mmse_experimental
@@ -67,7 +72,7 @@ KNOWN_CUSTOMERS+="TES "		# TES (Contractor for OpenGL to SMEG/Linux)
 echo "INFO: $0 - v0.1"
 
 if [ "$CUSTOMER" = "" ]; then
-	echo "ERROR: Should configure CUSTOMER within script"
+	echo "ERROR: Should configure CUSTOMER - Read script"
 	exit 1
 fi
 
@@ -82,41 +87,85 @@ if [ $ok -eq 1 ]; then
 	exit 1
 fi
 
-echo "INFO: Censoring VM for CUSTOMER=$CUSTOMER"
+if [ "$OPT_REMOVE" = "true" ]; then
+	echo "INFO: Censoring VM for CUSTOMER=$CUSTOMER"
+	RMTREE=rm -rf
+else
+	echo "WARNING: Dry run for CUSTOMER=$CUSTOMER - Set OPT_REMOVE=true to actually remove directories"
+	RMTREE="echo TODO: rm -rf"
+fi
 
-# TODO TODO TODO
-#set -x
-#exit 1
-
-#RMTREE=rm -rf
-RMTREE="echo TODO: rm -rf"
-
+# -----------------------------------------------------------------------------
+# Handle $HOME/...
+#
 if [ $CUSTOMER != LUPIN ]; then
-	$RMTREE /opt/LUPIN/code/trunk/area_51 || exit 1
+	$RMTREE $HOME/.mozilla || exit 1
+	$RMTREE $HOME/.ssh || exit 1
+	$RMTREE $HOME/.subversion || exit 1
 fi
-if [ $CUSTOMER != BMW ]; then
-	$RMTREE /opt/LUPIN/code/trunk/wrlinux/build_BMW* || exit 1
-fi
-if [ $CUSTOMER != BMW -a $CUSTOMER != GENIVI -a $CUSTOMER != PSA ]; then
-	$RMTREE /opt/LUPIN/code/trunk/wrlinux/build_GENIVI* || exit 1
-fi
-if [ $CUSTOMER != PSA ]; then
-	$RMTREE /opt/LUPIN/code/trunk/wrlinux/build_PSA* || exit 1
-fi
-if [ $CUSTOMER != BMW ]; then
-	$RMTREE /opt/LUPIN/code/trunk/wrlinux/layers/cust_BMW* || exit 1
-fi
-if [ $CUSTOMER != BMW -a $CUSTOMER != GENIVI -a $CUSTOMER != PSA ]; then
-	$RMTREE /opt/LUPIN/code/trunk/wrlinux/layers/cust_GENIVI* || exit 1
-fi
-if [ $CUSTOMER != PSA ]; then
-	$RMTREE /opt/LUPIN/code/trunk/wrlinux/layers/cust_PSA* || exit 1
+
+# -----------------------------------------------------------------------------
+# Handle /opt/LUPIN/...
+LUPIN_TOPDIR=/opt/LUPIN/code/trunk
+#
+if [ $CUSTOMER != LUPIN ]; then
+	$RMTREE $LUPIN_TOPDIR/apps || exit 1
 fi
 if [ $CUSTOMER != LUPIN ]; then
-	$RMTREE /opt/LUPIN/code/trunk/wrlinux/layers/mmse_experimental* || exit 1
+	$RMTREE $LUPIN_TOPDIR/area_51 || exit 1
+fi
+if [ $CUSTOMER != LUPIN ]; then
+	# TODO: How to deal with admin_scripts ???
+	$RMTREE $LUPIN_TOPDIR/misc || exit 1
+fi
+if [ $CUSTOMER != LUPIN ]; then
+	$RMTREE $LUPIN_TOPDIR/mm_sw || exit 1
+fi
+if [ $CUSTOMER != BMW -a $CUSTOMER != LUPIN ]; then
+	$RMTREE $LUPIN_TOPDIR/wrlinux/build_BMW* || exit 1
+fi
+if [ $CUSTOMER != BMW -a $CUSTOMER != GENIVI -a $CUSTOMER != LUPIN -a $CUSTOMER != PSA ]; then
+	$RMTREE $LUPIN_TOPDIR/wrlinux/build_GENIVI* || exit 1
+fi
+if [ $CUSTOMER != GENIVI -a $CUSTOMER != LUPIN ]; then
+	$RMTREE $LUPIN_TOPDIR/wrlinux/build_Intel* || exit 1
 fi
 if [ $CUSTOMER != LUPIN -a $CUSTOMER != MMSE ]; then
-	$RMTREE /opt/LUPIN/code/trunk/wrlinux/layers/mmse_proprietary* || exit 1
+	$RMTREE $LUPIN_TOPDIR/wrlinux/build_MMSE* || exit 1
+fi
+if [ $CUSTOMER != LUPIN -a $CUSTOMER != PSA ]; then
+	$RMTREE $LUPIN_TOPDIR/wrlinux/build_PSA* || exit 1
+fi
+if [ $CUSTOMER != LUPIN -a $CUSTOMER != SAIC ]; then
+	$RMTREE $LUPIN_TOPDIR/wrlinux/build_SAIC* || exit 1
+fi
+if [ $CUSTOMER != BMW -a $CUSTOMER != LUPIN ]; then
+	$RMTREE $LUPIN_TOPDIR/wrlinux/layers/cust_BMW* || exit 1
+fi
+if [ $CUSTOMER != BMW -a $CUSTOMER != GENIVI -a $CUSTOMER != LUPIN -a $CUSTOMER != PSA ]; then
+	$RMTREE $LUPIN_TOPDIR/wrlinux/layers/cust_GENIVI* || exit 1
+fi
+if [ $CUSTOMER != LUPIN -a $CUSTOMER != PSA ]; then
+	$RMTREE $LUPIN_TOPDIR/wrlinux/layers/cust_PSA* || exit 1
+fi
+if [ $CUSTOMER != LUPIN -a $CUSTOMER != SAIC ]; then
+	$RMTREE $LUPIN_TOPDIR/wrlinux/layers/cust_SAIC* || exit 1
+fi
+if [ $CUSTOMER != LUPIN ]; then
+	$RMTREE $LUPIN_TOPDIR/wrlinux/layers/mmse_experimental* || exit 1
+fi
+if [ $CUSTOMER != LUPIN -a $CUSTOMER != MMSE ]; then
+	$RMTREE $LUPIN_TOPDIR/wrlinux/layers/mmse_proprietary* || exit 1
+fi
+if [ $CUSTOMER != LUPIN -a $CUSTOMER != MMSE ]; then
+	$RMTREE $LUPIN_TOPDIR/wrlinux/layers/zzz_empty* || exit 1
+fi
+
+# -----------------------------------------------------------------------------
+# Handle /opt/WindRiver/...
+#
+if [ $CUSTOMER != LUPIN -a $CUSTOMER != MMSE ]; then
+	$RMTREE /opt/WindRiver/license/* || exit 1
 fi
 
 echo "INFO: Virtual Machine censored for CUSTOMER=$CUSTOMER"
