@@ -11,7 +11,7 @@
 #       $ ./do_censore_vm.sh
 #
 # Package Dependencies:
-#       Required:       awk cp fileutils samba sh
+#       Required:       rm
 #       Optional:       ?
 #
 # Note:
@@ -22,7 +22,8 @@
 # =============================================================================
 
 # CUSTOMER should be chosen within KNOWN_CUSTOMERS (see below)
-CUSTOMER=clueless
+#CUSTOMER=clueless
+CUSTOMER=GENIVI
 
 # -----------------------------------------------------------------------------
 # You should not need to change the script below
@@ -84,15 +85,41 @@ fi
 echo "INFO: Censoring VM for CUSTOMER=$CUSTOMER"
 
 # TODO TODO TODO
-set -x
+#set -x
+#exit 1
 
-exit 1
+#RMTREE=rm -rf
+RMTREE="echo TODO: rm -rf"
 
 if [ $CUSTOMER != LUPIN ]; then
-	rm -rf /opt/LUPIN/code/trunk/area_51
+	$RMTREE /opt/LUPIN/code/trunk/area_51 || exit 1
 fi
 if [ $CUSTOMER != BMW ]; then
-	rm -rf /opt/LUPIN/code/trunk/wrlinux/build_BMW*
+	$RMTREE /opt/LUPIN/code/trunk/wrlinux/build_BMW* || exit 1
 fi
+if [ $CUSTOMER != BMW -a $CUSTOMER != GENIVI -a $CUSTOMER != PSA ]; then
+	$RMTREE /opt/LUPIN/code/trunk/wrlinux/build_GENIVI* || exit 1
+fi
+if [ $CUSTOMER != PSA ]; then
+	$RMTREE /opt/LUPIN/code/trunk/wrlinux/build_PSA* || exit 1
+fi
+if [ $CUSTOMER != BMW ]; then
+	$RMTREE /opt/LUPIN/code/trunk/wrlinux/layers/cust_BMW* || exit 1
+fi
+if [ $CUSTOMER != BMW -a $CUSTOMER != GENIVI -a $CUSTOMER != PSA ]; then
+	$RMTREE /opt/LUPIN/code/trunk/wrlinux/layers/cust_GENIVI* || exit 1
+fi
+if [ $CUSTOMER != PSA ]; then
+	$RMTREE /opt/LUPIN/code/trunk/wrlinux/layers/cust_PSA* || exit 1
+fi
+if [ $CUSTOMER != LUPIN ]; then
+	$RMTREE /opt/LUPIN/code/trunk/wrlinux/layers/mmse_experimental* || exit 1
+fi
+if [ $CUSTOMER != LUPIN -a $CUSTOMER != MMSE ]; then
+	$RMTREE /opt/LUPIN/code/trunk/wrlinux/layers/mmse_proprietary* || exit 1
+fi
+
+echo "INFO: Virtual Machine censored for CUSTOMER=$CUSTOMER"
+exit 0
 
 # === EOF ===
