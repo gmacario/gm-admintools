@@ -3,14 +3,14 @@
 # =============================================================================
 # Project:      LUPIN
 #
-# Description:  Censore a VM before distributing outside the LUPIN team
+# Description:  Sanitize a VM before distributing outside the LUPIN team
 #
 # Language:     Linux Shell Script
 #
 # Usage examples:
-#       $ ./do_censore_vm.sh
-#       $ CUSTOMER=clueless ./do_censore_vm.sh
-#       $ CUSTOMER=GENIVI OPT_REMOVE=true ./do_censore_vm.sh
+#       $ ./do_censor_vm.sh
+#       $ CUSTOMER=clueless ./do_censor_vm.sh
+#       $ CUSTOMER=GENIVI OPT_REMOVE=true ./do_censor_vm.sh
 #
 # Package Dependencies:
 #       Required:       rm
