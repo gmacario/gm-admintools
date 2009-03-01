@@ -7,6 +7,11 @@ REMOTEUSER=macario
 REMOTEHOST=inno10.venaria.marelli.it
 REMOTEDIR=/home/macario/do_backup_mediawiki
 
+WIKIS=""
+WIKIS+="innowiki "
+WIKIS+="nbtwiki "
+WIKIS+="osstbox "
+
 echo "INFO: $0 v0.1"
 
 # Backup MySQL
@@ -17,11 +22,20 @@ ssh $REMOTEUSER@$REMOTEHOST "(cd $REMOTEDIR && ./automysqlbackup_inno10.sh)" || 
 echo "INFO: Copying backup of MySQL DB from $REMOTEHOST"
 scp -r $REMOTEUSER@$REMOTEHOST:$REMOTEDIR/mysql_backups $BACKUPDIR || exit 1
 
-# Backup Images
-for wiki in innowiki nbtwiki osstbox; do
-	echo "INFO: Backing up images from $wiki at $REMOTEHOST"
-	mkdir -p $BACKUPDIR/$wiki || exit 1
-	scp -r $REMOTEUSER@$REMOTEHOST:/var/www/$wiki/images $BACKUPDIR/$wiki || exit 1
-done
+# Backup MediaWiki engine
+echo "INFO: Backing up MediaWiki engine at $REMOTEHOST"
+ssh $REMOTEUSER@$REMOTEHOST \
+	"(cd /var/www && tar cvz mediawiki-1.9.3 $WIKIS)" \
+	> $BACKUPDIR/mediawiki-install.tgz || exit 1
+
+## Backup Images
+#for wiki in $WIKIS; do
+#	echo "INFO: Backing up images from $wiki at $REMOTEHOST"
+#	mkdir -p $BACKUPDIR/$wiki || exit 1
+#	scp -r $REMOTEUSER@$REMOTEHOST:/var/www/$wiki/images \
+#		$BACKUPDIR/$wiki || exit 1
+#done
+
+# Backup MediaWiki engine
 
 # === EOF ===
