@@ -12,6 +12,8 @@ WIKIS+="innowiki "
 WIKIS+="nbtwiki "
 WIKIS+="osstbox "
 
+MEDIAWIKI_ARCHIVE=`date '+%Y%m%d'`-mediawiki_install.tgz
+
 echo "INFO: $0 v0.1"
 
 # Backup MySQL
@@ -26,7 +28,7 @@ scp -r $REMOTEUSER@$REMOTEHOST:$REMOTEDIR/mysql_backups $BACKUPDIR || exit 1
 echo "INFO: Backing up MediaWiki engine at $REMOTEHOST"
 ssh $REMOTEUSER@$REMOTEHOST \
 	"(cd /var/www && tar cvz mediawiki-1.9.3 $WIKIS)" \
-	> $BACKUPDIR/mediawiki-install.tgz || exit 1
+	> $BACKUPDIR/$MEDIAWIKI_ARCHIVE || exit 1
 
 ## Backup Images
 #for wiki in $WIKIS; do
