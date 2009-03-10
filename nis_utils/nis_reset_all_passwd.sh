@@ -6,12 +6,13 @@ BEGIN	{ FS = ":" }
 '`; do
 	#echo "DBG:username=$username"
 	if [ "$username" != "rodino" ]; then
-		echo "DBG: Change password for user $username"
+		echo "DBG: Locking password for user $username"
 		#sudo passwd $username
 		#sudo su -c passwd $username
 		#sudo yppasswd -p $username
 		#su -c passwd $username
-		su -c yppasswd $username
+		#su -c yppasswd $username
+		sudo ./nis_set_passwd.sh $username xxx
 	fi
 done
 
