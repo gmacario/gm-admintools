@@ -62,8 +62,10 @@ BEGIN	{
 	gid=$4
 	#
 	firstname=gensub(/\ [a-zA-Z]*$/, "", "g", $5);
+	#
 	# Fixup macario firstname
-	if (firstname == "Giampaolo") firstname="Gianpaolo";
+	#if (firstname == "Giampaolo") firstname="Gianpaolo";
+	#
 	lastname=toupper(gensub(/.*\ /, "", "g", $5));
 	#
 	in_MotoGP = ((username in lupin_users) && \
