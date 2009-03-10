@@ -15,7 +15,7 @@ cd /var/yp/maps || exit 1
 cp passwd passwd.OLD || exit 1
 
 if [ "$newpass" = "" ]; then
-    echo "WARNING: Resetting password for $user to default"
+    echo "INFO: Resetting password for user $user"
     newpass="GzslqrxRRWFfE"
 fi
 
@@ -37,8 +37,13 @@ $1 == user {
 cd /var/yp || exit 1
 make >/dev/null || exit 1
 
-sudo -u $user yppasswd
+if [ "$2" = "" ]; then
+    echo "INFO: Changing password for user $user"
+    sudo -u $user yppasswd
+else
+    echo "INFO: Changed password for user $user"
+    ypcat passwd | grep "^$user:"
+fi
 
-#ypcat passwd | grep "^$user:"
 
 # === EOF ===
