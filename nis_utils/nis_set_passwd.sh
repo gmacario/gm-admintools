@@ -1,7 +1,10 @@
 #!/bin/sh
 
+
+# TODO: Figure out how to encrypt password with salt
+
 if [ $# -lt 1 ]; then
-	echo "Usage: $0 user [newpass]"
+	echo "Usage: $0 user [newpass_crypt]"
 	exit 1
 fi
 
@@ -22,10 +25,10 @@ $1 == user {
 //	{
 	print $0
 	}
-' passwd.OLD >passwd.NEW || exit 1
+' passwd.OLD >passwd || exit 1
 
 cd /var/yp || exit 1
-# make
+make || exit 1
 # sudo -u user
 
 # === EOF ===
