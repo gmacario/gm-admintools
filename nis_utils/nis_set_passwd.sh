@@ -45,5 +45,6 @@ else
     ypcat passwd | grep "^$user:"
 fi
 
+exit 0
 
 # === EOF ===
