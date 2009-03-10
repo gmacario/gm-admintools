@@ -7,12 +7,19 @@ if [ $# -lt 1 ]; then
 	echo "Usage: $0 user [newpass_crypt]"
 	exit 1
 fi
+user=$1
+newpass=$2
 
 cd /var/yp/maps || exit 1
 
 cp passwd passwd.OLD || exit 1
 
-awk -v user=$1 -v newpass=$2 '
+if [ "$newpass" = "" ]; then
+    echo "WARNING: Resetting password for $user to default"
+    newpass="GzslqrxRRWFfE"
+fi
+
+awk -v user=$user -v newpass=$newpass '
 BEGIN	{
 	FS=":"
 	OFS=":"
@@ -28,7 +35,10 @@ $1 == user {
 ' passwd.OLD >passwd || exit 1
 
 cd /var/yp || exit 1
-make || exit 1
-# sudo -u user
+make >/dev/null || exit 1
+
+sudo -u $user yppasswd
+
+#ypcat passwd | grep "^$user:"
 
 # === EOF ===
