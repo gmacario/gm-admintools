@@ -1,8 +1,11 @@
 #!/bin/sh
 
+#set -x
+
 for username in `ypcat passwd | awk '
 BEGIN	{ FS = ":" }
-/GzslqrxRRWFfE/	{ print $1 }
+($2 == "GzslqrxRRWFfE")	{ print $1 }
+($2 == "xxx")	{ print $1 }
 '`; do
 	#echo "DBG:username=$username"
 	if [ "$username" != "rodino" ]; then
@@ -12,7 +15,7 @@ BEGIN	{ FS = ":" }
 		#sudo yppasswd -p $username
 		#su -c passwd $username
 		#su -c yppasswd $username
-		sudo ./nis_set_passwd.sh $username xxx
+		sudo ./nis_set_passwd.sh $username xxx >/dev/null
 	fi
 done
 
