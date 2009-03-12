@@ -116,20 +116,6 @@ if [ "${OPT_EXPORT_TO_NAS}" = "true" ]; then
     fi
 fi
 
-## Make sure NAS_SHARE is mounted
-#if [ ! -f ${NAS_CHECKFILE} ]; then
-#    sudo mkdir -p ${NAS_MOUNTPOINT}
-#    sudo smbmount ${NAS_SHARE} ${NAS_MOUNTPOINT} \ 
-#        -o username="${NAS_USER}",password="${NAS_PASSWORD}",workgroup=${NAS_DOMAIN}
-##    sudo mount -t smbfs ${NAS_SHARE} ${NAS_MOUNTPOINT} \ 
-##        -o username="${NAS_USER}",password="${NAS_PASSWORD}",workgroup=${NAS_DOMAIN}
-#
-#fi
-#if [ ! -f ${NAS_CHECKFILE} ]; then
-#    echo Cannot access file ${NAS_CHECKFILE}
-#    exit 1
-#fi
-
 # Sanity checks
 if [ ! -d "${VM_REPOSITORY}/${VM_NAME}" ]; then
     echo ERROR: Cannot find VM "${VM_NAME}" under "${VM_REPOSITORY}"
@@ -137,10 +123,15 @@ if [ ! -d "${VM_REPOSITORY}/${VM_NAME}" ]; then
 fi
 
 # Make sure you can write your temporary files...
-mkdir -p ${BCK_TMPDIR}/${BCK_FILENAME}
-if [ $? -gt 0 ]; then
-    echo "ERROR: Cannot create directory under ${BCK_TMPDIR}"
-    exit 1
+f_newcreated=false
+if [ ! -e ${BCK_TMPDIR}/${BCK_FILENAME} ]; then
+    # Directory oes not exist, create it
+    mkdir -p ${BCK_TMPDIR}/${BCK_FILENAME}
+    if [ $? -gt 0 ]; then
+        echo "ERROR: Cannot create directory under ${BCK_TMPDIR}"
+        exit 1
+    fi
+    f_newcreated=true
 fi
 
 cd ${BCK_TMPDIR}/${BCK_FILENAME} || exit 1
@@ -152,6 +143,9 @@ else
     VM_ISLOCKED=`find "${VM_REPOSITORY}/${VM_NAME}" -name "*.lck" | wc -l`
     if [ ${VM_ISLOCKED} -gt 0 ]; then
         echo "ERROR: VM ${VM_NAME} is currently locked - Stop your VM first"
+	if [ "$f_newcreated" = "true" ]; then
+	    cd ${BCK_TMPDIR} && rmdir ${BCK_FILENAME}
+	fi
         exit 1
     fi
     echo "INFO: Enter password for ${USER} on ${HOSTNAME} if requested"
