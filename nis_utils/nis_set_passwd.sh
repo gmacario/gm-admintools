@@ -10,6 +10,13 @@ fi
 user=$1
 newpass=$2
 
+ypcat passwd | grep -e "^$user:" >/dev/null
+retval=$?
+if [ $retval -ne 0 ]; then
+    echo "ERROR: User $user not found in NIS database"
+    exit 1
+fi
+
 cd /var/yp/maps || exit 1
 
 cp passwd passwd.OLD || exit 1
