@@ -62,7 +62,7 @@ VM_REPOSITORY="/var/lib/vmware/Virtual Machines"
 # Main Program starts here
 echo "INFO: $0 - v0.4"
 
-# set -x
+set -x
 
 # Try to source configuration from conffile
 #
@@ -152,7 +152,12 @@ else
     rm -f md5sum.txt
     (cd "${VM_REPOSITORY}" && \
 	sudo tar cvz ${VM_NAME}) |
-	split -d --bytes=${BCK_CHUNKSIZE} - ${BCK_FILENAME}.tgz- || exit 1
+	split -d --bytes=${BCK_CHUNKSIZE} - ${BCK_FILENAME}.tgz-
+    retval=$?
+    if [ $retval -ne 0 ]; then
+	echo "ERROR: remote tar returned $retval"
+	exit 1
+    fi
     echo "INFO: You may restart your VM now"
 
     echo "INFO: Calculating md5sum of ${BCK_FILENAME}"
