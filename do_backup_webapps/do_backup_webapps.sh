@@ -2,10 +2,10 @@
 
 #set -x
 
-BACKUPDIR=/backup/Backup_MediaWiki/lupin08
+BACKUPDIR=/backup/Backup_webapps/lupin08
 REMOTEUSER=user01
 REMOTEHOST=lupin08.venaria.marelli.it
-REMOTEDIR=/home/user01/do_backup_mediawiki
+REMOTEDIR=/home/user01/do_backup_webapps
 
 WIKIS=""
 WIKIS+="mediawiki-1.14.0 "
