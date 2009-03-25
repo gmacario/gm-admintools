@@ -1,4 +1,3 @@
-* LASTNAME;firstname;username;uid;gid;in_MotoGP;in_MotoGB
 AGHEMO;Fabio;faghemo;501;15;Yes;Yes
 ALLAOUA;Tarek;allaoua;531;15;No;No
 ANTONELLI;Sergio;santonel;513;15;No;No
@@ -34,6 +33,7 @@ GIRAUDO;Emanuele;giraudo;559;15;No;No
 GRAGLIA;Emiliano;graglia;558;15;No;No
 GRELLIER;Fabrice;grellier;534;15;No;No
 HERARD;Rodolphe;herard;535;15;No;No
+* LASTNAME;firstname;username;uid;gid;in_MotoGP;in_MotoGB
 LOCOCO;Annalisa;lococo;525;15;No;No
 LOSEGO;Eric;losego;536;15;No;No
 MACARIO;Gianpaolo;macario;500;15;Yes;Yes

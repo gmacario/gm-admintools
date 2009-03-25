@@ -38,6 +38,7 @@ BEGIN	{
 	lupin_users["ghiazza"]   = "MOTOGP|MOTOGB";
 	lupin_users["ginnuzzi"]  = "MOTOGP|MOTOGB";
 	lupin_users["macario"]   = "MOTOGP|MOTOGB";
+	lupin_users["mocci"]     = "MOTOGP|MOTOGB";
 	lupin_users["paolodoz"]  = "MOTOGP|MOTOGB";
 	lupin_users["pierri"]    = "MOTOGP|MOTOGB";
 	lupin_users["pirra"]     = "MOTOGP|MOTOGB";
