@@ -9,7 +9,8 @@ REMOTEUSER=macario
 REMOTEHOST=inno05.venaria.marelli.it
 
 REPOSITORIES=""
-REPOSITORIES+=" inno"
+#REPOSITORIES+=" inno"
+REPOSITORIES+=" inno.OLD"
 REPOSITORIES+=" mmseti"
 REPOSITORIES+=" osstbox"
 
@@ -24,10 +25,15 @@ BACKUPDIR=/backup/Backup_svnrepos/`date '+%Y%m%d'`-inno05
 #	svnadmin: Can't read length line in file '/opt/repos/mmseti/db/revs/6'
 #
 
-echo "INFO: $0 - v0.1"
+echo "INFO: $0 - v0.2"
 
 mkdir -p $BACKUPDIR || exit 1
 cd $BACKUPDIR || exit 1
+
+# TODO: Backup /etc/apache2/dav_svn.{authz,passwd}
+scp ${REMOTEUSER}@${REMOTEHOST}:/etc/apache2/dav_svn.authz .
+scp ${REMOTEUSER}@${REMOTEHOST}:/etc/apache2/dav_svn.passwd .
+
 for repos in ${REPOSITORIES}; do
     echo "INFO: Dumping SVN repos $repos from $REMOTEHOST..."
     (ssh ${REMOTEUSER}@${REMOTEHOST} svnadmin dump /opt/repos/$repos | gzip -c -9) \
