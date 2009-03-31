@@ -62,7 +62,7 @@ VM_REPOSITORY="/var/lib/vmware/Virtual Machines"
 # Main Program starts here
 echo "INFO: $0 - v0.4"
 
-set -x
+#set -x
 
 # Try to source configuration from conffile
 #
@@ -193,9 +193,9 @@ echo "VM_BCKDIR=/source/Backup_VM/${BCK_FILENAME}"	>>${sample_script}
 echo "VM_DESTDIR=/dest/My_VM/"				>>${sample_script}
 cat >>${sample_script} << EOF
 
-mkdir -p \${VM_DESTDIR} || exit 1
-cd \${VM_BCKDIR} && md5sum -c md5sum.txt || exit 1
-cd \${VM_DESTDIR} && cat \${VM_BCKDIR}/*.tgz-* | tar xvz
+mkdir -p "\${VM_DESTDIR}" || exit 1
+cd "\${VM_BCKDIR}" && md5sum -c md5sum.txt || exit 1
+cd "\${VM_DESTDIR}" && cat "\${VM_BCKDIR}"/*.tgz-* | tar xvz
 
 # === EOF ===
 EOF
