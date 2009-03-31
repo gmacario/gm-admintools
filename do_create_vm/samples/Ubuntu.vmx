@@ -1,0 +1,91 @@
+#!/usr/bin/vmware
+.encoding = "UTF-8"
+config.version = "8"
+virtualHW.version = "7"
+scsi0.present = "true"
+scsi0.virtualDev = "lsilogic"
+memsize = "1024"
+scsi0:0.present = "true"
+scsi0:0.fileName = "Ubuntu.vmdk"
+ide1:0.present = "true"
+ide1:0.fileName = "/backup/export/pub/Linux/Ubuntu/9.04_beta/ubuntu-9.04-beta-dvd-i386.iso"
+ide1:0.deviceType = "cdrom-image"
+floppy0.present = "false"
+Ethernet0.present = "true"
+Ethernet0.connectionType = "bridged"
+displayname = "@@VM_NAME@@"
+guestOS = "ubuntu"
+priority.grabbed = "normal"
+priority.ungrabbed = "normal"
+
+scsi0:0.redo = ""
+ethernet0.addressType = "generated"
+uuid.location = "56 4d 73 f1 5f f8 53 14-85 0f 53 e1 20 93 74 94"
+uuid.bios = "56 4d 73 f1 5f f8 53 14-85 0f 53 e1 20 93 74 94"
+ide1:0.autodetect = "false"
+ethernet0.generatedAddress = "00:0c:29:93:74:94"
+ethernet0.generatedAddressOffset = "0"
+
+usb.present = "true"
+sound.present = "true"
+sound.fileName = "-1"
+sound.autodetect = "true"
+workingDir = "."
+
+sound.virtualDev = "es1371"
+
+checkpoint.vmState = ""
+
+
+extendedConfigFile = "Ubuntu.vmxf"
+virtualHW.productCompatibility = "hosted"
+tools.upgrade.policy = "upgradeAtPowerCycle"
+
+
+vmotion.checkpointFBSize = "16777216"
+sound.startConnected = "false"
+
+ide1:0.startConnected = "FALSE"
+tools.syncTime = "FALSE"
+
+annotation = "Sample .vmx for Ubuntu"
+
+ehci.present = "TRUE"
+mks.enable3d = "TRUE"
+pciBridge0.present = "TRUE"
+pciBridge4.present = "TRUE"
+pciBridge5.present = "TRUE"
+pciBridge6.present = "TRUE"
+pciBridge7.present = "TRUE"
+vmci0.present = "TRUE"
+pciBridge4.virtualDev = "pcieRootPort"
+pciBridge4.pciSlotNumber = "21"
+pciBridge4.functions = "8"
+pciBridge5.virtualDev = "pcieRootPort"
+pciBridge5.pciSlotNumber = "22"
+pciBridge5.functions = "8"
+pciBridge6.virtualDev = "pcieRootPort"
+pciBridge6.pciSlotNumber = "23"
+pciBridge6.functions = "8"
+pciBridge7.virtualDev = "pcieRootPort"
+pciBridge7.pciSlotNumber = "24"
+pciBridge7.functions = "8"
+
+pciBridge0.pciSlotNumber = "17"
+scsi0.pciSlotNumber = "16"
+usb.pciSlotNumber = "32"
+ethernet0.pciSlotNumber = "33"
+sound.pciSlotNumber = "34"
+ehci.pciSlotNumber = "35"
+vmci0.pciSlotNumber = "36"
+vmci0.id = "546534549"
+
+ide1:0.allowGuestConnectionControl = "FALSE"
+
+bios.forceSetupOnce = "FALSE"
+
+tools.remindInstall = "FALSE"
+
+debugStub.linuxOffsets = "0x0,0xffffffff,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0"
+
+# === EOF ===
