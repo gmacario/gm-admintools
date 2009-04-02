@@ -75,6 +75,16 @@ make >/dev/null || exit 1
 #    ypcat passwd | grep "^$user:"
 #fi
 
+set -x
+
+gid=`ypcat passwd | grep "^${username}:" | cut -d ':' -f 4`
+echo "DBG: gid=${gid}"
+
+# Create and populate Home Directory for new username
+mkdir /home/${username} || exit 1
+[ -e /etc/skel ] && (cd /etc/skel && cp -a . /home/${username})
+chown -R ${username}.${gid} /home/${username} || exit 1
+
 exit 0
 
 # === EOF ===
