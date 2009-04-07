@@ -5,16 +5,17 @@
 
 NOW=`date '+%Y%m%d-%H%M'`
 
-REMOTEUSER=macario
-REMOTEHOST=inno05.venaria.marelli.it
+REMOTEUSER=administrator
+REMOTEHOST=lupin05.venaria.marelli.it
 
 REPOSITORIES=""
 #REPOSITORIES+=" inno"
-REPOSITORIES+=" inno.OLD"
-REPOSITORIES+=" mmseti"
-REPOSITORIES+=" osstbox"
+#REPOSITORIES+=" inno.OLD"
+#REPOSITORIES+=" mmseti"
+#REPOSITORIES+=" osstbox"
+REPOSITORIES+=" lupin"
 
-BACKUPDIR=/backup/Backup_svnrepos/`date '+%Y%m%d'`-inno05
+BACKUPDIR=/backup/Backup_svnrepos/`date '+%Y%m%d'`-lupin05
 
 #set -x
 
@@ -32,11 +33,11 @@ cd $BACKUPDIR || exit 1
 
 # TODO: Backup /etc/apache2/dav_svn.{authz,passwd}
 scp ${REMOTEUSER}@${REMOTEHOST}:/etc/apache2/dav_svn.authz .
-scp ${REMOTEUSER}@${REMOTEHOST}:/etc/apache2/dav_svn.passwd .
+#scp ${REMOTEUSER}@${REMOTEHOST}:/etc/apache2/dav_svn.passwd .
 
 for repos in ${REPOSITORIES}; do
     echo "INFO: Dumping SVN repos $repos from $REMOTEHOST..."
-    (ssh ${REMOTEUSER}@${REMOTEHOST} svnadmin dump /opt/repos/$repos | gzip -c -9) \
+    (ssh ${REMOTEUSER}@${REMOTEHOST} svnadmin dump /opt/svnrepos/$repos | gzip -c -9) \
 	| split -b 2048m -d - ${NOW}-bk-$repos.svndump.gz-split
     retval=$?
     if [ $retval -ne 0 ]; then
