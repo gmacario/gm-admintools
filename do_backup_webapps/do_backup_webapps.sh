@@ -7,13 +7,13 @@ REMOTEUSER=user01
 REMOTEHOST=lupin08.venaria.marelli.it
 REMOTEDIR=/home/user01/do_backup_webapps
 
-WIKIS=""
-WIKIS+="mediawiki-1.14.0 "
-WIKIS+="lupinwiki "
-WIKIS+="nbtwiki "
-WIKIS+="osstbox "
+DBS=""
+DBS+="mediawiki-1.14.0 "
+DBS+="lupinwiki "
+DBS+="bugzilla "
+#DBS+="osstbox "
 
-MEDIAWIKI_ARCHIVE=`date '+%Y%m%d'`-mediawiki_install.tgz
+WEBAPPS_ARCHIVE=`date '+%Y%m%d'`-webapps_install.tgz
 
 echo "INFO: $0 v0.1"
 
@@ -26,10 +26,10 @@ echo "INFO: Copying backup of MySQL DB from $REMOTEHOST"
 scp -r $REMOTEUSER@$REMOTEHOST:$REMOTEDIR/mysql_backups $BACKUPDIR || exit 1
 
 # Backup MediaWiki engine
-echo "INFO: Backing up MediaWiki engine at $REMOTEHOST"
+echo "INFO: Backing up webapps files at $REMOTEHOST"
 ssh $REMOTEUSER@$REMOTEHOST \
-	"(cd /var/www && tar cvz $WIKIS)" \
-	> $BACKUPDIR/$MEDIAWIKI_ARCHIVE || exit 1
+	"(cd /var/www && tar cvz $DBS)" \
+	> $BACKUPDIR/$WEBAPPS_ARCHIVE || exit 1
 
 ## Backup Images
 #for wiki in $WIKIS; do
