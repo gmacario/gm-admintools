@@ -28,7 +28,7 @@ scp -r $REMOTEUSER@$REMOTEHOST:$REMOTEDIR/mysql_backups $BACKUPDIR || exit 1
 # Backup MediaWiki engine
 echo "INFO: Backing up webapps files at $REMOTEHOST"
 ssh $REMOTEUSER@$REMOTEHOST \
-	"(cd /var/www && tar cvz $DBS)" \
+	"(cd /var/www && tar cz $DBS)" \
 	> $BACKUPDIR/$WEBAPPS_ARCHIVE || exit 1
 
 ## Backup Images
