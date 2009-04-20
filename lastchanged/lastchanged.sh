@@ -13,7 +13,7 @@ LIST=lastchanged.txt
 TARBALL=lastchanged.tar.gz
 
 if [ ! -e $LIST ]; then
-	ssh $REMOTEUSER@$REMOTEHOST "cd $BASEDIR && find . $FIND_PATTERN" >$LIST
+	ssh $REMOTEUSER@$REMOTEHOST "cd $BASEDIR && find . $FIND_PATTERN -ls" >$LIST
 	echo "INFO: Saving list from $LIST"
 	exit
 else
@@ -21,6 +21,6 @@ else
 fi
 
 scp $LIST $REMOTEUSR@$REMOTEHOST:/tmp
-ssh $REMOTEUSER@$REMOTEHOST "cd $BASEDIR && tar cvz $(cat /tmp/$LIST)" >$TARBALL
+ssh $REMOTEUSER@$REMOTEHOST "cd $BASEDIR && tar cvz $(find . $FIND_PATTERN)" >$TARBALL
 
 # === EOF ===
