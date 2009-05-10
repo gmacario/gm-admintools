@@ -16,6 +16,12 @@
 # Copyright 2007-2009 Magneti Marelli Electronic Systems - All Rights Reserved
 # =============================================================================
 
+set -e
+
+OUTFILE=nis2table/`ypdomainname`_users.csv
+
+mkdir -p `dirname ${OUTFILE}`
+
 (ypcat passwd  || exit 1 ) | awk '
 BEGIN	{
 	printf("%s;%s;%s;%s;%s;%s;%s\n", \
@@ -86,6 +92,8 @@ BEGIN	{
 	}
 END	{
 	}
-' | sort >`ypdomainname`_users.csv
+' | sort >${OUTFILE}
+
+echo "INFO: Results saved under ${OUTFILE}"
 
 # === EOF ==
