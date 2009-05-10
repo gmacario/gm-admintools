@@ -18,7 +18,7 @@
 
 set -e
 
-OUTFILE=nis2table/`ypdomainname`_users.csv
+OUTFILE=tables/`ypdomainname`_users.csv
 
 mkdir -p `dirname ${OUTFILE}`
 
