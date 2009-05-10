@@ -1,95 +1,95 @@
-! LASTNAME;firstname;company;username;uid;gid;in_MotoGP;in_MotoGB
-AGHEMO;Fabio;Marelli;faghemo;501;2015;1;1
-ALLAOUA;Tarek;MM Chatellerault;allaoua;531;2015;0;0
-ANTONELLI;Sergio;Marelli;santonel;513;2015;0;0
-BASSO;Filippo;Zirak;fbasso;553;2015;0;0
-BATHELT;Manfred;BMW;bathelt;585;2015;0;0
-BESOZZI;Celine;MM Chatellerault;besozzi;532;2015;0;0
-BILLIET;Eric;Marelli;billiet;514;2015;1;1
-BOJE;Markus;BMW;boje;584;2015;0;0
-BOSCO;Stefano;Marelli;sbosco;515;2015;1;1
-BRUCI;Evaldo;Marelli;ebruci;516;2015;0;0
-BUSO;Laura;Marelli;lbuso;517;2015;0;0
-CALABRO;Antonio;Marelli;calabro;518;2015;0;0
-CAMBURSANO;Claudio;Marelli;cambursa;565;2015;0;0
-CANETTO;Beatrice;Akhela;bcanetto;589;2015;0;0
-CASANOVA;Gianfranco;Akhela;casanova;542;2015;0;0
-CAVALLOTTI;Piero;Visiant;cavallot;550;2015;1;1
-CERATO;Alberto;Marelli;cerato;554;2015;1;1
-CINGOLANI;Daniele;Marelli;cingolan;564;2015;0;0
-CLEMENCEAU;Yvan;MM Chatellerault;clemence;533;2015;0;0
-COPETTI;Paolo;Marelli;copetti;519;2015;0;0
-CURTI;Massimiliano;Teoresi;curti;579;2015;0;0
-DAMIANO;Antonino;Marelli;damiano;520;2015;1;1
-DEGIOANNI;Claudio;Zirak;degioanni;592;2015;0;0
-DESANA;Davide;Marelli;desana;503;2015;1;1
-DOZ;Paolo;Marelli;paolodoz;502;2015;1;1
-DUTTO;Valerio;Zirak;dutto;591;2015;0;0
-EMMERICH;Laurent;BMW;emmerich;586;2015;0;0
-FAGGIANI;Federica;Marelli;faggiani;521;2015;0;0
-FARINA;Stefano;Akhela;farina;543;2015;0;0
-FERRARA;Riccardo;Marelli;ferrara;504;2015;1;1
-FRESI;Luca;Akhela;fresi;544;2015;0;0
-GARBEROGLIO;Flaviano;Marelli;garberog;522;2015;0;0
-GARCEA;Alessandro;Teoresi;garcea;576;2015;1;1
-GENNARINO;Maria Concetta;Marelli;gennarin;523;2015;0;0
-GHIAZZA;Matteo;Marelli;ghiazza;505;2015;1;1
-GIACOIA;Giuseppe;Marelli;giacoia;568;2015;0;0
-GILFORTE;Maria Paola;Marelli;gilforte;524;2015;1;1
-GIRAUDO;Emanuele;Marelli;giraudo;559;2015;1;1
-GRAGLIA;Emiliano;Marelli;graglia;558;2015;0;0
-GRELLIER;Fabrice;MM Chatellerault;grellier;534;2015;0;0
-HERARD;Rodolphe;MM Chatellerault;herard;535;2015;0;0
-KOERNER;Gerri;BMW;koerner;587;2015;0;0
-LOCOCO;Annalisa;Marelli;lococo;525;2015;0;0
-LOSEGO;Eric;MM Chatellerault;losego;536;2015;0;0
-MACARIO;Gianpaolo;Marelli;macario;500;2015;1;1
-MADDAU;Andrea;Akhela;maddau;567;2015;0;0
-MARCIA;Marta;Akhela;marcia;545;2015;0;0
-MARINO;Rosario;Marelli;rmarino;560;2015;1;1
-MARTORELL;Ludovic;MM Chatellerault;martorel;537;2015;1;1
-MOCCI;Francesco;Akhela;mocci;574;2015;1;1
-MURRU;Alessandro;Akhela;murru;571;2015;0;0
-NASSI;Marco;Marelli;nassi;563;2015;0;0
-NOBERASCO;Michele;Zirak;noberasco;555;2015;0;0
-NUZZI;Gino;Akhela;ginnuzzi;540;2015;1;1
-ORLANDI;Stefano;Marelli;sorlandi;526;2015;0;0
-PALMA;Cosimo;Teoresi;copalma;580;2015;1;1
-PANERO;Danila;Marelli;panero;573;2015;0;0
-PANTALEO;Paolo;Zirak;ppantale;578;2015;0;0
-PARENTI;Leonardo;UniPMN;parenti;575;2015;1;1
-PAROLINI;Nicolo;Zirak;parolini;556;2015;0;0
-PICERNO;Luciano;Marelli;picerno;562;2015;0;0
-PIERRI;Massimo;Marelli;pierri;506;2015;1;1
-PINNA;Emilio;Akhela;epinna;572;2015;0;0
-PINNA;Pierluigi;Akhela;pinna;546;2015;0;0
-PIRRA;Giorgio;Marelli;pirra;507;2015;1;1
-PONCHIONE;Giorgio;Marelli;ponchion;508;2015;1;1
-PORCU;Paolo;Marelli;porcu;547;2015;0;0
-RE;Antonio;Marelli;re;527;2015;0;0
-ROCCA;Marco;Zirak;mrocca;557;2015;0;0
-RODINO;Laura;Marelli;rodino;593;2015;0;0
-RUSSO;Angelo;Marelli;angrusso;509;2015;1;1
-SALERNO;Franco;Marelli;fsalerno;569;2015;0;0
-SANAPO;Marcella;Teoresi;sanapo;577;2015;0;0
-SANNA;Andrea;Akhela;asanna;541;2015;1;1
-SANNIA;Sandro;Akhela;sannia;590;2015;0;0
-SANNIO;Antonio;Marelli;sannio;570;2015;0;0
-SARTORI;Claudio;Marelli;sartoric;528;2015;1;1
-SERRE;Giacomo;Marelli;serre;529;2015;0;0
-SERRETTI;Enrico;Visiant;serrett;551;2015;1;1
-SIMMINI;Angelo;Marelli;asimmini;510;2015;1;1
-SODDU;Marco;Akhela;soddu;566;2015;0;0
-SPONZA;Cristiano;Marelli;sponza;511;2015;1;1
-STOCCHINO;Marco;Akhela;stocchino;548;2015;1;1
-STRAZZULLO;Antonio;Marelli;strazzullo;530;2015;0;0
-TERREE;Eric;MM Chatellerault;terree;538;2015;0;0
-TONDANI;Antonio;Accenture;tondani;582;2015;0;0
-TOSETTO;Fabio;Marelli;ftosett;581;2015;0;0
-TURINETTO;Maurizio;Visiant;turinett;552;2015;0;0
-TURPAULT;Eric;MM Chatellerault;turpault;539;2015;0;0
-TUTTOBENE;Francois;Marelli;tuttobene;549;2015;0;0
-ULERI;Giuseppe;Accenture;uleri;583;2015;0;0
-VIOLINO;Walter;Marelli;violino;512;2015;1;1
-WENZEL;Alex;BMW;wenzel;588;2015;0;0
-ZOMPI;Roberto;Marelli;zompi;561;2015;0;0
+! LASTNAME;firstname;company;username;uid;gid;pass_enc;homedir;shell;in_MotoGP;in_MotoGB
+AGHEMO;Fabio;Marelli;faghemo;501;2015;UNpgmgxZVu2TQ;/home/faghemo;/bin/bash;1;1
+ALLAOUA;Tarek;MM Chatellerault;allaoua;531;2015;8bHP2gHbNdc6o;/home/allaoua;/bin/bash;0;0
+ANTONELLI;Sergio;Marelli;santonel;513;2015;gQHZcdbMXDyzU;/home/santonel;/bin/bash;0;0
+BASSO;Filippo;Zirak;fbasso;553;2015;o7l/6XIy/Hla.;/home/fbasso;/bin/bash;0;0
+BATHELT;Manfred;BMW;bathelt;585;2015;zzz;/home/bathelt;/bin/bash;0;0
+BESOZZI;Celine;MM Chatellerault;besozzi;532;2015;xxx;/home/Besozzi;/bin/bash;0;0
+BILLIET;Eric;Marelli;billiet;514;2015;xxx;/home/billiet;/bin/bash;1;1
+BOJE;Markus;BMW;boje;584;2015;zzz;/home/boje;/bin/bash;0;0
+BOSCO;Stefano;Marelli;sbosco;515;2015;MgDehIgFNSwL6;/home/sbosco;/bin/bash;1;1
+BRUCI;Evaldo;Marelli;ebruci;516;2015;xxx;/home/ebruci;/bin/bash;0;0
+BUSO;Laura;Marelli;lbuso;517;2015;xxx;/home/lbuso;/bin/bash;0;0
+CALABRO;Antonio;Marelli;calabro;518;2015;/xXcifihSKh9k;/home/calabro;/bin/bash;0;0
+CAMBURSANO;Claudio;Marelli;cambursa;565;2015;yyy;/home/cambursa;/bin/bash;0;0
+CANETTO;Beatrice;Akhela;bcanetto;589;2015;zzz;/home/bcanetto;/bin/bash;0;0
+CASANOVA;Gianfranco;Akhela;casanova;542;2015;xxx;/home/casanova;/bin/bash;0;0
+CAVALLOTTI;Piero;Visiant;cavallot;550;2015;mb0071M3CULvs;/home/cavallot;/bin/bash;1;1
+CERATO;Alberto;Marelli;cerato;554;2015;$1$N.GDREEP$zjfYA4EuSPNJNJQAk7Z3Y/;/home/cerato;/bin/bash;1;1
+CINGOLANI;Daniele;Marelli;cingolan;564;2015;yyy;/home/cingolan;/bin/bash;0;0
+CLEMENCEAU;Yvan;MM Chatellerault;clemence;533;2015;xxx;/home/clemence;/bin/bash;0;0
+COPETTI;Paolo;Marelli;copetti;519;2015;ORaGufTz3oZaE;/home/copetti;/bin/bash;0;0
+CURTI;Massimiliano;Teoresi;curti;579;2015;G/Fr08MpLHJP2;/home/curti;/bin/bash;0;0
+DAMIANO;Antonino;Marelli;damiano;520;2015;bW.sR4mQhaYOg;/home/damiano;/bin/bash;1;1
+DEGIOANNI;Claudio;Zirak;degioanni;592;2015;zzz;/home/degioanni;/bin/bash;0;0
+DESANA;Davide;Marelli;desana;503;2015;IV7V7sMwdFEwU;/home/desana;/bin/bash;1;1
+DOZ;Paolo;Marelli;paolodoz;502;2015;DPxaRp3jM.6Do;/home/paolodoz;/bin/bash;1;1
+DUTTO;Valerio;Zirak;dutto;591;2015;zzz;/home/dutto;/bin/bash;0;0
+EMMERICH;Laurent;BMW;emmerich;586;2015;zzz;/home/emmerich;/bin/bash;0;0
+FAGGIANI;Federica;Marelli;faggiani;521;2015;xxx;/home/faggiani;/bin/bash;0;0
+FARINA;Stefano;Akhela;farina;543;2015;xxx;/home/farina;/bin/bash;0;0
+FERRARA;Riccardo;Marelli;ferrara;504;2015;NBl.ztLQcEmAk;/home/ferrara;/bin/bash;1;1
+FRESI;Luca;Akhela;fresi;544;2015;xxx;/home/fresi;/bin/bash;0;0
+GARBEROGLIO;Flaviano;Marelli;garberog;522;2015;xxx;/home/garberog;/bin/bash;0;0
+GARCEA;Alessandro;Teoresi;garcea;576;2015;/Tft/eArMm8Tc;/home/garcea;/bin/bash;1;1
+GENNARINO;Maria Concetta;Marelli;gennarin;523;2015;xxx;/home/gennarin;/bin/bash;0;0
+GHIAZZA;Matteo;Marelli;ghiazza;505;2015;B9opJAn4a90tU;/home/ghiazza;/bin/bash;1;1
+GIACOIA;Giuseppe;Marelli;giacoia;568;2015;yyy;/home/giacoia;/bin/bash;0;0
+GILFORTE;Maria Paola;Marelli;gilforte;524;2015;TwzQorpiELux.;/home/gilforte;/bin/bash;1;1
+GIRAUDO;Emanuele;Marelli;giraudo;559;2015;aGp78HT/SnnFY;/home/giraudo;/bin/bash;1;1
+GRAGLIA;Emiliano;Marelli;graglia;558;2015;yyy;/home/graglia;/bin/bash;0;0
+GRELLIER;Fabrice;MM Chatellerault;grellier;534;2015;xxx;/home/grellier;/bin/bash;0;0
+HERARD;Rodolphe;MM Chatellerault;herard;535;2015;xxx;/home/herard;/bin/bash;0;0
+KOERNER;Gerri;BMW;koerner;587;2015;zzz;/home/koerner;/bin/bash;0;0
+LOCOCO;Annalisa;Marelli;lococo;525;2015;xxx;/home/lococo;/bin/bash;0;0
+LOSEGO;Eric;MM Chatellerault;losego;536;2015;xxx;/home/losego;/bin/bash;0;0
+MACARIO;Gianpaolo;Marelli;macario;500;2015;SOh/4CaVxSR/E;/home/macario;/bin/bash;1;1
+MADDAU;Andrea;Akhela;maddau;567;2015;yyy;/home/maddau;/bin/bash;0;0
+MARCIA;Marta;Akhela;marcia;545;2015;xxx;/home/marcia;/bin/bash;0;0
+MARINO;Rosario;Marelli;rmarino;560;2015;yyy;/home/rmarino;/bin/bash;1;1
+MARTORELL;Ludovic;MM Chatellerault;martorel;537;2015;xxx;/home/martorel;/bin/bash;1;1
+MOCCI;Francesco;Akhela;mocci;574;2015;OEMhmu8y4eOFA;/home/mocci;/bin/bash;1;1
+MURRU;Alessandro;Akhela;murru;571;2015;yyy;/home/murru;/bin/bash;0;0
+NASSI;Marco;Marelli;nassi;563;2015;yyy;/home/nassi;/bin/bash;0;0
+NOBERASCO;Michele;Zirak;noberasco;555;2015;LaAY6LpAYYpGk;/home/noberasco;/bin/bash;0;0
+NUZZI;Gino;Akhela;ginnuzzi;540;2015;D7M00QJfOCjHU;/home/ginnuzzi;/bin/bash;1;1
+ORLANDI;Stefano;Marelli;sorlandi;526;2015;pzcaoSo1H9HXY;/home/sorlandi;/bin/bash;0;0
+PALMA;Cosimo;Teoresi;copalma;580;2015;lk3AzcxQXgDBM;/home/copalma;/bin/bash;1;1
+PANERO;Danila;Marelli;panero;573;2015;yyy;/home/panero;/bin/bash;0;0
+PANTALEO;Paolo;Zirak;ppantale;578;2015;yyy;/home/ppantale;/bin/bash;0;0
+PARENTI;Leonardo;UniPMN;parenti;575;2015;9u/OQPI9kiC1o;/home/parenti;/bin/bash;1;1
+PAROLINI;Nicolo;Zirak;parolini;556;2015;xxx;/home/parolini;/bin/bash;0;0
+PICERNO;Luciano;Marelli;picerno;562;2015;yyy;/home/picerno;/bin/bash;0;0
+PIERRI;Massimo;Marelli;pierri;506;2015;DY1e45n7iMvUk;/home/pierri;/bin/bash;1;1
+PINNA;Emilio;Akhela;epinna;572;2015;yyy;/home/epinna;/bin/bash;0;0
+PINNA;Pierluigi;Akhela;pinna;546;2015;oaG0ypR71qd6Q;/home/pinna;/bin/bash;0;0
+PIRRA;Giorgio;Marelli;pirra;507;2015;hC.dEhghMIEwU;/home/pirra;/bin/bash;1;1
+PONCHIONE;Giorgio;Marelli;ponchion;508;2015;XnrcN.hJsl6Vo;/home/ponchion;/bin/bash;1;1
+PORCU;Paolo;Marelli;porcu;547;2015;xxx;/home/porcu (Akhela);/bin/bash;0;0
+RE;Antonio;Marelli;re;527;2015;161v3brfqN9MA;/home/re;/bin/bash;0;0
+ROCCA;Marco;Zirak;mrocca;557;2015;rg8BBB2I3ogV6;/home/mrocca;/bin/bash;0;0
+RODINO;Laura;Marelli;rodino;593;2015;GzslqrxRRWFfE;/home/rodino;/bin/bash;0;0
+RUSSO;Angelo;Marelli;angrusso;509;2015;yr72fuVRZ9UE6;/home/angrusso;/bin/bash;1;1
+SALERNO;Franco;Marelli;fsalerno;569;2015;yyy;/home/fsalerno;/bin/bash;0;0
+SANAPO;Marcella;Teoresi;sanapo;577;2015;yyy;/home/sanapo;/bin/bash;0;0
+SANNA;Andrea;Akhela;asanna;541;2015;QxuBnHsclLw9U;/home/asanna;/bin/bash;1;1
+SANNIA;Sandro;Akhela;sannia;590;2015;zzz;/home/sannia;/bin/bash;0;0
+SANNIO;Antonio;Marelli;sannio;570;2015;yyy;/home/sannio;/bin/bash;0;0
+SARTORI;Claudio;Marelli;sartoric;528;2015;fNgnoF8lAiYFA;/home/sartoric;/bin/bash;1;1
+SERRE;Giacomo;Marelli;serre;529;2015;xxx;/home/serre;/bin/bash;0;0
+SERRETTI;Enrico;Visiant;serrett;551;2015;AUqolKEyY2oP.;/home/Serrett;/bin/bash;1;1
+SIMMINI;Angelo;Marelli;asimmini;510;2015;7ddt4W4zc7uI2;/home/asimmini;/bin/bash;1;1
+SODDU;Marco;Akhela;soddu;566;2015;yyy;/home/soddu;/bin/bash;0;0
+SPONZA;Cristiano;Marelli;sponza;511;2015;dqpcy7WM3R5Cc;/home/sponza;/bin/bash;1;1
+STOCCHINO;Marco;Akhela;stocchino;548;2015;CaQgci/cTuPKA;/home/stocchino;/bin/bash;1;1
+STRAZZULLO;Antonio;Marelli;strazzullo;530;2015;xxx;/home/strazzullo;/bin/bash;0;0
+TERREE;Eric;MM Chatellerault;terree;538;2015;xxx;/home/terree;/bin/bash;0;0
+TONDANI;Antonio;Accenture;tondani;582;2015;MF328mGc/nJCQ;/home/tondani;/bin/bash;0;0
+TOSETTO;Fabio;Marelli;ftosett;581;2015;xxx;/home/ftosett;/bin/bash;0;0
+TURINETTO;Maurizio;Visiant;turinett;552;2015;xxx;/home/turinett;/bin/bash;0;0
+TURPAULT;Eric;MM Chatellerault;turpault;539;2015;xxx;/home/turpault;/bin/bash;0;0
+TUTTOBENE;Francois;Marelli;tuttobene;549;2015;xxx;/home/tuttobene;/bin/bash;0;0
+ULERI;Giuseppe;Accenture;uleri;583;2015;a.vUetaPlzgr2;/home/uleri;/bin/bash;0;0
+VIOLINO;Walter;Marelli;violino;512;2015;lsoG4M1otofc6;/home/violino;/bin/bash;1;1
+WENZEL;Alex;BMW;wenzel;588;2015;zzz;/home/wenzel;/bin/bash;0;0
+ZOMPI;Roberto;Marelli;zompi;561;2015;yyy;/home/zompi;/bin/bash;0;0

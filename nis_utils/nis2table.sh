@@ -24,9 +24,10 @@ mkdir -p `dirname ${OUTFILE}`
 
 (ypcat passwd  || exit 1 ) | awk '
 BEGIN	{
-	printf("%s;%s;%s;%s;%s;%s;%s;%s\n", \
+	printf("%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s\n", \
 		"! LASTNAME", "firstname", "company", "username", \
 		"uid", "gid", \
+		"pass_enc", "homedir", "shell", \
 		"in_MotoGP", "in_MotoGB");
 	FS=":"
 	#
@@ -105,9 +106,10 @@ BEGIN	{
 	#print "DBG: in_MotoGP=" in_MotoGP
 	#print "DBG:"
 	#
-	printf("%s;%s;%s;%s;%d;%d;%d;%d\n", \
+	printf("%s;%s;%s;%s;%d;%d;%s;%s;%s;%d;%d\n", \
 		lastname, firstname, company, username, \
 		uid, gid, \
+		pass_enc,homedir,shell, \
 		in_MotoGP, in_MotoGB);
 	}
 END	{
