@@ -33,24 +33,35 @@ BEGIN	{
 	FLAG_MOTOGP = 1;
 	FLAG_MOTOGB = 2;
 	#
-	lupin_users["angrusso"]  = "MOTOGP|MOTOGB";
-	lupin_users["asanna"]    = "MOTOGP|MOTOGB";
-	lupin_users["asimmini"]  = "MOTOGP|MOTOGB";
+	lupin_users["faghemo"]   = "MOTOGP|MOTOGB";
+	lupin_users["alloua"]    = "MOTOGP";
+	lupin_users["billiet"]   = "MOTOGP|MOTOGB";
+	lupin_users["sbosco"]    = "MOTOGP|MOTOGB";
 	lupin_users["cavallot"]  = "MOTOGP|MOTOGB";
 	lupin_users["cerato"]    = "MOTOGP|MOTOGB";
+	lupin_users["damiano"]   = "MOTOGB";
 	lupin_users["desana"]    = "MOTOGP|MOTOGB";
-	lupin_users["faghemo"]   = "MOTOGP|MOTOGB";
-	lupin_users["ferrara"]   = "MOTOGP|MOTOGB";
-	lupin_users["ghiazza"]   = "MOTOGP|MOTOGB";
-	lupin_users["ginnuzzi"]  = "MOTOGP|MOTOGB";
-	lupin_users["macario"]   = "MOTOGP|MOTOGB";
-	lupin_users["mocci"]     = "MOTOGP|MOTOGB";
 	lupin_users["paolodoz"]  = "MOTOGP|MOTOGB";
+	lupin_users["ferrara"]   = "MOTOGP|MOTOGB";
+	lupin_users["garcea"]    = "MOTOGP|MOTOGB";
+	lupin_users["ghiazza"]   = "MOTOGP|MOTOGB";
+	lupin_users["gilforte"]  = "MOTOGP|MOTOGB";
+	lupin_users["giraudo"]   = "MOTOGP";
+	lupin_users["macario"]   = "MOTOGP|MOTOGB";
+	lupin_users["rmarino"]   = "MOTOGP";
+	lupin_users["martorel"]  = "MOTOGP";
+	lupin_users["mocci"]     = "MOTOGP|MOTOGB";
+	lupin_users["ginnuzzi"]  = "MOTOGP|MOTOGB";
+	lupin_users["copalma"]   = "MOTOGP|MOTOGB";
+	lupin_users["parenti"]   = "MOTOGP|MOTOGB";
 	lupin_users["pierri"]    = "MOTOGP|MOTOGB";
 	lupin_users["pirra"]     = "MOTOGP|MOTOGB";
 	lupin_users["ponchion"]  = "MOTOGP|MOTOGB";
+	lupin_users["angrusso"]  = "MOTOGP|MOTOGB";
+	lupin_users["asanna"]    = "MOTOGP|MOTOGB";
 	lupin_users["sartoric"]  = "MOTOGP|MOTOGB";
 	lupin_users["serrett"]   = "MOTOGP|MOTOGB";
+	lupin_users["asimmini"]  = "MOTOGP|MOTOGB";
 	lupin_users["sponza"]    = "MOTOGP|MOTOGB";
 	lupin_users["stocchino"] = "MOTOGP|MOTOGB";
 	lupin_users["violino"]   = "MOTOGP|MOTOGB";
@@ -83,9 +94,9 @@ BEGIN	{
 	company = (n_sub == 2) ? company : "Marelli";
 	#
 	in_MotoGP = ((username in lupin_users) && \
-		index("MOTOGP", lupin_users[username]) >= 0) ? "Yes" : "No";
+		index("MOTOGP", lupin_users[username]) >= 0) ? 1 : 0;
 	in_MotoGB = ((username in lupin_users) && \
-		index("MOTOGB", lupin_users[username]) >= 0) ? "Yes" : "No";
+		index("MOTOGB", lupin_users[username]) >= 0) ? 1 : 0;
 	#
 	#print "DBG: displayname=" displayname
 	#print "DBG: lastname=" lastname
@@ -94,7 +105,7 @@ BEGIN	{
 	#print "DBG: in_MotoGP=" in_MotoGP
 	#print "DBG:"
 	#
-	printf("%s;%s;%s;%s;%d;%d;%s;%s\n", \
+	printf("%s;%s;%s;%s;%d;%d;%d;%d\n", \
 		lastname, firstname, company, username, \
 		uid, gid, \
 		in_MotoGP, in_MotoGB);

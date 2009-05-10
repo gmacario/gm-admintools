@@ -1,95 +1,95 @@
 ! LASTNAME;firstname;company;username;uid;gid;in_MotoGP;in_MotoGB
-AGHEMO;Fabio;Marelli;faghemo;501;2015;Yes;Yes
-ALLAOUA;Tarek;MM Chatellerault;allaoua;531;2015;No;No
-ANTONELLI;Sergio;Marelli;santonel;513;2015;No;No
-BASSO;Filippo;Zirak;fbasso;553;2015;No;No
-BATHELT;Manfred;BMW;bathelt;585;2015;No;No
-BESOZZI;Celine;MM Chatellerault;besozzi;532;2015;No;No
-BILLIET;Eric;Marelli;billiet;514;2015;No;No
-BOJE;Markus;BMW;boje;584;2015;No;No
-BOSCO;Stefano;Marelli;sbosco;515;2015;No;No
-BRUCI;Evaldo;Marelli;ebruci;516;2015;No;No
-BUSO;Laura;Marelli;lbuso;517;2015;No;No
-CALABRO;Antonio;Marelli;calabro;518;2015;No;No
-CAMBURSANO;Claudio;Marelli;cambursa;565;2015;No;No
-CANETTO;Beatrice;Akhela;bcanetto;589;2015;No;No
-CASANOVA;Gianfranco;Akhela;casanova;542;2015;No;No
-CAVALLOTTI;Piero;Visiant;cavallot;550;2015;Yes;Yes
-CERATO;Alberto;Marelli;cerato;554;2015;Yes;Yes
-CINGOLANI;Daniele;Marelli;cingolan;564;2015;No;No
-CLEMENCEAU;Yvan;MM Chatellerault;clemence;533;2015;No;No
-COPETTI;Paolo;Marelli;copetti;519;2015;No;No
-CURTI;Massimiliano;Teoresi;curti;579;2015;No;No
-DAMIANO;Antonino;Marelli;damiano;520;2015;No;No
-DEGIOANNI;Claudio;Zirak;degioanni;592;2015;No;No
-DESANA;Davide;Marelli;desana;503;2015;Yes;Yes
-DOZ;Paolo;Marelli;paolodoz;502;2015;Yes;Yes
-DUTTO;Valerio;Zirak;dutto;591;2015;No;No
-EMMERICH;Laurent;BMW;emmerich;586;2015;No;No
-FAGGIANI;Federica;Marelli;faggiani;521;2015;No;No
-FARINA;Stefano;Akhela;farina;543;2015;No;No
-FERRARA;Riccardo;Marelli;ferrara;504;2015;Yes;Yes
-FRESI;Luca;Akhela;fresi;544;2015;No;No
-GARBEROGLIO;Flaviano;Marelli;garberog;522;2015;No;No
-GARCEA;Alessandro;Teoresi;garcea;576;2015;No;No
-GENNARINO;Maria Concetta;Marelli;gennarin;523;2015;No;No
-GHIAZZA;Matteo;Marelli;ghiazza;505;2015;Yes;Yes
-GIACOIA;Giuseppe;Marelli;giacoia;568;2015;No;No
-GILFORTE;Maria Paola;Marelli;gilforte;524;2015;No;No
-GIRAUDO;Emanuele;Marelli;giraudo;559;2015;No;No
-GRAGLIA;Emiliano;Marelli;graglia;558;2015;No;No
-GRELLIER;Fabrice;MM Chatellerault;grellier;534;2015;No;No
-HERARD;Rodolphe;MM Chatellerault;herard;535;2015;No;No
-KOERNER;Gerri;BMW;koerner;587;2015;No;No
-LOCOCO;Annalisa;Marelli;lococo;525;2015;No;No
-LOSEGO;Eric;MM Chatellerault;losego;536;2015;No;No
-MACARIO;Gianpaolo;Marelli;macario;500;2015;Yes;Yes
-MADDAU;Andrea;Akhela;maddau;567;2015;No;No
-MARCIA;Marta;Akhela;marcia;545;2015;No;No
-MARINO;Rosario;Marelli;rmarino;560;2015;No;No
-MARTORELL;Ludovic;MM Chatellerault;martorel;537;2015;No;No
-MOCCI;Francesco;Akhela;mocci;574;2015;Yes;Yes
-MURRU;Alessandro;Akhela;murru;571;2015;No;No
-NASSI;Marco;Marelli;nassi;563;2015;No;No
-NOBERASCO;Michele;Zirak;noberasco;555;2015;No;No
-NUZZI;Gino;Akhela;ginnuzzi;540;2015;Yes;Yes
-ORLANDI;Stefano;Marelli;sorlandi;526;2015;No;No
-PALMA;Cosimo;Teoresi;copalma;580;2015;No;No
-PANERO;Danila;Marelli;panero;573;2015;No;No
-PANTALEO;Paolo;Zirak;ppantale;578;2015;No;No
-PARENTI;Leonardo;UniPMN;parenti;575;2015;No;No
-PAROLINI;Nicolo;Zirak;parolini;556;2015;No;No
-PICERNO;Luciano;Marelli;picerno;562;2015;No;No
-PIERRI;Massimo;Marelli;pierri;506;2015;Yes;Yes
-PINNA;Emilio;Akhela;epinna;572;2015;No;No
-PINNA;Pierluigi;Akhela;pinna;546;2015;No;No
-PIRRA;Giorgio;Marelli;pirra;507;2015;Yes;Yes
-PONCHIONE;Giorgio;Marelli;ponchion;508;2015;Yes;Yes
-PORCU;Paolo;Marelli;porcu;547;2015;No;No
-RE;Antonio;Marelli;re;527;2015;No;No
-ROCCA;Marco;Zirak;mrocca;557;2015;No;No
-RODINO;Laura;Marelli;rodino;593;2015;No;No
-RUSSO;Angelo;Marelli;angrusso;509;2015;Yes;Yes
-SALERNO;Franco;Marelli;fsalerno;569;2015;No;No
-SANAPO;Marcella;Teoresi;sanapo;577;2015;No;No
-SANNA;Andrea;Akhela;asanna;541;2015;Yes;Yes
-SANNIA;Sandro;Akhela;sannia;590;2015;No;No
-SANNIO;Antonio;Marelli;sannio;570;2015;No;No
-SARTORI;Claudio;Marelli;sartoric;528;2015;Yes;Yes
-SERRE;Giacomo;Marelli;serre;529;2015;No;No
-SERRETTI;Enrico;Visiant;serrett;551;2015;Yes;Yes
-SIMMINI;Angelo;Marelli;asimmini;510;2015;Yes;Yes
-SODDU;Marco;Akhela;soddu;566;2015;No;No
-SPONZA;Cristiano;Marelli;sponza;511;2015;Yes;Yes
-STOCCHINO;Marco;Akhela;stocchino;548;2015;Yes;Yes
-STRAZZULLO;Antonio;Marelli;strazzullo;530;2015;No;No
-TERREE;Eric;MM Chatellerault;terree;538;2015;No;No
-TONDANI;Antonio;Accenture;tondani;582;2015;No;No
-TOSETTO;Fabio;Marelli;ftosett;581;2015;No;No
-TURINETTO;Maurizio;Visiant;turinett;552;2015;No;No
-TURPAULT;Eric;MM Chatellerault;turpault;539;2015;No;No
-TUTTOBENE;Francois;Marelli;tuttobene;549;2015;No;No
-ULERI;Giuseppe;Accenture;uleri;583;2015;No;No
-VIOLINO;Walter;Marelli;violino;512;2015;Yes;Yes
-WENZEL;Alex;BMW;wenzel;588;2015;No;No
-ZOMPI;Roberto;Marelli;zompi;561;2015;No;No
+AGHEMO;Fabio;Marelli;faghemo;501;2015;1;1
+ALLAOUA;Tarek;MM Chatellerault;allaoua;531;2015;0;0
+ANTONELLI;Sergio;Marelli;santonel;513;2015;0;0
+BASSO;Filippo;Zirak;fbasso;553;2015;0;0
+BATHELT;Manfred;BMW;bathelt;585;2015;0;0
+BESOZZI;Celine;MM Chatellerault;besozzi;532;2015;0;0
+BILLIET;Eric;Marelli;billiet;514;2015;1;1
+BOJE;Markus;BMW;boje;584;2015;0;0
+BOSCO;Stefano;Marelli;sbosco;515;2015;1;1
+BRUCI;Evaldo;Marelli;ebruci;516;2015;0;0
+BUSO;Laura;Marelli;lbuso;517;2015;0;0
+CALABRO;Antonio;Marelli;calabro;518;2015;0;0
+CAMBURSANO;Claudio;Marelli;cambursa;565;2015;0;0
+CANETTO;Beatrice;Akhela;bcanetto;589;2015;0;0
+CASANOVA;Gianfranco;Akhela;casanova;542;2015;0;0
+CAVALLOTTI;Piero;Visiant;cavallot;550;2015;1;1
+CERATO;Alberto;Marelli;cerato;554;2015;1;1
+CINGOLANI;Daniele;Marelli;cingolan;564;2015;0;0
+CLEMENCEAU;Yvan;MM Chatellerault;clemence;533;2015;0;0
+COPETTI;Paolo;Marelli;copetti;519;2015;0;0
+CURTI;Massimiliano;Teoresi;curti;579;2015;0;0
+DAMIANO;Antonino;Marelli;damiano;520;2015;1;1
+DEGIOANNI;Claudio;Zirak;degioanni;592;2015;0;0
+DESANA;Davide;Marelli;desana;503;2015;1;1
+DOZ;Paolo;Marelli;paolodoz;502;2015;1;1
+DUTTO;Valerio;Zirak;dutto;591;2015;0;0
+EMMERICH;Laurent;BMW;emmerich;586;2015;0;0
+FAGGIANI;Federica;Marelli;faggiani;521;2015;0;0
+FARINA;Stefano;Akhela;farina;543;2015;0;0
+FERRARA;Riccardo;Marelli;ferrara;504;2015;1;1
+FRESI;Luca;Akhela;fresi;544;2015;0;0
+GARBEROGLIO;Flaviano;Marelli;garberog;522;2015;0;0
+GARCEA;Alessandro;Teoresi;garcea;576;2015;1;1
+GENNARINO;Maria Concetta;Marelli;gennarin;523;2015;0;0
+GHIAZZA;Matteo;Marelli;ghiazza;505;2015;1;1
+GIACOIA;Giuseppe;Marelli;giacoia;568;2015;0;0
+GILFORTE;Maria Paola;Marelli;gilforte;524;2015;1;1
+GIRAUDO;Emanuele;Marelli;giraudo;559;2015;1;1
+GRAGLIA;Emiliano;Marelli;graglia;558;2015;0;0
+GRELLIER;Fabrice;MM Chatellerault;grellier;534;2015;0;0
+HERARD;Rodolphe;MM Chatellerault;herard;535;2015;0;0
+KOERNER;Gerri;BMW;koerner;587;2015;0;0
+LOCOCO;Annalisa;Marelli;lococo;525;2015;0;0
+LOSEGO;Eric;MM Chatellerault;losego;536;2015;0;0
+MACARIO;Gianpaolo;Marelli;macario;500;2015;1;1
+MADDAU;Andrea;Akhela;maddau;567;2015;0;0
+MARCIA;Marta;Akhela;marcia;545;2015;0;0
+MARINO;Rosario;Marelli;rmarino;560;2015;1;1
+MARTORELL;Ludovic;MM Chatellerault;martorel;537;2015;1;1
+MOCCI;Francesco;Akhela;mocci;574;2015;1;1
+MURRU;Alessandro;Akhela;murru;571;2015;0;0
+NASSI;Marco;Marelli;nassi;563;2015;0;0
+NOBERASCO;Michele;Zirak;noberasco;555;2015;0;0
+NUZZI;Gino;Akhela;ginnuzzi;540;2015;1;1
+ORLANDI;Stefano;Marelli;sorlandi;526;2015;0;0
+PALMA;Cosimo;Teoresi;copalma;580;2015;1;1
+PANERO;Danila;Marelli;panero;573;2015;0;0
+PANTALEO;Paolo;Zirak;ppantale;578;2015;0;0
+PARENTI;Leonardo;UniPMN;parenti;575;2015;1;1
+PAROLINI;Nicolo;Zirak;parolini;556;2015;0;0
+PICERNO;Luciano;Marelli;picerno;562;2015;0;0
+PIERRI;Massimo;Marelli;pierri;506;2015;1;1
+PINNA;Emilio;Akhela;epinna;572;2015;0;0
+PINNA;Pierluigi;Akhela;pinna;546;2015;0;0
+PIRRA;Giorgio;Marelli;pirra;507;2015;1;1
+PONCHIONE;Giorgio;Marelli;ponchion;508;2015;1;1
+PORCU;Paolo;Marelli;porcu;547;2015;0;0
+RE;Antonio;Marelli;re;527;2015;0;0
+ROCCA;Marco;Zirak;mrocca;557;2015;0;0
+RODINO;Laura;Marelli;rodino;593;2015;0;0
+RUSSO;Angelo;Marelli;angrusso;509;2015;1;1
+SALERNO;Franco;Marelli;fsalerno;569;2015;0;0
+SANAPO;Marcella;Teoresi;sanapo;577;2015;0;0
+SANNA;Andrea;Akhela;asanna;541;2015;1;1
+SANNIA;Sandro;Akhela;sannia;590;2015;0;0
+SANNIO;Antonio;Marelli;sannio;570;2015;0;0
+SARTORI;Claudio;Marelli;sartoric;528;2015;1;1
+SERRE;Giacomo;Marelli;serre;529;2015;0;0
+SERRETTI;Enrico;Visiant;serrett;551;2015;1;1
+SIMMINI;Angelo;Marelli;asimmini;510;2015;1;1
+SODDU;Marco;Akhela;soddu;566;2015;0;0
+SPONZA;Cristiano;Marelli;sponza;511;2015;1;1
+STOCCHINO;Marco;Akhela;stocchino;548;2015;1;1
+STRAZZULLO;Antonio;Marelli;strazzullo;530;2015;0;0
+TERREE;Eric;MM Chatellerault;terree;538;2015;0;0
+TONDANI;Antonio;Accenture;tondani;582;2015;0;0
+TOSETTO;Fabio;Marelli;ftosett;581;2015;0;0
+TURINETTO;Maurizio;Visiant;turinett;552;2015;0;0
+TURPAULT;Eric;MM Chatellerault;turpault;539;2015;0;0
+TUTTOBENE;Francois;Marelli;tuttobene;549;2015;0;0
+ULERI;Giuseppe;Accenture;uleri;583;2015;0;0
+VIOLINO;Walter;Marelli;violino;512;2015;1;1
+WENZEL;Alex;BMW;wenzel;588;2015;0;0
+ZOMPI;Roberto;Marelli;zompi;561;2015;0;0
