@@ -1,4 +1,20 @@
 #!/bin/sh
+# =============================================================================
+# Project:	LUPIN
+#
+# Description:	Helper script to add users to lupin NIS database
+#
+# Language:	Linux Shell Script
+#
+# Usage example:
+#       $ ./nis_add_user.sh username displayname [newpass_crypt]
+#
+# Package Dependencies:
+#       Required:       awk sh yp-tools
+#	Optional:	?
+#
+# Copyright 2007-2009 Magneti Marelli Electronic Systems - All Rights Reserved
+# =============================================================================
 
 #set -x
 set -e
