@@ -24,8 +24,8 @@ mkdir -p `dirname ${OUTFILE}`
 
 (ypcat passwd  || exit 1 ) | awk '
 BEGIN	{
-	printf("%s;%s;%s;%s;%s;%s;%s\n", \
-		"* LASTNAME", "firstname", "username", \
+	printf("%s;%s;%s;%s;%s;%s;%s;%s\n", \
+		"! LASTNAME", "firstname", "company", "username", \
 		"uid", "gid", \
 		"in_MotoGP", "in_MotoGB");
 	FS=":"
@@ -65,34 +65,43 @@ BEGIN	{
 //	{
 	#print "DBG: $0=" $0
 	username=$1
+	pass_enc=$2
 	uid=$3
 	gid=$4
+	displayname=$5
+	homedir=$6
+	shell=$7
 	#
-	firstname=gensub(/\ [a-zA-Z]*$/, "", "g", $5);
+	flastname=gensub(/[\ ]*\([a-zA-Z\ \-]*\).*$/, "", "g", displayname);
+	firstname=gensub(/\ [a-zA-Z]*$/, "", "g", flastname);
+	lastname=toupper(gensub(/.*\ /, "", "g", flastname));
 	#
-	# Fixup macario firstname
-	#if (firstname == "Giampaolo") firstname="Gianpaolo";
-	#
-	lastname=toupper(gensub(/.*\ /, "", "g", $5));
+	n_sub = 0;
+	company = displayname;
+	n_sub += gsub(/^(.*\()/, "", company);
+	n_sub += gsub(/(\).*)$/, "", company);
+	company = (n_sub == 2) ? company : "Marelli";
 	#
 	in_MotoGP = ((username in lupin_users) && \
 		index("MOTOGP", lupin_users[username]) >= 0) ? "Yes" : "No";
 	in_MotoGB = ((username in lupin_users) && \
 		index("MOTOGB", lupin_users[username]) >= 0) ? "Yes" : "No";
 	#
-	#print "DBG: firstname=" firstname
+	#print "DBG: displayname=" displayname
 	#print "DBG: lastname=" lastname
+	#print "DBG: firstname=" firstname
+	#print "DBG: company=" company
 	#print "DBG: in_MotoGP=" in_MotoGP
 	#print "DBG:"
 	#
-	printf("%s;%s;%s;%d;%d;%s;%s\n", \
-		lastname, firstname, username, \
+	printf("%s;%s;%s;%s;%d;%d;%s;%s\n", \
+		lastname, firstname, company, username, \
 		uid, gid, \
 		in_MotoGP, in_MotoGB);
 	}
 END	{
 	}
-' | sort >${OUTFILE}
+' | tee nis2table.log | sort >${OUTFILE}
 
 echo "INFO: Results saved under ${OUTFILE}"
 
