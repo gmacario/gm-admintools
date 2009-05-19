@@ -39,8 +39,9 @@ last_uid=`ypcat passwd | sort -n -t ':' -k 3 -r | head -n 1 | cut -d ':' -f 3`
 #echo "DBG: last_uid=$last_uid"
 
 if [ "$newpass_crypt" = "" ]; then
-    echo "INFO: Resetting password for username $username"
-    newpass_crypt="GzslqrxRRWFfE"
+    echo "INFO: Locking user $username - Run nis_set_passwd.sh to set password"
+    #newpass_crypt="GzslqrxRRWFfE"
+    newpass_crypt="xxx"
 fi
 
 cd /var/yp/maps || exit 1
