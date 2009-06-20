@@ -78,7 +78,7 @@ else
 fi
 if [ "${conffile}" != "" ]; then
     echo "INFO: Reading configuration from ${conffile}"
-    source ${conffile} || exit 1
+    . ${conffile} || exit 1
 fi
 
 #set -x
