@@ -28,7 +28,7 @@
 #       may be overridden by xxx.conf (see comments above)
 
 # Name of the Virtual Machine
-VM_NAME=itven1d0671.mmemea.marelliad.net
+VM_NAME=test
 #VM_NAME=nbv-macario.mmemea.marelliad.net
 
 # Source directory where VM ${VM_NAME} can be found
@@ -284,5 +284,21 @@ set -x
 #
 #echo "INFO: Created new VM ${VM_NAME} under ${VM_DESTDIR}"
 #echo "INFO: from backup ${VM_BCKDATE} of VM ${VM_BASELINE}"
+
+#set -x
+
+if [ "${VM_SOURCEDIR}" != "${VM_DESTDIR}" ]; then
+	mkdir -p "${VM_DESTDIR}/${VM_NAME}"
+	cd "${VM_DESTDIR}/${VM_NAME}"
+	(cd "${VM_SOURCEDIR}/${VM_NAME}" && ls) | while read filename; do
+		ln -sf "${VM_SOURCEDIR}/${VM_NAME}/${filename}" .
+	done
+fi
+
+cd "${VM_DESTDIR}/${VM_NAME}"
+ls *.vmdk | while read vmdk_name; do
+	echo "DBG: Shrinking ${vmdk_name}"
+	vmware-vdiskmanager -k ${vmdk_name} || exit 1
+done
 
 # === EOF ===
