@@ -75,14 +75,18 @@ fi
 
 # Sanity checks
 #
-#if [ -z "${VM_DESTDIR}" ]; then
-#    echo "ERROR: Should define VM_DESTDIR"
-#    exit 1
-#fi
-#if [ -z ${VM_NAME} ]; then
-#    echo "ERROR: Should define VM_NAME"
-#    exit 1
-#fi
+if [ -z ${VM_NAME} ]; then
+    echo "ERROR: Should define VM_NAME"
+    exit 1
+fi
+if [ -z "${VM_SOURCEDIR}" ]; then
+    echo "ERROR: Should define VM_SOURCEDIR"
+    exit 1
+fi
+if [ -z "${VM_DESTDIR}" ]; then
+    echo "ERROR: Should define VM_DESTDIR"
+    exit 1
+fi
 #if [ -z ${VM_TEMPLATE} ]; then
 #    echo "ERROR: Should define VM_TEMPLATE"
 #    exit 1
