@@ -56,7 +56,7 @@ echo "INFO: $0 - v0.1"
 #
 confpattern="vm_shrink_image"
 confpath=""
-if [ -e ./$conpattern.conf ]; then
+if [ -e ./$confpattern.conf ]; then
     confpath=./$confpattern.conf
 elif [ -e ${HOME}/.$confpattern.conf ]; then
     confpath=${HOME}/.$confpattern.conf
@@ -193,7 +193,7 @@ VMRUN_CMD="$VMRUN_CMD -p $VMRUN_PASS"
 # List registered VMs
 #$VMRUN_CMD listRegisteredVM || exit 1
 
-set -x
+#set -x
 
 # List running VMs
 # $VMRUN_CMD list || exit 1
