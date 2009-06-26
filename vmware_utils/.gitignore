@@ -1,3 +1,4 @@
-vm_shrink_image.conf
 *~
-do_backup_vm.conf
+vm_backup.conf
+vm_shrink_image.conf
+

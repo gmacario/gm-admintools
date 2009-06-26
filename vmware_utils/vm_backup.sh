@@ -7,13 +7,13 @@
 # Language:	Linux Shell Script
 #
 # Usage example:
-#       $ ./do_backup_vm.sh
+#       $ ./vm_backup.sh
 #
 # The script attempts to fetch configuration options
 # from the first file in the following search list:
-#       * ./do_backup_vm.conf
-#       * ${HOME}/.do_backup_vm/do_backup_vm.conf
-#       * /etc/do_backup_vm.conf
+#       * ./vm_backup.conf
+#       * ${HOME}/.vm_backup.conf
+#       * /etc/vm_backup.conf
 #
 # Package Dependencies:
 #       Required:       awk cp fileutils samba sh
@@ -67,12 +67,12 @@ echo "INFO: $0 - v0.4"
 # Try to source configuration from conffile
 #
 conffile=""
-if [ -e ./do_backup_vm.conf ]; then
-    conffile=./do_backup_vm.conf
-elif [ -e ${HOME}/.do_backup_vm/do_backup_vm.conf ]; then
-    conffile=${HOME}/.do_backup_vm/do_backup_vm.conf
-elif [ -e /etc/do_backup_vm.conf ]; then
-    conffile=/etc/do_backup_vm.conf
+if [ -e ./vm_backup.conf ]; then
+    conffile=./vm_backup.conf
+elif [ -e ${HOME}/.vm_backup.conf ]; then
+    conffile=${HOME}/.vm_backup.conf
+elif [ -e /etc/vm_backup.conf ]; then
+    conffile=/etc/vm_backup.conf
 else
     echo "WARNING: No conffile found, using defaults"
 fi
