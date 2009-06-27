@@ -151,8 +151,8 @@ else
     echo "INFO: Enter password for ${USER} on ${HOSTNAME} if requested"
     rm -f md5sum.txt
     (cd "${VM_REPOSITORY}" && \
-	sudo tar cvz ${VM_NAME}) |
-	split -d --bytes=${BCK_CHUNKSIZE} - ${BCK_FILENAME}.tgz-
+	sudo tar cvz --dereference ${VM_NAME}) |
+	split -d --bytes=${BCK_CHUNKSIZE} --verbose - ${BCK_FILENAME}.tgz-
     retval=$?
     if [ $retval -ne 0 ]; then
 	echo "ERROR: remote tar returned $retval"
