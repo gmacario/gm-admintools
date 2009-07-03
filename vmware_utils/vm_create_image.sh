@@ -7,7 +7,7 @@
 # Language:     Linux Shell Script
 #
 # Usage example:
-#       $ ./do_createnew_vm.sh
+#       $ ./vm_create_image.sh
 #
 # The script attempts to fetch configuration options
 # from a configuration file in the following search list:
@@ -48,13 +48,13 @@ VMRUN_USER=macario
 
 # -----------------------------------------------------------------------------
 # Main Program starts here
-echo "INFO: $0 - v0.1"
+echo "INFO: $0 - v0.2"
 
 #set -x
 
 # Try to source configuration from conffile
 #
-confpattern="do_createnew_vm"
+confpattern="vm_create_image"
 confpath=""
 if [ -e ./$conpattern.conf ]; then
     confpath=./$confpattern.conf
