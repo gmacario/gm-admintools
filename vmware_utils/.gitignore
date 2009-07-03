@@ -1,4 +1,5 @@
 *~
 vm_backup.conf
+vm_create_image.conf
 vm_shrink_image.conf
 
