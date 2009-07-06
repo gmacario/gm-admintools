@@ -8,6 +8,9 @@ CONFDIR=vm_create_ubuntu_build_machine
 UBUNTUDISC=/Users/andrea/Desktop/ubuntu-9.04-alternate-i386.iso
 DISKSIZE=60G
 QEMUIMG=qemu-img
+YOURIP=192.168.1.100
+PORT=8000
+
 
 function do_usage {
     echo "$0 <EXPORT-DIR> <UBUNTU-ISO-IMAGE>";
@@ -105,7 +108,7 @@ EOF
 
 function do_webserver_start {
     cd ${CONFDIR}
-    ${PYTHON} -m SimpleHTTPServer 8282 &
+    ${PYTHON} -m SimpleHTTPServer 8282
     cd -
 }
 
@@ -118,4 +121,5 @@ clear;
 do_check;
 do_create_vmx;
 do_create_vmdk;
+do_create_ks;
 do_webserver_start;
