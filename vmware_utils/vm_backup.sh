@@ -125,7 +125,7 @@ fi
 # Make sure you can write your temporary files...
 f_newcreated=false
 if [ ! -e ${BCK_TMPDIR}/${BCK_FILENAME} ]; then
-    # Directory oes not exist, create it
+    # Directory does not exist, create it
     mkdir -p ${BCK_TMPDIR}/${BCK_FILENAME}
     if [ $? -gt 0 ]; then
         echo "ERROR: Cannot create directory under ${BCK_TMPDIR}"
@@ -148,8 +148,9 @@ else
 	fi
         exit 1
     fi
-    echo "INFO: Enter password for ${USER} on ${HOSTNAME} if requested"
+    echo "INFO: Enter password for ${USER} on `hostname` if requested"
     rm -f md5sum.txt
+    echo "INFO: Creating backup under ${BCK_TMPDIR}/${BCK_FILENAME}..."
     (cd "${VM_REPOSITORY}" && \
 	sudo tar cvz --dereference ${VM_NAME}) |
 	split -d --bytes=${BCK_CHUNKSIZE} --verbose - ${BCK_FILENAME}.tgz-
@@ -189,8 +190,8 @@ cat >>${sample_script} << EOF
 # Personalize as needed
 #
 EOF
-echo "VM_BCKDIR=/source/Backup_VM/${BCK_FILENAME}"	>>${sample_script}
-echo "VM_DESTDIR=/dest/My_VM/"				>>${sample_script}
+echo "VM_BCKDIR=\"/source/Backup_VM/${BCK_FILENAME}\""	>>${sample_script}
+echo "VM_DESTDIR=\"/dest/My_VM/\""			>>${sample_script}
 cat >>${sample_script} << EOF
 
 mkdir -p "\${VM_DESTDIR}" || exit 1
