@@ -19,12 +19,15 @@
 # Configurable Parameters
 #
 # NOTE: The following configuration variables
-#       may be overridden by do_clone_disk.conf (see comments above)
+#       may be overridden by smb_mirror.conf (see comments above)
 
-# Samba Share used to save backups
+# Mount source directory before rsyncing (and unmount at the end)
+OPT_MOUNT_SOURCEDIR=true
+
+# Samba Share on NAS
 #NAS_SHARE=//itven1nnas1.venaria.marelli.it/lupin
-NAS_SHARE=//itven1nnas1.venaria.marelli.it/smeg
-#NAS_SHARE=//multi.mmemea.marelliad.net/telematic_doc
+#NAS_SHARE=//itven1nnas1.venaria.marelli.it/smeg
+NAS_SHARE=//multi.mmemea.marelliad.net/telematic_doc
 
 # Active Directory credentials (domain/user/password) on NAS_SHARE
 NAS_DOMAIN=mmemea
@@ -32,16 +35,18 @@ NAS_DOMAIN=mmemea
 #NAS_PASSWORD=MyPassword
 
 # Source Directory to mirror
-#NAS_SOURCEDIR=projets
-NAS_SOURCEDIR=.
+NAS_SOURCEDIR=Projets/17_projetSMEG_A9
+#NAS_SOURCEDIR=.
 
-# Only for test
-OPT_MOUNT_SOURCEDIR=true
+# Mount point of the remote source directory
+MIRROR_SOURCEDIR=$HOME/source/SMEG_A9
+
+# Destination directory for mirror
+MIRROR_DESTDIR=$HOME/mirrors/SMEG_A9
+
+# TEST - Use Venaria mirror (only for test, the folder is not updated...)
 NAS_SHARE=//itven1nnas1.venaria.marelli.it/smeg
 NAS_SOURCEDIR=.
-MIRROR_DESTDIR=$HOME/mirrors/smeg
-
-MIRROR_SOURCEDIR=$HOME/source/smeg
 
 # -----------------------------------------------------------------------------
 # You should not need to change the script below
@@ -86,6 +91,8 @@ sudo mount -t cifs ${NAS_SHARE} ${MIRROR_SOURCEDIR} \
 set -x
 rsync -avz ${MIRROR_SOURCEDIR}/ ${MIRROR_DESTDIR}
 
-echo TODO: sudo umount ${MIRROR_SOURCEDIR}
+# if [ "${OPT_MOUNT_SOURCEDIR}" = "true" ]; then
+# 	sudo umount ${MIRROR_SOURCEDIR}
+# fi
 
 # === EOF ===
