@@ -14,6 +14,9 @@
 #	Optional:	?
 #
 # Copyright 2007-2009 Magneti Marelli Electronic Systems - All Rights Reserved
+#
+# TODO:
+#	- Should handle case when MIRROR_SOURCEDIR is already mounted
 # =============================================================================
 
 # Configurable Parameters
@@ -44,7 +47,7 @@ MIRROR_SOURCEDIR=$HOME/source/SMEG_A9
 # Destination directory for mirror
 MIRROR_DESTDIR=$HOME/mirrors/SMEG_A9
 
-# TEST - Use Venaria mirror (only for test, the folder is not updated...)
+# Use Venaria mirror (for initial syncup, the folder is not kept updated...)
 NAS_SHARE=//itven1nnas1.venaria.marelli.it/smeg
 NAS_SOURCEDIR=.
 
