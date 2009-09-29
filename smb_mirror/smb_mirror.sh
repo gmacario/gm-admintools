@@ -45,11 +45,11 @@ NAS_SOURCEDIR=Projets/17_projetSMEG_A9
 MIRROR_SOURCEDIR=$HOME/source/SMEG_A9
 
 # Destination directory for mirror
-MIRROR_DESTDIR=$HOME/mirrors/SMEG_A9
+MIRROR_DESTDIR=$HOME/mirrors/SMEG_A9@multi
 
 # Use Venaria mirror (for initial syncup, the folder is not kept updated...)
-NAS_SHARE=//itven1nnas1.venaria.marelli.it/smeg
-NAS_SOURCEDIR=.
+#NAS_SHARE=//itven1nnas1.venaria.marelli.it/smeg
+#NAS_SOURCEDIR=.
 
 # -----------------------------------------------------------------------------
 # You should not need to change the script below
