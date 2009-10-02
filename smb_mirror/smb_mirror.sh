@@ -37,15 +37,16 @@ NAS_DOMAIN=mmemea
 #NAS_USER=paolodoz
 #NAS_PASSWORD=MyPassword
 
-# Source Directory to mirror
+# Source Directory to mirror (under NAS_SHARE)
 NAS_SOURCEDIR=Projets/17_projetSMEG_A9
 #NAS_SOURCEDIR=.
 
 # Mount point of the remote source directory
-MIRROR_SOURCEDIR=$HOME/source/SMEG_A9
+REMOTE_MOUNTPOINT=${HOME}/remote
 
 # Destination directory for mirror
-MIRROR_DESTDIR=$HOME/mirrors/SMEG_A9@multi
+#MIRROR_DESTDIR=$HOME/mirrors/SMEG_A9@multi
+MIRROR_DESTDIR=/var/www/mirrors/SMEG_A9@multi
 
 # Use Venaria mirror (for initial syncup, the folder is not kept updated...)
 #NAS_SHARE=//itven1nnas1.venaria.marelli.it/smeg
@@ -63,9 +64,6 @@ echo "INFO: $0 - v0.1"
 set -e
 
 ## Request parameters if not specified in the section above
-if [ "${MIRROR_SOURCEDIR}" = "" ]; then
-    read -p "Enter MIRROR_SOURCEDIR: " MIRROR_SOURCEDIR
-fi
 #BCK_FILENAME=`date +%Y%m%d`-${VM_NAME}
 if [ "${OPT_MOUNT_SOURCEDIR}" = "true" ]; then
     if [ "${NAS_DOMAIN}" = "" ]; then
@@ -83,19 +81,23 @@ if [ "${OPT_MOUNT_SOURCEDIR}" = "true" ]; then
     fi
 fi
 
-mkdir -p ${MIRROR_SOURCEDIR}
+if [ ! -e ${REMOTE_MOUNTPOINT} ]; then
+	mkdir -p ${REMOTE_MOUNTPOINT}
+fi
 mkdir -p ${MIRROR_DESTDIR}
 
-sudo mount -t cifs ${NAS_SHARE} ${MIRROR_SOURCEDIR} \
+set -x
+if [ "${OPT_MOUNT_SOURCEDIR}" = "true" ]; then
+sudo mount -t cifs ${NAS_SHARE} ${REMOTE_MOUNTPOINT} \
 	-o user=${NAS_DOMAIN}/${NAS_USER} \
 	-o password=${NAS_PASSWORD} \
 	-o ro
+fi
 
-set -x
-rsync -avz ${MIRROR_SOURCEDIR}/ ${MIRROR_DESTDIR}
+rsync -avz ${REMOTE_MOUNTPOINT}/${NAS_SOURCEDIR}/ ${MIRROR_DESTDIR}
 
 # if [ "${OPT_MOUNT_SOURCEDIR}" = "true" ]; then
-# 	sudo umount ${MIRROR_SOURCEDIR}
+# 	sudo umount ${REMOTE_MOUNTPOINT}
 # fi
 
 # === EOF ===
