@@ -2,7 +2,7 @@
 # =============================================================================
 # Project:	LUPIN
 #
-# Description:	Mirror a remote directory (available from Samba)
+# Description:	Mirror one or more remote directory (available from Samba)
 #
 # Language:	Linux Shell Script
 #
@@ -20,21 +20,9 @@
 # =============================================================================
 
 # Default values for configurable parameters
-#
-# NOTE: The following configuration variables
-#       may be overridden by smb_mirror.conf (see comments above)
-
-# Name of mirrored project (will be a subdirectory under MIRROR_BASEDIR)
-#MIRROR_PROJECT=SMEG_A9@multi
 
 # Mount source directory before rsyncing (and unmount at the end)
 OPT_MOUNT_SOURCEDIR=true
-
-# Samba Share on NAS
-#NAS_SHARE=//multi.mmemea.marelliad.net/telematic_doc
-
-# Source Directory to mirror (under NAS_SHARE)
-#NAS_SOURCEDIR=Projets/17_projetSMEG_A9
 
 # Active Directory credentials (domain/user/password) on NAS_SHARE
 NAS_DOMAIN=mmemea
@@ -44,9 +32,8 @@ NAS_DOMAIN=mmemea
 # Mount point of the remote source directory
 REMOTE_MOUNTPOINT=${HOME}/remote
 
-# Destination directory for mirror
-#MIRROR_BASEDIR=$HOME/mirrors
-MIRROR_BASEDIR=/var/www/mirrors
+# Destination directory for mirror (may be a link to /var/www)
+MIRROR_BASEDIR=$HOME/mirrors
 
 # -----------------------------------------------------------------------------
 # You should not need to change the script below
@@ -79,8 +66,8 @@ do_mirror_smbproject()
 	NAS_SHARE=//multi.mmemea.marelliad.net/telematic_doc
 	NAS_SOURCEDIR="Projets/20_projet SMEG OPEN+ B78"
     fi
-    # Use Venaria mirror for SMEG_A9@multi
-    # (only for initial syncup, the folder is not kept updated...)
+    # Venaria mirror for SMEG_A9@multi
+    # (WARNING: the folder does not seem to be updated...)
     if [ "${MIRROR_PROJECT}" = "SMEG@itven1nnas1" ]; then
 	NAS_SHARE=//itven1nnas1.venaria.marelli.it/smeg
 	NAS_SOURCEDIR=.
@@ -106,10 +93,13 @@ do_mirror_smbproject()
 
     #rsync -avz ${REMOTE_MOUNTPOINT}/${NAS_SOURCEDIR}/ ${MIRROR_DESTDIR}
     cmdline="rsync -avz \
-	${REMOTE_MOUNTPOINT}/${NAS_SOURCEDIR}/ \
-	${MIRROR_DESTDIR}"
+${REMOTE_MOUNTPOINT}/${NAS_SOURCEDIR}/ \
+${MIRROR_DESTDIR}"
+
     echo "INFO: Executing ${cmdline}"
-    ${cmdline}
+    #
+    # Ignore errors returned by rsync
+    ${cmdline} || true
 
     if [ "${OPT_MOUNT_SOURCEDIR}" = "true" ]; then
 	sudo umount ${REMOTE_MOUNTPOINT}
@@ -124,6 +114,9 @@ echo "INFO: $0 - v0.3"
 set -e
 
 ## Request parameters if not specified in the section above
+if [ "${NAS_DOMAIN}" = "" ]; then
+    read -p "Enter NAS_DOMAIN: " NAS_DOMAIN
+fi
 if [ "${NAS_USER}" = "" ]; then
     read -p "Enter NAS_USER: " NAS_USER
 fi
@@ -134,13 +127,13 @@ if [ "${NAS_PASSWORD}" = "" ]; then
     echo
     stty echo
 fi
+#export NAS_DOMAIN
+#export NAS_USER
+#export NAS_PASSWORD
 
-export NAS_USER
-export NAS_PASSWORD
-
+#NO: do_mirror_smbproject "SMEG@itven1nnas1"
 do_mirror_smbproject "SMEG_A9@multi"
-# do_mirror_smbproject "architects@multi"
-# do_mirror_smbproject "SMEG_OpenPlus_B78"
-##do_mirror_smbproject "SMEG@itven1nnas1"
+do_mirror_smbproject "SMEG_OpenPlus_B78@multi"
+do_mirror_smbproject "architects@multi"
 
 # === EOF ===
