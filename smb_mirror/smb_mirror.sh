@@ -30,7 +30,8 @@ NAS_DOMAIN=mmemea
 #NAS_PASSWORD=MyPassword
 
 # Mount point of the remote source directory
-REMOTE_MOUNTPOINT=${HOME}/remote
+#REMOTE_MOUNTPOINT=${HOME}/remote
+REMOTE_MOUNTPOINT=/var/www/remote/telematic_doc@multi
 
 # Destination directory for mirror (may be a link to /var/www)
 MIRROR_BASEDIR=$HOME/mirrors
