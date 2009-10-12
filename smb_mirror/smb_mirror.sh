@@ -66,6 +66,10 @@ do_mirror_smbproject()
 	NAS_SHARE=//multi.mmemea.marelliad.net/telematic_doc
 	NAS_SOURCEDIR="Projets/20_projet SMEG OPEN+ B78"
     fi
+    if [ "${MIRROR_PROJECT}" = "software@multi" ]; then
+	NAS_SHARE=//multi.mmemea.marelliad.net/telematic_doc
+	NAS_SOURCEDIR="software"
+    fi
     # Venaria mirror for SMEG_A9@multi
     # (WARNING: the folder does not seem to be updated...)
     if [ "${MIRROR_PROJECT}" = "SMEG@itven1nnas1" ]; then
@@ -91,15 +95,22 @@ do_mirror_smbproject()
 	-o ro
     fi
 
-    #rsync -avz ${REMOTE_MOUNTPOINT}/${NAS_SOURCEDIR}/ ${MIRROR_DESTDIR}
+echo "DBG: NAS_SOURCEDIR=${NAS_SOURCEDIR}"
+echo "DBG: MIRROR_DESTDIR=${MIRROR_DESTDIR}"
+
+    #rsync -avz "${REMOTE_MOUNTPOINT}/${NAS_SOURCEDIR}/" "${MIRROR_DESTDIR}"
+
+    # Quote source and dest (may contain spaces)
     cmdline="rsync -avz \
-${REMOTE_MOUNTPOINT}/${NAS_SOURCEDIR}/ \
-${MIRROR_DESTDIR}"
+\"${REMOTE_MOUNTPOINT}/${NAS_SOURCEDIR}/\" \
+\"${MIRROR_DESTDIR}\""
 
     echo "INFO: Executing ${cmdline}"
     #
     # Ignore errors returned by rsync
-    ${cmdline} || true
+    rsync -avz \
+	"${REMOTE_MOUNTPOINT}/${NAS_SOURCEDIR}/" \
+	"${MIRROR_DESTDIR}" || true
 
     if [ "${OPT_MOUNT_SOURCEDIR}" = "true" ]; then
 	sudo umount ${REMOTE_MOUNTPOINT}
@@ -135,5 +146,6 @@ fi
 do_mirror_smbproject "SMEG_A9@multi"
 do_mirror_smbproject "SMEG_OpenPlus_B78@multi"
 do_mirror_smbproject "architects@multi"
+do_mirror_smbproject "software@multi"
 
 # === EOF ===
