@@ -11,10 +11,34 @@
 #
 # See also:
 #	LupinWiki:[[Secure_authentication_with_SSH_without_password_request]]
+#
+# Usage examples:
+#	do_ssh_nologin root@gianpinas.homelinux.net
 # ============================================================================
 
-REMOTEUSER=demo
-REMOTEHOST=lupin12.venaria.marelli.it
+# ---------------------------------------------------------------------------
+# Configurable parameters
+# ---------------------------------------------------------------------------
+
+# NONE
+
+# ---------------------------------------------------------------------------
+# Main Program
+# ---------------------------------------------------------------------------
+
+#set -x
+set -e
+
+PROGNAME=`basename $0`
+echo "INFO: ${PROGNAME} - v0.2"
+
+if [ $# -lt 1 ]; then
+    echo "Usage: ${PROGNAME} remoteuser@remotehost"
+    exit 1
+fi
+
+REMOTEUSER=`echo $1 | sed -e 's/\@.*$//'`
+REMOTEHOST=`echo $1 | sed -e 's/\^.*@//'`
 
 echo "INFO: Enabling automatic login to ${REMOTEUSER}@${REMOTEHOST}"
 if [ ! -e ${HOME}/.ssh/id_rsa.pub ]; then
