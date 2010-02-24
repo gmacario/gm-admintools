@@ -13,7 +13,7 @@
 #	LupinWiki:[[Secure_authentication_with_SSH_without_password_request]]
 #
 # Usage examples:
-#	do_ssh_nologin root@gianpinas.homelinux.net
+#	do_ssh_nopass_enable.sh root@gianpinas.homelinux.net
 # ============================================================================
 
 # ---------------------------------------------------------------------------
@@ -38,10 +38,14 @@ if [ $# -lt 1 ]; then
 fi
 
 REMOTEUSER=`echo $1 | sed -e 's/\@.*$//'`
-REMOTEHOST=`echo $1 | sed -e 's/\^.*@//'`
+REMOTEHOST=`echo $1 | sed -e 's/^.*@//'`
+
+#echo "DEBUG: REMOTEUSER=$REMOTEUSER"
+#echo "DEBUG: REMOTEHOST=$REMOTEHOST"
 
 echo "INFO: Enabling automatic login to ${REMOTEUSER}@${REMOTEHOST}"
 if [ ! -e ${HOME}/.ssh/id_rsa.pub ]; then
+    echo "WARNING: Missing SSH public/private keypair"
     ssh-keygen
 fi
 cat ${HOME}/.ssh/id_rsa.pub | ssh ${REMOTEUSER}@${REMOTEHOST} \
