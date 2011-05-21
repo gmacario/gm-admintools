@@ -48,9 +48,9 @@ echo "INF: Verifying deltas against copy on SVN server"
 svn status
 
 # "Look, Mom - No Hands!"
-svn status | awk '/^?/ {print $2}' | xargs svn add
-svn status | awk '/^!/ {print $2}' | xargs svn rm
+svn status | awk '/^?/ {print $2}' | while read f; do xargs svn add ${f}; done
+svn status | awk '/^!/ {print $2}' | while read f; do xargs svn rm ${f};  done
 
-# TODO svn commit -m "Automatically mirrored from ${SOURCE_URL}"
+echo "TODO:" svn commit -m "Automatically mirrored from ${SOURCE_URL}"
 
 # === EOF ===
