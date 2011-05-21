@@ -1,0 +1,38 @@
+# ===========================================================================
+# gobby_utils
+# ===========================================================================
+
+To Whom It May Concern:
+
+Your annoying, boring, leadership-less LUPIN SysArch
+has just released v0.1 of package “gobby_utils”
+
+You can download the sources and the documentation from
+http://lupin05.venaria.marelli.it/svnrepos/lupin/platforms/LUPIN/code/trunk/misc/admin_scripts/gobby_utils/
+
+Please help improve the tool, which is distributed under the GPLv2 license -
+as you can guess by scanning the codebase with FOSSology or other
+more expensive tools such as
+$ cat LICENSE
+$ dd if=LICENSE of=/dev/console
+
+As usual, if there is anything missing or broken YOU may fix it, NOT me (that is Open Source, isn’t it?)
+
+This tool may be used to keep a mirror of the gobby@lupin13 data under
+http://lupin05.venaria.marelli.it/svnrepos/lupin/mirrors/lupin13.venaria.marelli.it/infinoted/
+	
+(NOTE: Just in case that https://trace3.windriver.com/?Lupin1.1,I0037 is not closing ASAP…)
+
+Cordiali Saluti - Best Regards
+
+--
+Gianpaolo Macario
+
+
+# ---------------------------------------------------------------------------
+# USAGE
+# ---------------------------------------------------------------------------
+
+ $ MY_USERNAME=macario MY_PASSWORD=xxx ./do_mirror_gobby.sh 
+
+# === EOF ===
