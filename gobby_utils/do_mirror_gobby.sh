@@ -39,8 +39,17 @@ wget -nv --mirror --no-parent --no-host-directories \
 # --password=PASS
 # --ask-password
 
+# --exclude
+
+# Remove dummy "index.html" (but NOT inside .svn):
+find . -path "*/.svn" -prune -o -name "index.html\?*" -exec rm {} \;
+
 echo "INF: Verifying deltas against copy on SVN server"
 svn status
+
+# "Look, Mom - No Hands!"
+svn status | awk '/^?/ {print $2}' | xargs svn add
+svn status | awk '/^!/ {print $2}' | xargs svn rm
 
 # TODO svn commit -m "Automatically mirrored from ${SOURCE_URL}"
 
