@@ -9,13 +9,13 @@ REMOTEUSER=administrator
 REMOTEHOST=lupin05.venaria.marelli.it
 
 REPOSITORIES=""
-#REPOSITORIES+=" inno"
-#REPOSITORIES+=" inno.OLD"
-#REPOSITORIES+=" mmseti"
-#REPOSITORIES+=" osstbox"
-REPOSITORIES+=" lupin"
+#REPOSITORIES="${REPOSITORIES} inno"
+#REPOSITORIES="${REPOSITORIES} inno.OLD"
+#REPOSITORIES="${REPOSITORIES} mmseti"
+#REPOSITORIES="${REPOSITORIES} osstbox"
+REPOSITORIES="${REPOSITORIES} lupin"
 
-BACKUPDIR=/backup/Backup_svnrepos/`date '+%Y%m%d'`-lupin05
+BACKUPDIR=/BACKUP/Backup_svnrepos/`date '+%Y%m%d'`-lupin05
 
 #set -x
 
