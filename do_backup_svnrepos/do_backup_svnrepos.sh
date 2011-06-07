@@ -33,7 +33,7 @@ BACKUPDIR="${BK_BASEDIR}`date '+%Y%m%d'`-${REMOTEHOST}"
 #	svnadmin: Can't read length line in file '/opt/repos/mmseti/db/revs/6'
 #
 
-echo "INFO: $0 - v0.2"
+echo "INFO: $0 - v0.3"
 
 mkdir -p $BACKUPDIR || exit 1
 cd $BACKUPDIR || exit 1
