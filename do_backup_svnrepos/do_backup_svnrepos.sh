@@ -3,19 +3,26 @@
 # Backup all SVN Repositories available on a Remote Host
 # =============================================================================
 
-NOW=`date '+%Y%m%d-%H%M'`
+if [ "${REMOTEUSER}" = "" ]; then
+	REMOTEUSER="administrator"
+fi
+if [ "${REMOTEHOST}" = "" ]; then
+	REMOTEHOST="lupin05.venaria.marelli.it"
+fi
+if [ "${REPOSITORIES}" = "" ]; then
+	REPOSITORIES=""
+	#REPOSITORIES="${REPOSITORIES} inno"
+	#REPOSITORIES="${REPOSITORIES} inno.OLD"
+	#REPOSITORIES="${REPOSITORIES} mmseti"
+	#REPOSITORIES="${REPOSITORIES} osstbox"
+	REPOSITORIES="${REPOSITORIES} lupin"
+fi
+if [ "${BK_BASEDIR}" = "" ]; then
+	BK_BASEDIR="/BACKUP/Backup_svnrepos/"
+fi
 
-REMOTEUSER=administrator
-REMOTEHOST=lupin05.venaria.marelli.it
-
-REPOSITORIES=""
-#REPOSITORIES="${REPOSITORIES} inno"
-#REPOSITORIES="${REPOSITORIES} inno.OLD"
-#REPOSITORIES="${REPOSITORIES} mmseti"
-#REPOSITORIES="${REPOSITORIES} osstbox"
-REPOSITORIES="${REPOSITORIES} lupin"
-
-BACKUPDIR=/BACKUP/Backup_svnrepos/`date '+%Y%m%d'`-lupin05
+NOW="`date '+%Y%m%d-%H%M'`"
+BACKUPDIR="${BK_BASEDIR}`date '+%Y%m%d'`-${REMOTEHOST}"
 
 #set -x
 
@@ -32,8 +39,8 @@ mkdir -p $BACKUPDIR || exit 1
 cd $BACKUPDIR || exit 1
 
 # TODO: Backup /etc/apache2/dav_svn.{authz,passwd}
-scp ${REMOTEUSER}@${REMOTEHOST}:/etc/apache2/dav_svn.authz .
-#scp ${REMOTEUSER}@${REMOTEHOST}:/etc/apache2/dav_svn.passwd .
+scp "${REMOTEUSER}@${REMOTEHOST}:/etc/apache2/dav_svn.authz" .
+#scp "${REMOTEUSER}@${REMOTEHOST}:/etc/apache2/dav_svn.passwd" .
 
 for repos in ${REPOSITORIES}; do
     echo "INFO: Dumping SVN repos $repos from $REMOTEHOST..."
