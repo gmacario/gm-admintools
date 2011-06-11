@@ -95,13 +95,15 @@ for repos in ${REPOSITORIES}; do
 	echo ""
 	echo "#set -x"
 	echo ""
-	echo "#zcat \${FILES} | hexdump -Cv"
-	echo "#zcat \${FILES} > dumpfile"
 	echo ""
 	echo "svnadmin create \${NEWREPOS}"
 	if [ "${GPG_RECIPIENT}" != "NONE" ]; then
-		echo "cat \${FILES}* | gpg - | svnadmin load \${NEWREPOS}"
+		echo "#cat \${FILES} | gpg | gzip -dc | hexdump -Cv"
+		echo "#cat \${FILES} | gpg | gzip -dc > dumpfile"
+		echo "cat \${FILES}* | gpg | gzip -dc | svnadmin load \${NEWREPOS}"
 	else
+		echo "#zcat \${FILES} | hexdump -Cv"
+		echo "#zcat \${FILES} > dumpfile"
 		echo "zcat \${FILES}* | svnadmin load \${NEWREPOS}"
 	fi
 	echo ""
