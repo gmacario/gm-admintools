@@ -63,16 +63,16 @@ echo "INFO: Backing up config files from ${REMOTEHOST}"
 scp "${REMOTEUSER}@${REMOTEHOST}:/etc/apache2/dav_svn.authz" .
 #scp "${REMOTEUSER}@${REMOTEHOST}:/etc/apache2/dav_svn.passwd" .
 
-if [ "${GPG_RECIPIENT}" != "NONE" ]; then
-    GPG_PIPE="gpg --encrypt --recipient ${GPG_RECIPIENT} -"
-    FILES="${NOW}-bk-${repos}.svndump.gz.gpg-split"
-else
-    GPG_PIPE="cat -"
-    FILES="${NOW}-bk-${repos}.svndump.gz-split"
-fi
-
 for repos in ${REPOSITORIES}; do
     echo "INFO: Dumping repository $repos from ${REMOTEHOST}"
+
+    if [ "${GPG_RECIPIENT}" != "NONE" ]; then
+        GPG_PIPE="gpg --encrypt --recipient ${GPG_RECIPIENT} -"
+        FILES="${NOW}-bk-${repos}.svndump.gz.gpg-split"
+    else
+        GPG_PIPE="cat -"
+        FILES="${NOW}-bk-${repos}.svndump.gz-split"
+    fi
     (ssh "${REMOTEUSER}@${REMOTEHOST}" \
 	svnadmin dump "/opt/svnrepos/${repos}" \
 	| gzip -c -9) \
