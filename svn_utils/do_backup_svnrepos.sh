@@ -14,27 +14,42 @@ PROGNAME="`basename $0`"
 echo "INFO: ${PROGNAME} - v0.3"
 
 if [ "${REMOTEUSER}" = "" ]; then
-	REMOTEUSER="administrator"
+	REMOTEUSER="gmacario"
+	#REMOTEUSER="administrator"
 	echo -n "REMOTEUSER [${REMOTEUSER}]: "
-	read REMOTEUSER
+	read line
+	[ "$line" != "" ] && REMOTEUSER=$line
 fi
 if [ "${REMOTEHOST}" = "" ]; then
-	REMOTEHOST="lupin05.venaria.marelli.it"
+	REMOTEHOST="localhost"
+	#REMOTEHOST="lupin05.venaria.marelli.it"
 	echo -n "REMOTEHOST [${REMOTEHOST}]: "
-	read REMOTEHOST
+	read line
+	[ "$line" != "" ] && REMOTEHOST=$line
 fi
 if [ "${REPOSITORIES}" = "" ]; then
 	REPOSITORIES=""
+	REPOSITORIES="testrepos"
 	#REPOSITORIES="${REPOSITORIES} entrynav"
-	REPOSITORIES="${REPOSITORIES} lupin"
+	#REPOSITORIES="${REPOSITORIES} lupin"
 	#REPOSITORIES="${REPOSITORIES} pmo"
 	echo -n "REPOSITORIES [${REPOSITORIES}]: "
-	read REPOSITORIES
+	read line
+	[ "$line" != "" ] && REPOSITORIES=$line
 fi
 if [ "${BK_BASEDIR}" = "" ]; then
-	BK_BASEDIR="/BACKUP/Backup_svnrepos/"
+	BK_BASEDIR="${HOME}/BACKUP/Backup_svnrepos/"
+	#BK_BASEDIR="/BACKUP/Backup_svnrepos/"
 	echo -n "BK_BASEDIR [${BK_BASEDIR}]: "
-	read BK_BASEDIR
+	read line
+	[ "$line" != "" ] && BK_BASEDIR=$line
+fi
+if [ "${GPG_RECIPIENT}" = "" ]; then
+	GPG_RECIPIENT="NONE"
+	#GPG_RECIPIENT="alberto.cerato"
+	echo -n "GPG_RECIPIENT [${GPG_RECIPIENT}]: "
+	read line
+	[ "$line" != "" ] && GPG_RECIPIENT=$line
 fi
 
 TODAY="`date '+%Y%m%d'`"
@@ -48,12 +63,20 @@ echo "INFO: Backing up config files from ${REMOTEHOST}"
 scp "${REMOTEUSER}@${REMOTEHOST}:/etc/apache2/dav_svn.authz" .
 #scp "${REMOTEUSER}@${REMOTEHOST}:/etc/apache2/dav_svn.passwd" .
 
+if [ "${GPG_RECIPIENT}" != "NONE" ]; then
+    GPG_PIPE="gpg --encrypt --recipient ${GPG_RECIPIENT} -"
+    FILES="${NOW}-bk-${repos}.svndump.gz.gpg-split"
+else
+    GPG_PIPE="cat -"
+    FILES="${NOW}-bk-${repos}.svndump.gz-split"
+fi
+
 for repos in ${REPOSITORIES}; do
     echo "INFO: Dumping repository $repos from ${REMOTEHOST}"
-    (ssh ${REMOTEUSER}@${REMOTEHOST} \
-	svnadmin dump /opt/svnrepos/${repos} \
+    (ssh "${REMOTEUSER}@${REMOTEHOST}" \
+	svnadmin dump "/opt/svnrepos/${repos}" \
 	| gzip -c -9) \
-	| split -b 2048m -d - ${NOW}-bk-${repos}.svndump.gz-split
+	| ${GPG_PIPE} | split -b 2048m -d - "${FILES}"
     retval=$?
     if [ $retval -ne 0 ]; then
 	echo "ERROR: Dumping repository $repos returned ${retval}";
@@ -68,20 +91,23 @@ for repos in ${REPOSITORIES}; do
 	echo "# http://svnbook.red-bean.com/en/1.5/svn.reposadmin.maint.html"
 	echo ""
 	echo "NEWREPOS=new-${repos}"
-	echo "FILES=${NOW}-bk-${repos}.svndump.gz-split*"
+	echo "FILES=${FILES}"
 	echo ""
 	echo "#set -x"
 	echo ""
 	echo "#zcat \${FILES} | hexdump -Cv"
 	echo "#zcat \${FILES} > dumpfile"
 	echo ""
-	echo "#gpg --decrypt xxx"
-	echo ""
 	echo "svnadmin create \${NEWREPOS}"
-	echo "zcat \${FILES} | svnadmin load \${NEWREPOS}"
+	if [ "${GPG_RECIPIENT}" != "NONE" ]; then
+		echo "cat \${FILES}* | gpg - | svnadmin load \${NEWREPOS}"
+	else
+		echo "zcat \${FILES}* | svnadmin load \${NEWREPOS}"
+	fi
 	echo ""
 	echo "# === EOF ==="
     ) >"${samplescript}"
+    # | gpg --encrypt --armor \
     chmod 755 "${samplescript}"
 done
 
