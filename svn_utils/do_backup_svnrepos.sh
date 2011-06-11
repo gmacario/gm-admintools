@@ -46,11 +46,11 @@ if [ "${BK_BASEDIR}" = "" ]; then
 fi
 if [ "${GPG_RECIPIENT}" = "" ]; then
 	GPG_RECIPIENT="NONE"
-	#GPG_RECIPIENT="alberto.cerato"
-	echo -n "GPG_RECIPIENT [${GPG_RECIPIENT}]: "
-	read line
+	GPG_RECIPIENT="alberto.cerato; gianpaolo.macario"
+	read -p "GPG_RECIPIENT [${GPG_RECIPIENT}]: " line
 	[ "$line" != "" ] && GPG_RECIPIENT=$line
 fi
+echo "DBG: GPG_RECIPIENT=\"${GPG_RECIPIENT}\""
 
 TODAY="`date '+%Y%m%d'`"
 NOW="`date '+%Y%m%d-%H%M'`"
@@ -60,7 +60,14 @@ mkdir -p ${BACKUPDIR} || exit 1
 cd ${BACKUPDIR} || exit 1
 
 if [ "${GPG_RECIPIENT}" != "NONE" ]; then
-        GPG_PIPE="gpg --encrypt --recipient ${GPG_RECIPIENT}"
+	export GPG_PIPE
+        #GPG_PIPE="gpg --encrypt --recipient ${GPG_RECIPIENT}"
+        GPG_PIPE="gpg --encrypt `
+	    echo "${GPG_RECIPIENT}" | tr ';' '\n' \
+	    | while read entry; do echo -n " --group all=${entry}"
+	done
+	` --recipient all"
+	echo "DBG: GPG_PIPE=\"${GPG_PIPE}\""
 else
         GPG_PIPE="cat"
 fi
