@@ -38,8 +38,8 @@ if [ "${REPOSITORIES}" = "" ]; then
 	[ "$line" != "" ] && REPOSITORIES=$line
 fi
 if [ "${BK_BASEDIR}" = "" ]; then
-	BK_BASEDIR="${HOME}/BACKUP/Backup_svnrepos/"
-	#BK_BASEDIR="/BACKUP/Backup_svnrepos/"
+	BK_BASEDIR="${HOME}/BACKUP/Backup_svnrepos"
+	#BK_BASEDIR="/BACKUP/Backup_svnrepos"
 	echo -n "BK_BASEDIR [${BK_BASEDIR}]: "
 	read line
 	[ "$line" != "" ] && BK_BASEDIR=$line
@@ -98,6 +98,7 @@ for repos in ${REPOSITORIES}; do
     samplescript="sample-restore-${repos}.sh"
     (
 	echo "#!/bin/sh"
+	echo ""
 	echo "# Sample script to restore ${repos}"
 	echo "# http://svnbook.red-bean.com/en/1.5/svn.reposadmin.maint.html"
 	echo ""
@@ -107,7 +108,6 @@ for repos in ${REPOSITORIES}; do
 	echo "FILES=${FILES}"
 	echo ""
 	echo "#set -x"
-	echo ""
 	echo ""
 	echo "echo INFO: Decrypting configuration files"
 	if [ "${GPG_RECIPIENT}" != "NONE" ]; then
@@ -119,12 +119,12 @@ for repos in ${REPOSITORIES}; do
 	echo ""
 	echo "echo INFO: Loading dumpfile into new repository"
 	if [ "${GPG_RECIPIENT}" != "NONE" ]; then
-		echo "#cat \${BACKUPDIR}/\${FILES} | gpg | gzip -dc | hexdump -Cv"
-		echo "#cat \${BACKUPDIR}/\${FILES} | gpg | gzip -dc > dumpfile"
+		echo "#cat \${BACKUPDIR}/\${FILES}* | gpg | gzip -dc | hexdump -Cv"
+		echo "#cat \${BACKUPDIR}/\${FILES}* | gpg | gzip -dc > dumpfile"
 		echo "cat \${BACKUPDIR}/\${FILES}* | gpg | gzip -dc | svnadmin load \${NEWREPOS}"
 	else
-		echo "#zcat \${BACKUPDIR}/\${FILES} | hexdump -Cv"
-		echo "#zcat \${BACKUPDIR}/\${FILES} > dumpfile"
+		echo "#zcat \${BACKUPDIR}/\${FILES}* | hexdump -Cv"
+		echo "#zcat \${BACKUPDIR}/\${FILES}* > dumpfile"
 		echo "zcat \${BACKUPDIR}/\${FILES}* | svnadmin load \${NEWREPOS}"
 	fi
 	echo ""
