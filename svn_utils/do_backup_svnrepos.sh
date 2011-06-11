@@ -59,18 +59,29 @@ BACKUPDIR="${BK_BASEDIR}/${TODAY}-${REMOTEHOST}"
 mkdir -p ${BACKUPDIR} || exit 1
 cd ${BACKUPDIR} || exit 1
 
+if [ "${GPG_RECIPIENT}" != "NONE" ]; then
+        GPG_PIPE="gpg --encrypt --recipient ${GPG_RECIPIENT}"
+else
+        GPG_PIPE="cat"
+fi
+
 echo "INFO: Backing up config files from ${REMOTEHOST}"
-scp "${REMOTEUSER}@${REMOTEHOST}:/etc/apache2/dav_svn.authz" .
-#scp "${REMOTEUSER}@${REMOTEHOST}:/etc/apache2/dav_svn.passwd" .
+if [ "${GPG_RECIPIENT}" != "NONE" ]; then
+    ssh "${REMOTEUSER}@${REMOTEHOST}" \
+	"cat /etc/apache2/dav_svn.authz" \
+	| ${GPG_PIPE} --armor >dav_svn.authz.asc
+    # TODO: /etc/apache2/dav_svn.passwd
+else
+    scp "${REMOTEUSER}@${REMOTEHOST}:/etc/apache2/dav_svn.authz" .
+    # TODO: /etc/apache2/dav_svn.passwd
+fi
 
 for repos in ${REPOSITORIES}; do
     echo "INFO: Dumping repository $repos from ${REMOTEHOST}"
 
     if [ "${GPG_RECIPIENT}" != "NONE" ]; then
-        GPG_PIPE="gpg --encrypt --recipient ${GPG_RECIPIENT} -"
         FILES="${NOW}-bk-${repos}.svndump.gz.gpg-split"
     else
-        GPG_PIPE="cat -"
         FILES="${NOW}-bk-${repos}.svndump.gz-split"
     fi
     (ssh "${REMOTEUSER}@${REMOTEHOST}" \
@@ -90,22 +101,34 @@ for repos in ${REPOSITORIES}; do
 	echo "# Sample script to restore ${repos}"
 	echo "# http://svnbook.red-bean.com/en/1.5/svn.reposadmin.maint.html"
 	echo ""
-	echo "NEWREPOS=new-${repos}"
+	echo "# Configurable parameters"
+	echo "BACKUPDIR=\"${BACKUPDIR}\""
+	echo "NEWREPOS=\"new-${repos}\""
 	echo "FILES=${FILES}"
 	echo ""
 	echo "#set -x"
 	echo ""
 	echo ""
-	echo "svnadmin create \${NEWREPOS}"
+	echo "echo INFO: Decrypting configuration files"
 	if [ "${GPG_RECIPIENT}" != "NONE" ]; then
-		echo "#cat \${FILES} | gpg | gzip -dc | hexdump -Cv"
-		echo "#cat \${FILES} | gpg | gzip -dc > dumpfile"
-		echo "cat \${FILES}* | gpg | gzip -dc | svnadmin load \${NEWREPOS}"
-	else
-		echo "#zcat \${FILES} | hexdump -Cv"
-		echo "#zcat \${FILES} > dumpfile"
-		echo "zcat \${FILES}* | svnadmin load \${NEWREPOS}"
+		echo "cat \${BACKUPDIR}/dav_svn.authz.asc | gpg >dav_svn.authz"
 	fi
+	echo ""
+	echo "echo INFO: Creating empty repository"
+	echo "svnadmin create \${NEWREPOS}"
+	echo ""
+	echo "echo INFO: Loading dumpfile into new repository"
+	if [ "${GPG_RECIPIENT}" != "NONE" ]; then
+		echo "#cat \${BACKUPDIR}/\${FILES} | gpg | gzip -dc | hexdump -Cv"
+		echo "#cat \${BACKUPDIR}/\${FILES} | gpg | gzip -dc > dumpfile"
+		echo "cat \${BACKUPDIR}/\${FILES}* | gpg | gzip -dc | svnadmin load \${NEWREPOS}"
+	else
+		echo "#zcat \${BACKUPDIR}/\${FILES} | hexdump -Cv"
+		echo "#zcat \${BACKUPDIR}/\${FILES} > dumpfile"
+		echo "zcat \${BACKUPDIR}/\${FILES}* | svnadmin load \${NEWREPOS}"
+	fi
+	echo ""
+	echo "echo INFO: Done"
 	echo ""
 	echo "# === EOF ==="
     ) >"${samplescript}"
