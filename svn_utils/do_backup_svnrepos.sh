@@ -16,15 +16,13 @@ echo "INFO: ${PROGNAME} - v0.3"
 if [ "${REMOTEUSER}" = "" ]; then
 	REMOTEUSER="gmacario"
 	#REMOTEUSER="administrator"
-	echo -n "REMOTEUSER [${REMOTEUSER}]: "
-	read line
+	read -p "REMOTEUSER [${REMOTEUSER}]: " line
 	[ "$line" != "" ] && REMOTEUSER=$line
 fi
 if [ "${REMOTEHOST}" = "" ]; then
 	REMOTEHOST="localhost"
 	#REMOTEHOST="lupin05.venaria.marelli.it"
-	echo -n "REMOTEHOST [${REMOTEHOST}]: "
-	read line
+	read -p "REMOTEHOST [${REMOTEHOST}]: " line
 	[ "$line" != "" ] && REMOTEHOST=$line
 fi
 if [ "${REPOSITORIES}" = "" ]; then
@@ -33,24 +31,21 @@ if [ "${REPOSITORIES}" = "" ]; then
 	#REPOSITORIES="${REPOSITORIES} entrynav"
 	#REPOSITORIES="${REPOSITORIES} lupin"
 	#REPOSITORIES="${REPOSITORIES} pmo"
-	echo -n "REPOSITORIES [${REPOSITORIES}]: "
-	read line
+	read -p "REPOSITORIES [${REPOSITORIES}]: " line
 	[ "$line" != "" ] && REPOSITORIES=$line
 fi
 if [ "${BK_BASEDIR}" = "" ]; then
 	BK_BASEDIR="${HOME}/BACKUP/Backup_svnrepos"
 	#BK_BASEDIR="/BACKUP/Backup_svnrepos"
-	echo -n "BK_BASEDIR [${BK_BASEDIR}]: "
-	read line
+	read -p "BK_BASEDIR [${BK_BASEDIR}]: " line
 	[ "$line" != "" ] && BK_BASEDIR=$line
 fi
 if [ "${GPG_RECIPIENT}" = "" ]; then
 	GPG_RECIPIENT="NONE"
-	GPG_RECIPIENT="alberto.cerato; gianpaolo.macario"
+	#GPG_RECIPIENT="alberto.cerato; gianpaolo.macario"
 	read -p "GPG_RECIPIENT [${GPG_RECIPIENT}]: " line
 	[ "$line" != "" ] && GPG_RECIPIENT=$line
 fi
-echo "DBG: GPG_RECIPIENT=\"${GPG_RECIPIENT}\""
 
 TODAY="`date '+%Y%m%d'`"
 NOW="`date '+%Y%m%d-%H%M'`"
@@ -60,18 +55,17 @@ mkdir -p ${BACKUPDIR} || exit 1
 cd ${BACKUPDIR} || exit 1
 
 if [ "${GPG_RECIPIENT}" != "NONE" ]; then
-	export GPG_PIPE
-        #GPG_PIPE="gpg --encrypt --recipient ${GPG_RECIPIENT}"
-        GPG_PIPE="$(
-	    echo -n "gpg --encrypt"
-	    echo "${GPG_RECIPIENT}" | tr ';' '\n' | while read entry; do 
-		echo -n " --group all=${entry}"
-	    done
-	    echo -n " --recipient all"
-	)"
-	echo "DBG: GPG_PIPE=\"${GPG_PIPE}\""
+    #GPG_PIPE="gpg --encrypt --recipient ${GPG_RECIPIENT}"
+    GPG_PIPE="$(
+        echo -n "gpg --encrypt"
+        echo "${GPG_RECIPIENT}" | tr ';' '\n' | while read entry; do 
+	    echo -n " --group all=${entry}"
+        done
+        echo -n " --recipient all"
+    )"
+    echo "DBG: GPG_PIPE=\"${GPG_PIPE}\""
 else
-        GPG_PIPE="cat"
+    GPG_PIPE="cat"
 fi
 
 echo "INFO: Backing up config files from ${REMOTEHOST}"
