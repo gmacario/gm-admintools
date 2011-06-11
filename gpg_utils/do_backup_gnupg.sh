@@ -1,6 +1,7 @@
 #!/bin/sh
 
-BACKUPDIR="/opt/BACKUP"
+BACKUPDIR="${HOME}/BACKUP"
+#BACKUPDIR="/opt/BACKUP"
 
 TODAY="`date '+%Y%m%d'`"
 HOSTNAME="`hostname`"
