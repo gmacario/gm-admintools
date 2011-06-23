@@ -1,7 +1,9 @@
 #!/bin/sh
 
 # =============================================================================
-# Backup all SVN Repositories available on a Remote Host
+# Project:	admin_scripts
+#
+# Purpose:	Backup all SVN Repositories available on a Remote Host
 # =============================================================================
 
 # -----------------------------------------------------------------------------
@@ -106,7 +108,8 @@ for repos in ${REPOSITORIES}; do
 	echo "# http://svnbook.red-bean.com/en/1.5/svn.reposadmin.maint.html"
 	echo ""
 	echo "# Configurable parameters"
-	echo "BACKUPDIR=\"${BACKUPDIR}\""
+	echo "#BACKUPDIR=\"${BACKUPDIR}\""
+	echo "BACKUPDIR=\"\$(dirname \$0)\""
 	echo "NEWREPOS=\"new-${repos}\""
 	echo "FILES=${FILES}"
 	echo ""
