@@ -58,9 +58,8 @@ mkdir -p ${BACKUPDIR} || exit 1
 cd ${BACKUPDIR} || exit 1
 
 if [ "${GPG_RECIPIENT}" != "NONE" ]; then
-    #GPG_PIPE="gpg --encrypt --recipient ${GPG_RECIPIENT}"
     GPG_PIPE="$(
-        echo -n "gpg --encrypt"
+        echo -n "gpg --encrypt --batch"
         echo "${GPG_RECIPIENT}" | tr ';' '\n' | while read entry; do 
 	    echo -n " --group all=${entry}"
         done
