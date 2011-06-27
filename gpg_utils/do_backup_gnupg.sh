@@ -3,14 +3,17 @@
 # Configurable parameters
 REMOTEUSER="gmacario"
 REMOTEHOST="itven1d0400.venaria.marelli.it"
+#REMOTEUSER="macario"
+#REMOTEHOST="itven1d0541.venaria.marelli.it"
 
-BACKUPDIR="${HOME}/BACKUP"
+BACKUPDIR="${HOME}/BACKUP/GnuPG"
 #BACKUPDIR="/opt/BACKUP"
 
 TODAY="`date '+%Y%m%d'`"
 
 #set -x
 
+mkdir -p "${BACKUPDIR}"
 if [ "${REMOTEUSER}" != "" ]; then
     BK_FILE="${TODAY}-${REMOTEHOST}-${REMOTEUSER}-gnupg.zip"
 
