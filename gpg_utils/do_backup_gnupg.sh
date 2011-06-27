@@ -1,8 +1,11 @@
 #!/bin/sh
 
+# ---------------------------------------------------------------------------
 # Configurable parameters
-REMOTEUSER="gmacario"
-REMOTEHOST="itven1d0400.venaria.marelli.it"
+# ---------------------------------------------------------------------------
+
+# NONE
+
 #REMOTEUSER="macario"
 #REMOTEHOST="itven1d0541.venaria.marelli.it"
 
@@ -11,7 +14,28 @@ BACKUPDIR="${HOME}/BACKUP/GnuPG"
 
 TODAY="`date '+%Y%m%d'`"
 
+# ---------------------------------------------------------------------------
+# Main Program
+# ---------------------------------------------------------------------------
+
 #set -x
+set -e
+
+PROGNAME=`basename $0`
+echo "INFO: ${PROGNAME} - v0.2"
+
+if [ $# -lt 1 ]; then
+    echo "Usage: ${PROGNAME} remoteuser@remotehost"
+    exit 1
+fi
+
+REMOTEUSER=`echo $1 | sed -e 's/\@.*$//'`
+REMOTEHOST=`echo $1 | sed -e 's/^.*@//'`
+
+#echo "DEBUG: REMOTEUSER=$REMOTEUSER"
+#echo "DEBUG: REMOTEHOST=$REMOTEHOST"
+
+echo "INFO: Backing up GnuPG keys ${REMOTEUSER}@${REMOTEHOST}"
 
 mkdir -p "${BACKUPDIR}"
 if [ "${REMOTEUSER}" != "" ]; then
@@ -29,6 +53,6 @@ else
     zip -rp "${BACKUPDIR}/${BK_FILE}" .gnupg
 fi
 
-echo "INF: GPG keys backed up at ${BACKUPDIR}/${BK_FILE}"
+echo "INFO: GnuPG keys backed up at ${BACKUPDIR}/${BK_FILE}"
 
 # === EOF ===
