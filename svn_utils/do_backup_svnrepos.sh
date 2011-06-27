@@ -113,6 +113,7 @@ for repos in ${REPOSITORIES}; do
 	echo "FILES=${FILES}"
 	echo ""
 	echo "#set -x"
+	echo "set -e"
 	echo ""
 	echo "echo INFO: Decrypting configuration files"
 	if [ "${GPG_RECIPIENT}" != "NONE" ]; then
