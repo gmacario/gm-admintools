@@ -42,7 +42,9 @@ if [ "${REMOTEUSER}" != "" ]; then
 
     echo "INF: Backing up GPG keys of ${REMOTEUSER}@${REMOTEHOST}"
     ssh "${REMOTEUSER}@${REMOTEHOST}" \
-	"zip -rp - .gnupg" > "${BACKUPDIR}/${BK_FILE}.tmp"
+	"zip -rp - .gnupg" > "${BACKUPDIR}/${BK_FILE}.tmp" 	# || true
+    # result=$?
+    # echo "DEBUG: result=$result"
     rm -f "${BACKUPDIR}/${BK_FILE}"
     mv "${BACKUPDIR}/${BK_FILE}.tmp" "${BACKUPDIR}/${BK_FILE}"
 else
