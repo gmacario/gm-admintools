@@ -1,7 +1,5 @@
 #!/bin/sh
-#
-# TODO TODO TODO: STILL DEBUGGING IT!!!
-#
+
 # ============================================================================
 # Project:	LUPIN
 #
@@ -55,7 +53,6 @@ TUNNELHOST=`echo "${TUNNEL}" | sed -e 's/^.*@//'`
 
 #echo "INFO: Executing commands to ${TARGETUSER}@${TARGETHOST} through ${TUNNELUSER}@${TUNNELHOST}"
 
-#set -x
 ssh "${TUNNELUSER}@${TUNNELHOST}" "ssh ${REMOTEUSER}@${REMOTEHOST} $*"
 
 # === EOF ===
