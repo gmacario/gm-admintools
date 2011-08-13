@@ -1,16 +1,16 @@
 #!/bin/sh
 
 # =============================================================================
-# Project:	admin_scripts
+# Project:	admin_scripts/device-utils
 #
-# Purpose:	Backup filesystem of a Jailbroken iPhone
+# Purpose:	Backup filesystem of a device (example: jailbroken iPhone)
 # =============================================================================
 
 # -----------------------------------------------------------------------------
 # Main program follows
 # -----------------------------------------------------------------------------
 
-set -x
+#set -x
 set -e
 
 PROGNAME="`basename $0`"
@@ -29,12 +29,25 @@ if [ "${REMOTEHOST}" = "" ]; then
 fi
 
 if [ "${PARTS}" = "" ]; then
-	PARTS="/"
-	#PARTS=""
-	#PARTS="${PARTS} /Developer"
-	#PARTS="${PARTS} /Library"
+	#PARTS="/"
+	PARTS=""
+	PARTS="${PARTS} /Applications"
+	PARTS="${PARTS} /Developer"
+	PARTS="${PARTS} /Library"
 	#PARTS="${PARTS} /System"
+	PARTS="${PARTS} /User"
+	PARTS="${PARTS} /bin"
+	PARTS="${PARTS} /boot"
+	PARTS="${PARTS} /dev"
+	PARTS="${PARTS} /etc"
+	PARTS="${PARTS} /lib"
+	PARTS="${PARTS} /mnt"
+	#PARTS="${PARTS} /private"
 	PARTS="${PARTS} /private/etc"
+	PARTS="${PARTS} /sbin"
+	PARTS="${PARTS} /tmp"
+	#PARTS="${PARTS} /usr"
+	PARTS="${PARTS} /var"
 	read -p "PARTS [${PARTS}]: " line
 	[ "$line" != "" ] && PARTS=$line
 fi
@@ -73,12 +86,8 @@ else
 fi
 
 echo "INFO: Backing up filesystem from ${REMOTEHOST}"
-echo TODO
-
 for part in ${PARTS}; do
-
     echo "INFO: Dumping ${part} from ${REMOTEHOST}"
-
 	FILES="${NOW}-bk-${REMOTEHOST}"
 	FILES="${FILES}-`echo $part | tr '/' '_'`"
     if [ "${GPG_RECIPIENT}" != "NONE" ]; then
@@ -92,30 +101,30 @@ for part in ${PARTS}; do
 	# > "${NOW}-bk-${REMOTEHOST}.tgz"
 	# | hexdump 
     retval=$?
-   if [ $retval -ne 0 ]; then
-	echo "ERROR: Dumping $part from $REMOTEHOST returned ${retval}";
+    if [ $retval -ne 0 ]; then
+	    echo "ERROR: Dumping ${part} from ${REMOTEHOST} returned ${retval}";
 	exit 1
    fi
+done
 
-#   echo "INFO: Creating sample script to restore repository"
-#   samplescript="sample-restore-${repos}.sh"
-#   (
-#	echo "#!/bin/sh"
-#	echo ""
-#	echo "# Sample script to restore ${repos}"
-#	echo "# http://svnbook.red-bean.com/en/1.5/svn.reposadmin.maint.html"
-#	echo "#"
+echo "INFO: Creating sample script to restore filesystem"
+samplescript="sample-restore-${REMOTEHOST}.sh"
+(
+    echo "#!/bin/sh"
+	echo ""
+	echo "# Sample script to restore ${REMOTEHOST} filesystem"
+	echo "#"
 #	echo "# How to check-out working copy:"
 #	echo "# TODO: svn checkout file:///path/${repos}"
 #	echo ""
-#	echo "# Configurable parameters"
-#	echo "BACKUPDIR=\"\$(dirname \$0)\""
-#	echo "NEWREPOS=\"new-${repos}\""
-#	echo "FILES=${FILES}"
-#	echo ""
-#	echo "#set -x"
-#	echo "set -e"
-#	echo ""
+	echo "# Configurable Parameters"
+	echo "BACKUPDIR=\"\$(dirname \$0)\""
+	echo "NEW_ROOTFS=\"newfs-${REMOTEHOST}\""
+	echo "PARTS=${PARTS}"
+	echo ""
+	echo "#set -x"
+	echo "set -e"
+	echo ""
 #	echo "echo INFO: Decrypting configuration files"
 #	if [ "${GPG_RECIPIENT}" != "NONE" ]; then
 #		echo "cat \${BACKUPDIR}/dav_svn.authz.asc | gpg >dav_svn.authz"
@@ -134,15 +143,13 @@ for part in ${PARTS}; do
 #		echo "#zcat \${BACKUPDIR}/\${FILES}* > dumpfile"
 #		echo "zcat \${BACKUPDIR}/\${FILES}* | svnadmin load \${NEWREPOS}"
 #	fi
-#	echo ""
-#	echo "echo INFO: Done"
-#	echo ""
-#	echo "# === EOF ==="
-#    ) >"${samplescript}"
-#    # | gpg --encrypt --armor \
-#    chmod 755 "${samplescript}"
-
-done
+	echo ""
+	echo "echo INFO: Done"
+	echo ""
+    echo "# === EOF ==="
+) >"${samplescript}"
+# | gpg --encrypt --armor
+chmod 755 "${samplescript}" || true
 
 echo "INFO: ${PROGNAME} completed"
 
