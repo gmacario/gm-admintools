@@ -29,13 +29,13 @@ if [ "${REMOTEHOST}" = "" ]; then
 fi
 
 if [ "${PARTS}" = "" ]; then
-	#PARTS="/"
+	# Example 1: Backup portion of filesystem
 	PARTS=""
 	PARTS="${PARTS} /Applications"
 	PARTS="${PARTS} /Developer"
 	PARTS="${PARTS} /Library"
 	#PARTS="${PARTS} /System"
-	PARTS="${PARTS} /User"
+	#PARTS="${PARTS} /User"
 	PARTS="${PARTS} /bin"
 	PARTS="${PARTS} /boot"
 	PARTS="${PARTS} /dev"
@@ -47,7 +47,12 @@ if [ "${PARTS}" = "" ]; then
 	PARTS="${PARTS} /sbin"
 	PARTS="${PARTS} /tmp"
 	#PARTS="${PARTS} /usr"
-	PARTS="${PARTS} /var"
+	#PARTS="${PARTS} /var"
+	PARTS="${PARTS} /var/root"
+	#
+	# Example 2: Backup complete filesystem
+	#PARTS="/"
+	#
 	read -p "PARTS [${PARTS}]: " line
 	[ "$line" != "" ] && PARTS=$line
 fi
@@ -60,7 +65,7 @@ fi
 
 if [ "${GPG_RECIPIENT}" = "" ]; then
 	GPG_RECIPIENT="NONE"
-	#GPG_RECIPIENT="alberto.cerato; gianpaolo.macario"
+	#GPG_RECIPIENT="gianpaolo.macario; filippo.pagin"
 	read -p "GPG_RECIPIENT [${GPG_RECIPIENT}]: " line
 	[ "$line" != "" ] && GPG_RECIPIENT=$line
 fi
@@ -114,17 +119,30 @@ samplescript="sample-restore-${REMOTEHOST}.sh"
 	echo ""
 	echo "# Sample script to restore ${REMOTEHOST} filesystem"
 	echo "#"
-#	echo "# How to check-out working copy:"
-#	echo "# TODO: svn checkout file:///path/${repos}"
-#	echo ""
 	echo "# Configurable Parameters"
 	echo "BACKUPDIR=\"\$(dirname \$0)\""
 	echo "NEW_ROOTFS=\"newfs-${REMOTEHOST}\""
-	echo "PARTS=${PARTS}"
+	echo "PARTS=\"${PARTS}\""
 	echo ""
 	echo "#set -x"
 	echo "set -e"
 	echo ""
+	echo "mkdir -p \"${NEW_ROOTFS}\""
+	echo ""
+	echo "for part in \"${PARTS}\"; do"
+	echo "    f=xxx"
+	echo "    echo INFO: Untarring ${f}"
+	if [ "${GPG_RECIPIENT}" != "NONE" ]; then
+		echo "    #cat \${BACKUPDIR}/\${f}* | gpg | gzip -dc | hexdump -Cv"
+		echo "    #cat \${BACKUPDIR}/\${f}* | gpg | gzip -dc > dumpfile"
+		echo "    cat \${BACKUPDIR}/\${f}* | gpg | gzip -dc| tar xv -C \"\${NEW_ROOTFS}\""
+	else
+		echo "    #zcat \${BACKUPDIR}/\${f}* | hexdump -Cv"
+		echo "    #zcat \${BACKUPDIR}/\${f}* > dumpfile"
+		echo "    zcat \${BACKUPDIR}/\${f}* | tar xv -C \"\${NEW_ROOTFS}\""
+	fi
+	echo "done"
+	echo ""	
 #	echo "echo INFO: Decrypting configuration files"
 #	if [ "${GPG_RECIPIENT}" != "NONE" ]; then
 #		echo "cat \${BACKUPDIR}/dav_svn.authz.asc | gpg >dav_svn.authz"
@@ -143,7 +161,7 @@ samplescript="sample-restore-${REMOTEHOST}.sh"
 #		echo "#zcat \${BACKUPDIR}/\${FILES}* > dumpfile"
 #		echo "zcat \${BACKUPDIR}/\${FILES}* | svnadmin load \${NEWREPOS}"
 #	fi
-	echo ""
+#	echo ""
 	echo "echo INFO: Done"
 	echo ""
     echo "# === EOF ==="
