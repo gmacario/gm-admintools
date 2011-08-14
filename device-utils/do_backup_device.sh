@@ -51,7 +51,7 @@ if [ "${PARTS}" = "" ]; then
 	#PARTS="${PARTS} /var/root"
 	#
 	# Example 2: Backup complete filesystem
-	#PARTS="/"
+	PARTS="/"
 	#
 	read -p "PARTS [${PARTS}]: " line
 	[ "$line" != "" ] && PARTS=$line
@@ -135,8 +135,8 @@ samplescript="sample-restore-${REMOTEHOST}.sh"
     else
         echo "    f=\"\${f}.tgz-split\""
     fi
-	echo "    mkdir -p \"${NEW_ROOTFS}\${part}\""
-	echo "    cd \"${NEW_ROOTFS}\${part}\""
+	echo "    mkdir -p \"\${NEW_ROOTFS}\${part}\""
+	echo "    cd \"\${NEW_ROOTFS}\${part}\""
 	echo "    echo \"INFO: Untarring \${f}\""
 	if [ "${GPG_RECIPIENT}" != "NONE" ]; then
 		echo "    #cat \${f}* | gpg | gzip -dc | hexdump -Cv"
