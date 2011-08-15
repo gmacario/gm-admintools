@@ -70,13 +70,6 @@ if [ "${GPG_RECIPIENT}" = "" ]; then
 	[ "$line" != "" ] && GPG_RECIPIENT=$line
 fi
 
-TODAY="`date '+%Y%m%d'`"
-NOW="`date '+%Y%m%d-%H%M'`"
-BACKUPDIR="${BK_BASEDIR}/${TODAY}-${REMOTEHOST}"
-
-mkdir -p ${BACKUPDIR} || exit 1
-cd ${BACKUPDIR} || exit 1
-
 if [ "${GPG_RECIPIENT}" != "NONE" ]; then
     GPG_PIPE="$(
         echo -n "gpg --encrypt --batch"
@@ -90,27 +83,12 @@ else
     GPG_PIPE="cat"
 fi
 
-echo "INFO: Backing up filesystem from ${REMOTEHOST}"
-for part in ${PARTS}; do
-    echo "INFO: Dumping ${part} from ${REMOTEHOST}"
-	FILES="${NOW}-bk-${REMOTEHOST}"
-	FILES="${FILES}-`echo $part | tr '/' '_'`"
-    if [ "${GPG_RECIPIENT}" != "NONE" ]; then
-        FILES="${FILES}.tgz.gpg-split"
-    else
-        FILES="${FILES}.tgz-split"
-    fi
-    (ssh "${REMOTEUSER}@${REMOTEHOST}" \
-		"tar -cvz -C ${part} ." \
-	) | ${GPG_PIPE} | split -b 2048m -d - "${FILES}"
-	# > "${NOW}-bk-${REMOTEHOST}.tgz"
-	# | hexdump 
-    retval=$?
-    if [ $retval -ne 0 ]; then
-	    echo "ERROR: Dumping ${part} from ${REMOTEHOST} returned ${retval}";
-	exit 1
-   fi
-done
+TODAY="`date '+%Y%m%d'`"
+NOW="`date '+%Y%m%d-%H%M'`"
+BACKUPDIR="${BK_BASEDIR}/${TODAY}-${REMOTEHOST}"
+
+mkdir -p ${BACKUPDIR} || exit 1
+cd ${BACKUPDIR} || exit 1
 
 echo "INFO: Creating sample script to restore filesystem"
 samplescript="sample-restore-${REMOTEHOST}.sh"
@@ -139,13 +117,13 @@ samplescript="sample-restore-${REMOTEHOST}.sh"
 	echo "    pushd \"\${NEW_ROOTFS}\${part}\""
 	echo "    echo \"INFO: Untarring \${f}\""
 	if [ "${GPG_RECIPIENT}" != "NONE" ]; then
-		echo "    #cat \${f}* | gpg | gzip -dc | hexdump -Cv"
-		echo "    #cat \${f}* | gpg | gzip -dc > dumpfile"
-		echo "    cat \${f}* | gpg | gzip -dc| tar xv"
+		echo "    #cat \"\${f}\"* | gpg | gzip -dc | hexdump -Cv"
+		echo "    #cat \"\${f}\"* | gpg | gzip -dc > dumpfile"
+		echo "    cat \"\${f}\"* | gpg | gzip -dc| tar xv"
 	else
-		echo "    #zcat \${f}* | hexdump -Cv"
-		echo "    #zcat \${f}* > dumpfile"
-		echo "    zcat \${f}* | tar xv"
+		echo "    #zcat \"\${f}\"* | hexdump -Cv"
+		echo "    #zcat \"\${f}\"* > dumpfile"
+		echo "    zcat \"\${f}\"* | tar xv"
 	fi
 	echo "    popd"
 	echo "done"
@@ -156,6 +134,28 @@ samplescript="sample-restore-${REMOTEHOST}.sh"
 ) >"${samplescript}"
 # | gpg --encrypt --armor
 chmod 755 "${samplescript}" || true
+
+echo "INFO: Backing up filesystem from ${REMOTEHOST}"
+for part in ${PARTS}; do
+    echo "INFO: Dumping ${part} from ${REMOTEHOST}"
+	FILES="${NOW}-bk-${REMOTEHOST}"
+	FILES="${FILES}-`echo $part | tr '/' '_'`"
+    if [ "${GPG_RECIPIENT}" != "NONE" ]; then
+        FILES="${FILES}.tgz.gpg-split"
+    else
+        FILES="${FILES}.tgz-split"
+    fi
+    (ssh "${REMOTEUSER}@${REMOTEHOST}" \
+		"tar -cvz -C ${part} ." \
+	) | ${GPG_PIPE} | split -b 1024m -d - "${FILES}"
+	# > "${NOW}-bk-${REMOTEHOST}.tgz"
+	# | hexdump 
+    retval=$?
+    if [ $retval -ne 0 ]; then
+	    echo "ERROR: Dumping ${part} from ${REMOTEHOST} returned ${retval}";
+	exit 1
+   fi
+done
 
 echo "INFO: ${PROGNAME} completed"
 
