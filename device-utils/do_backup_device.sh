@@ -23,7 +23,7 @@ if [ "${REMOTEUSER}" = "" ]; then
 fi
 
 if [ "${REMOTEHOST}" = "" ]; then
-	REMOTEHOST="172.20.10.2"
+	REMOTEHOST="iPod-Marelli"
 	read -p "REMOTEHOST [${REMOTEHOST}]: " line
 	[ "$line" != "" ] && REMOTEHOST=$line
 fi
@@ -87,8 +87,8 @@ TODAY="`date '+%Y%m%d'`"
 NOW="`date '+%Y%m%d-%H%M'`"
 BACKUPDIR="${BK_BASEDIR}/${TODAY}-${REMOTEHOST}"
 
-mkdir -p ${BACKUPDIR} || exit 1
-cd ${BACKUPDIR} || exit 1
+mkdir -p "${BACKUPDIR}" || exit 1
+cd "${BACKUPDIR}" || exit 1
 
 echo "INFO: Creating sample script to restore filesystem"
 samplescript="sample-restore-${REMOTEHOST}.sh"
