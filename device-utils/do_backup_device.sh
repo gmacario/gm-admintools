@@ -110,21 +110,17 @@ samplescript="sample-restore-${REMOTEHOST}.sh"
 	echo "    f=\"\${f}-\`echo \${part} | tr '/' '_'\`\""
     if [ "${GPG_RECIPIENT}" != "NONE" ]; then
         echo "    f=\"\${f}.tgz.gpg-split\""
+		GPG_PIPE="| gpg -dc |"
     else
         echo "    f=\"\${f}.tgz-split\""
+		GPG_PIPE="|"
     fi
-	echo "    mkdir -p \"\${NEW_ROOTFS}\${part}\""
-	echo "    pushd \"\${NEW_ROOTFS}\${part}\""
+	echo "    mkdir -p \"\${NEW_ROOTFS}/\${part}\""
+	echo "    pushd \"\${NEW_ROOTFS}/\${part}\""
 	echo "    echo \"INFO: Untarring \${f}\""
-	if [ "${GPG_RECIPIENT}" != "NONE" ]; then
-		echo "    #cat \"\${f}\"* | gpg | gzip -dc | hexdump -Cv"
-		echo "    #cat \"\${f}\"* | gpg | gzip -dc > dumpfile"
-		echo "    cat \"\${f}\"* | gpg | gzip -dc| tar xv"
-	else
-		echo "    #zcat \"\${f}\"* | hexdump -Cv"
-		echo "    #zcat \"\${f}\"* > dumpfile"
-		echo "    zcat \"\${f}\"* | tar xv"
-	fi
+	echo "    #ls \${f}* | xargs cat ${GPG_PIPE} wc"
+	echo "    #ls \${f}* | xargs cat ${GPG_PIPE} tar tvz"
+	echo "    ls \${f}* | xargs cat ${GPG_PIPE} tar xvz"
 	echo "    popd"
 	echo "done"
 	echo ""	
