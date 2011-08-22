@@ -7,20 +7,29 @@
 #
 # Language:	GNU shell script
 #
-# Copyright 2007-2009 Magneti Marelli Electronic Systems - All Rights Reserved
+# Copyright 2007-2011 Magneti Marelli Electronic Systems - All Rights Reserved
+#
+# TODO:
+#	1.  Sanity checks on SSD_DEV
+#	2.  Define PARTITIONS parsing the output of "fdisk -l"
 # =============================================================================
 
+# -----------------------------------------------------------------------------
 # Configurable Parameters
-#
-SSD_DEV=/dev/sdb
+# -----------------------------------------------------------------------------
+
+SSD_DEV="/dev/sdb"
 PARTITIONS="1 2 3 4"
-MOUNTPOINT=/tmp/mount
-OUTDIR=/home/gmacario/MOVEME/20090503-Russelville_SSD
-LOGFILE=partdump.log
+MOUNTPOINT="/tmp/mount"
+OUTDIR="/home/macario/BACKUP/Backup_devices/20110822-Kingston_16GB"
+LOGFILE="partdump.log"
 
 # End of configurable parameters
 
 # -----------------------------------------------------------------------------
+# Main program follows
+# -----------------------------------------------------------------------------
+
 #set -x
 set -e
 
@@ -34,23 +43,28 @@ fi
 echo "INFO: Dumping partitions of ${SSD_DEV} into ${OUTDIR}"
 echo "INFO: Dump started at `date`"
 
-fdisk -l ${SSD_DEV} >$OUTDIR/fdisk.txt
+mkdir -p "${OUTDIR}"
 
+fdisk -l ${SSD_DEV} >"${OUTDIR}/fdisk.txt"
+
+# Make sure that no partitions of SSD_DEV are currently mounted
 for part in $PARTITIONS; do
-    umount ${SSD_DEV}$part 2>/dev/null || true
+    umount "${SSD_DEV}$part" 2>/dev/null || true
 done
 
-dd if=$SSD_DEV | gzip -c -9 >$OUTDIR/raw_device.gz
+# Dump raw device first
+dd if="${SSD_DEV}" | gzip -c -9 >"${OUTDIR}/raw_device.gz"
 
-for part in $PARTITIONS; do
-    mkdir -p $MOUNTPOINT
-    mount -o ro ${SSD_DEV}$part $MOUNTPOINT
-    (cd $MOUNTPOINT && tar cz .) >$OUTDIR/part$part.tar.gz
-    umount $MOUNTPOINT
+# Then dump each filesystem as a separate tarball
+for part in ${PARTITIONS}; do
+    mkdir -p "${MOUNTPOINT}"
+    mount -o ro "${SSD_DEV}$part" "${MOUNTPOINT}"
+    (cd "${MOUNTPOINT}" && tar cz .) >"${OUTDIR}/part${part}.tar.gz"
+    umount "${MOUNTPOINT}"
 done
 echo "INFO: Dump completed at `date`"
 }
 
-runme2 2>&1 | tee $OUTDIR/$LOGFILE
+runme2 2>&1 | tee "${OUTDIR}/${LOGFILE}"
 
 # === EOF ===
