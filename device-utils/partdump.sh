@@ -21,7 +21,7 @@
 SSD_DEV="/dev/sdb"
 PARTITIONS="1 2 3 4"
 MOUNTPOINT="/tmp/mount"
-OUTDIR="/home/macario/BACKUP/Backup_devices/20110822-Kingston_16GB"
+#OUTDIR="/home/macario/BACKUP/Backup_devices/20110822-Cruzer_8GB"
 LOGFILE="partdump.log"
 
 # End of configurable parameters
@@ -43,8 +43,6 @@ fi
 echo "INFO: Dumping partitions of ${SSD_DEV} into ${OUTDIR}"
 echo "INFO: Dump started at `date`"
 
-mkdir -p "${OUTDIR}"
-
 fdisk -l ${SSD_DEV} >"${OUTDIR}/fdisk.txt"
 
 # Make sure that no partitions of SSD_DEV are currently mounted
@@ -65,6 +63,19 @@ done
 echo "INFO: Dump completed at `date`"
 }
 
+PROGNAME="`basename $0`"
+echo "INFO: ${PROGNAME} - v0.1"
+
+TODAY="`date '+%Y%m%d'`"
+NOW="`date '+%Y%m%d-%H%M'`"
+
+if [ "${OUTDIR}" = "" ]; then
+	OUTDIR="/BACKUP/Backup_devices/${TODAY}-device"
+	read -p "OUTDIR [${OUTDIR}]: " line
+	[ "$line" != "" ] && OUTDIR=$line
+fi
+
+mkdir -p "${OUTDIR}"
 runme2 2>&1 | tee "${OUTDIR}/${LOGFILE}"
 
 # === EOF ===
