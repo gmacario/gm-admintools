@@ -15,8 +15,7 @@
 #	http://www.brandonhutchinson.com/ssh_tunnelling.html
 #
 # Usage examples:
-#	TUNNEL=macario@lupin01.venaria.marelli.it \
-#		ssh-tunnel.sh root@gianpinas.homelinux.net
+#	./ssh-tunnel.sh macario@lupin10.venaria.marelli.it 5000
 # ============================================================================
 
 # ---------------------------------------------------------------------------
@@ -27,52 +26,52 @@
 #	TUNNEL=macario@lupin01.venaria.marelli.it
 #fi
 
-if [ "${REMOTE_USER}" = "" ]; then
-	# $REMOTE_USER is the name of the remote user
-	REMOTE_USER=`whoami`
-fi
+#if [ "${REMOTE_USER}" = "" ]; then
+#	# $REMOTE_USER is the name of the remote user
+#	REMOTE_USER=`whoami`
+#fi
 
-if [ "${REMOTE_HOST}" = "" ]; then
-	# $REMOTE_HOST is the name of the remote system
-	REMOTE_HOST=my.home.system
-fi
+#if [ "${REMOTE_HOST}" = "" ]; then
+#	# $REMOTE_HOST is the name of the remote system
+#	REMOTE_HOST=my.home.system
+#fi
 
-if [ "${REMOTE_PORT}" = "" ]; then
-	# $REMOTE_PORT is the remote port number that will be used
-	# to tunnel back to this system
-	REMOTE_PORT=5000
-fi
-
-# $COMMAND is the command used to create the reverse ssh tunnel
-COMMAND="ssh -q -N -R $REMOTE_PORT:localhost:22 $REMOTE_USER@$REMOTE_HOST"
+#if [ "${REMOTE_PORT}" = "" ]; then
+#	# $REMOTE_PORT is the remote port number that will be used
+#	# to tunnel back to this system
+#	REMOTE_PORT=5000
+#fi
 
 # ---------------------------------------------------------------------------
 # Main Program
 # ---------------------------------------------------------------------------
 
-set -x
+#set -x
 set -e
 
 PROGNAME=`basename $0`
-#echo "INFO: ${PROGNAME} - v0.1"
+echo "INFO: ${PROGNAME} - v0.2"
 
-#if [ $# -lt 1 ]; then
-#    echo "Usage: ${PROGNAME} remoteuser@remotehost [commands]"
-#    exit 1
-#fi
+if [ $# -lt 2 ]; then
+    echo "Usage: ${PROGNAME} remote_user@remote_host remote_port"
+    exit 1
+fi
 
-#REMOTE_USER=`echo $1 | sed -e 's/\@.*$//'`
-#REMOTE_HOST=`echo $1 | sed -e 's/^.*@//'`
-#shift
+REMOTE_USER=`echo $1 | sed -e 's/\@.*$//'`
+REMOTE_HOST=`echo $1 | sed -e 's/^.*@//'`
+shift
 
-#echo "DEBUG: REMOTE_USER=$REMOTE_USER"
-#echo "DEBUG: REMOTE_HOST=$REMOTE_HOST"
+REMOTE_PORT=$1
+shift
 
-#TUNNEL_USER=`echo "${TUNNEL}" | sed -e 's/\@.*$//'`
-#TUNNEL_HOST=`echo "${TUNNEL}" | sed -e 's/^.*@//'`
+echo "DEBUG: REMOTE_USER=$REMOTE_USER"
+echo "DEBUG: REMOTE_HOST=$REMOTE_HOST"
+echo "DEBUG: REMOTE_PORT=$REMOTE_PORT"
 
-#echo "INFO: Executing commands to ${REMOTE_USER}@${REMOTE_HOST} through ${TUNNEL_USER}@${TUNNEL_HOST}"
-#ssh "${TUNNEL_USER}@${TUNNEL_HOST}" "ssh ${REMOTE_USER}@${REMOTE_HOST} $*"
+echo "INFO: Establishing reverse tunnel to ${REMOTE_USER}@${REMOTE_HOST} on port ${REMOTE_PORT}"
+
+# $COMMAND is the command used to create the reverse ssh tunnel
+COMMAND="ssh -q -N -R $REMOTE_PORT:localhost:22 $REMOTE_USER@$REMOTE_HOST"
 
 # Is the tunnel up? Perform two tests:
 
@@ -86,5 +85,7 @@ if [ $? -ne 0 ] ; then
    pkill -f -x "$COMMAND"
    $COMMAND
 fi
+
+#ssh "${TUNNEL_USER}@${TUNNEL_HOST}" "ssh ${REMOTE_USER}@${REMOTE_HOST} $*"
 
 # === EOF ===
