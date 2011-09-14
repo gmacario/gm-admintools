@@ -16,6 +16,8 @@
 #
 # Usage examples:
 #	./ssh-tunnel.sh macario@lupin10.venaria.marelli.it 5000
+#
+# TODO: STILL DEBUGGING...
 # ============================================================================
 
 # ---------------------------------------------------------------------------
@@ -47,7 +49,7 @@
 # ---------------------------------------------------------------------------
 
 set -x
-set -e
+#set -e
 
 PROGNAME=`basename $0`
 echo "INFO: ${PROGNAME} - v0.2"
@@ -66,25 +68,30 @@ shift
 REMOTE_PORT=$1
 shift
 
-echo "DEBUG: REMOTE_USER=$REMOTE_USER"
-echo "DEBUG: REMOTE_HOST=$REMOTE_HOST"
-echo "DEBUG: REMOTE_PORT=$REMOTE_PORT"
+#echo "DEBUG: REMOTE_USER=${REMOTE_USER}"
+#echo "DEBUG: REMOTE_HOST=${REMOTE_HOST}"
+#echo "DEBUG: REMOTE_PORT=${REMOTE_PORT}"
 
 # $COMMAND is the command used to create the reverse ssh tunnel
-COMMAND="ssh -q -N -R $REMOTE_PORT:localhost:22 $REMOTE_USER@$REMOTE_HOST"
+COMMAND="ssh -q -N -R ${REMOTE_PORT}:localhost:22 ${REMOTE_USER}@${REMOTE_HOST}"
 
 # Is the tunnel up? Perform two tests:
 
-# 1. Check for relevant process ($COMMAND)
-#pgrep -f -x "$COMMAND" > /dev/null 2>&1
-#[ $? ] || $COMMAND
+echo "INFO: Establishing reverse ssh to ${REMOTE_USER}@${REMOTE_HOST} on port ${REMOTE_PORT}"
 
-echo "INFO: Establishing reverse tunnel to ${REMOTE_USER}@${REMOTE_HOST} on port ${REMOTE_PORT}"
-$COMMAND
+# 1. Check for relevant process ($COMMAND)
+pgrep -f -x "$COMMAND"
+# >/dev/null 2>&1
+retval=$?
+echo "DEBUG: retval=$retval"
+[ $retval ] || $COMMAND
+
+#$COMMAND
 
 # 2. Test tunnel by looking at "netstat" output on $REMOTE_HOST
-ssh $REMOTE_HOST netstat -an | egrep "tcp.*:$REMOTE_PORT.*LISTEN" \
-   > /dev/null 2>&1
+ssh "${REMOTE_USER}@${REMOTE_HOST}" \
+	netstat -an | \
+	egrep "tcp.*:${REMOTE_PORT}.*LISTEN" # > /dev/null 2>&1
 if [ $? -ne 0 ] ; then
    pkill -f -x "$COMMAND"
    $COMMAND
