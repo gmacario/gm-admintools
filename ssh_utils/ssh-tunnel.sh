@@ -49,7 +49,7 @@
 # ---------------------------------------------------------------------------
 
 set -x
-#set -e
+#set -e		 # DO NOT set -e since some commands are expected to fail...
 
 PROGNAME=`basename $0`
 echo "INFO: ${PROGNAME} - v0.2"
