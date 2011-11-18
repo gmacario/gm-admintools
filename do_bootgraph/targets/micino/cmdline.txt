@@ -1,1 +1,0 @@
-root=UUID=2b9db528-cb1c-43a0-8d4a-66d99dec1ca2 ro quiet splash printk.time=1 initcall_debug

@@ -1,1 +1,0 @@
-ro root=/dev/VolGroup00/LogVol00 rhgb quiet
