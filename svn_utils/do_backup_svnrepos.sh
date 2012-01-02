@@ -14,26 +14,29 @@
 set -e
 
 PROGNAME="`basename $0`"
-echo "INFO: ${PROGNAME} - v0.3"
+echo "INFO: ${PROGNAME} - v0.4"
 
 if [ "${REMOTEUSER}" = "" ]; then
-	REMOTEUSER="gmacario"
+	REMOTEUSER="NONE"
 	#REMOTEUSER="administrator"
 	read -p "REMOTEUSER [${REMOTEUSER}]: " line
 	[ "$line" != "" ] && REMOTEUSER=$line
 fi
 if [ "${REMOTEHOST}" = "" ]; then
-	REMOTEHOST="localhost"
-	#REMOTEHOST="lupin05.venaria.marelli.it"
+	REMOTEHOST="NONE"
+	#REMOTEHOST="localhost"
 	read -p "REMOTEHOST [${REMOTEHOST}]: " line
 	[ "$line" != "" ] && REMOTEHOST=$line
+fi
+if [ "${REPO_BASEDIR}" = "" ]; then
+	REPO_BASEDIR="/opt/svnrepos"
+	#REPO_BASEDIR="/cygdrive/d/opt"
+	read -p "REPO_BASEDIR [${REPO_BASEDIR}]: " line
+	[ "$line" != "" ] && REPO_BASEDIR=$line
 fi
 if [ "${REPOSITORIES}" = "" ]; then
 	REPOSITORIES=""
 	REPOSITORIES="testrepos"
-	#REPOSITORIES="${REPOSITORIES} entrynav"
-	#REPOSITORIES="${REPOSITORIES} lupin"
-	#REPOSITORIES="${REPOSITORIES} pmo"
 	read -p "REPOSITORIES [${REPOSITORIES}]: " line
 	[ "$line" != "" ] && REPOSITORIES=$line
 fi
@@ -65,39 +68,50 @@ if [ "${GPG_RECIPIENT}" != "NONE" ]; then
         done
         echo -n " --recipient all"
     )"
-    echo "DBG: GPG_PIPE=\"${GPG_PIPE}\""
 else
     GPG_PIPE="cat"
 fi
+#echo "DBG: GPG_PIPE=\"${GPG_PIPE}\""
 
-echo "INFO: Backing up config files from ${REMOTEHOST}"
-if [ "${GPG_RECIPIENT}" != "NONE" ]; then
+if [ "${REMOTEHOST}" != "NONE" ]; then
+  echo "INFO: Backing up config files from ${REMOTEHOST}"
+  if [ "${GPG_RECIPIENT}" != "NONE" ]; then
     ssh "${REMOTEUSER}@${REMOTEHOST}" \
 	"cat /etc/apache2/dav_svn.authz" \
 	| ${GPG_PIPE} --armor >dav_svn.authz.asc
     # TODO: /etc/apache2/dav_svn.passwd
-else
+  else
     scp "${REMOTEUSER}@${REMOTEHOST}:/etc/apache2/dav_svn.authz" .
     # TODO: /etc/apache2/dav_svn.passwd
+  fi
 fi
 
+echo "INFO: Dumping repositories..."
 for repos in ${REPOSITORIES}; do
-    echo "INFO: Dumping repository $repos from ${REMOTEHOST}"
-
     if [ "${GPG_RECIPIENT}" != "NONE" ]; then
         FILES="${NOW}-bk-${repos}.svndump.gz.gpg-split"
     else
         FILES="${NOW}-bk-${repos}.svndump.gz-split"
     fi
-    (ssh "${REMOTEUSER}@${REMOTEHOST}" \
-	svnadmin dump "/opt/svnrepos/${repos}" \
-	| gzip -c -9) \
-	| ${GPG_PIPE} | split -b 2048m -d - "${FILES}"
-    retval=$?
+
+    if [ "${REMOTEHOST}" != "NONE" ]; then
+        echo "INFO: Dumping repository $repos from ${REMOTEHOST}"
+        (ssh "${REMOTEUSER}@${REMOTEHOST}" \
+	        svnadmin dump "${REPO_BASEDIR}/${repos}" \
+	        | gzip -c -9) \
+	        | ${GPG_PIPE} | split -b 2048m -d - "${FILES}"
+        retval=$?
+	else
+        echo "INFO: Dumping local repository $repos"
+        (svnadmin dump "${REPO_BASEDIR}/${repos}" \
+	        | gzip -c -9) \
+	        | ${GPG_PIPE} | split -b 2048m -d - "${FILES}"
+        retval=$?
+	fi
     if [ $retval -ne 0 ]; then
-	echo "ERROR: Dumping repository $repos returned ${retval}";
-	exit 1
-    fi
+        echo "ERROR: Dumping repository $repos returned ${retval}";
+  	    exit 1
+	fi
 
     echo "INFO: Creating sample script to restore repository"
     samplescript="sample-restore-${repos}.sh"
