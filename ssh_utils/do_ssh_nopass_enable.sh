@@ -49,6 +49,6 @@ if [ ! -e ${HOME}/.ssh/id_rsa.pub ]; then
     ssh-keygen
 fi
 cat ${HOME}/.ssh/id_rsa.pub | ssh ${REMOTEUSER}@${REMOTEHOST} \
-"cd .ssh && cat >>authorized_keys && chmod 640 authorized_keys"
+"mkdir -p .ssh && cd .ssh && cat >>authorized_keys && chmod 640 authorized_keys"
 
 # === EOF ===
