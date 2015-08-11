@@ -1,0 +1,1 @@
+A collection of scattered scripts to simplify Linux system administration
